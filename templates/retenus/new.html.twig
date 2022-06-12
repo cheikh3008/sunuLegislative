@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau retenu{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="content">
+        <div class="card">
+            <div class="card-header">
+                <h4>Ajouter un nouveau retenus</h4>
+            </div>
+            <div class="card-body">
+                {{ include('retenus/_form.html.twig') }}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}La liste des retenus{% endblock %}
+
+{% block body %}
+
+
+<div class="container">
+    {% for message in app.flashes('success') %}
+    <div class="text-center alert alert-success mt-2" role="alert">
+        {{ message }}
+    </div>
+    {% endfor %}
+    <div class="card mt-2 mb-2" style="width: 100%;">
+        <div class="card-header" style="padding:20px;background-color:#fff !important;">
+            <div class="d-flex justify-content-between">
+                <div class="mt-2">
+                    <h4>La liste des retenus</h4>
+                </div>
+                <div>
+                    <a href="{{path('app_retenus_new')}}" class="btn btn-secondary">Ajouter</a>
+                    <a href="{{path('app_retenus_add')}}" class="btn btn-success">Importer le fichier</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="content">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Nom des coalitions</th>
+                    <th>actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for retenus in retenuses %}
+                <tr>
+                    <td>{{ retenus.nom}}</td>
+                    <td>
+                        <a href="{{ path('app_retenus_edit', {'id': retenus.id}) }}" class="btn btn-warning"><i
+                                class="fa-solid fa-pen-to-square"></i></a>
+                        <a href="{{ path('app_retenus_delete', {'id': retenus.id}) }} "
+                            class="btn btn-danger"><i class="fa-solid fa-trash-can"></i></a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5">no records found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

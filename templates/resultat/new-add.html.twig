@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Resultat{% endblock %}
+
+{% block body %}
+
+<div class="container">
+    {% for message in app.flashes('success') %}
+    <div class="alert alert-warning mt-2">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% for message in app.flashes('error') %}
+    <div class="text-center alert alert-danger mt-2" role="alert">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {{ dump(dataForm) }}
+    <div class="content">
+        <div class="card">
+            <div class="card-header">
+                <h4> Ajouter à nouveau le resultat</h4>
+            </div>
+            <div class="card-body">
+                {{ form_start(form, {attr: {'novalidate': 'novalidate'}}) }}
+                <div class="row">
+                    <div class="col-md-6">
+                        {{ form_row(form.bulletinExp) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form_row(form.retenus) }}
+                    </div>
+                    <div class="col-md-4">
+                        {{ form_row(form.nbInscrit) }}
+                    </div>
+                    <div class="col-md-4">
+                        {{ form_row(form.nbVotant) }}
+                    </div>
+                    <div class="col-md-4">
+                        {{ form_row(form.bulletinNull) }}
+                    </div>
+                </div>
+                <button class="btn btn-success">{{ button_label|default('Ajouter') }}</button>
+                {{ form_end(form) }}
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

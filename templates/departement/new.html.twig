@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Departement{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="content">
+        <div class="card">
+            <div class="card-header">
+                Ajouter un nouveau département
+            </div>
+            <div class="card-body">
+                {{ form_start(form, {attr: {'novalidate': 'novalidate'}}) }}
+                {{ form_widget(form) }}
+                <button class="btn btn-primary">{{ button_label|default('Ajouter') }}</button>
+                {{ form_end(form) }}
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

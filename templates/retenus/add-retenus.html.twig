@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Importer le fichier{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="content">
+
+        <div class="card">
+            <div class="card-header">
+                <h4>Choisir un fichier CSV ou XLSX, XLS</h4>
+            </div>
+            <div class="card-body">
+                {{ form_start(form, {attr: {'novalidate': 'novalidate'}}) }}
+                {{ form_widget(form) }}
+                <button class="btn btn-primary">{{ button_label|default('Importer le fichier') }}</button>
+                {{ form_end(form) }}
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

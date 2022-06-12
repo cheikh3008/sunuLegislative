@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}users index{% endblock %}
+
+{% block body %}
+
+
+<div class="container">
+    {% for message in app.flashes('success') %}
+    <div class="text-center alert alert-success mt-2" role="alert">
+        {{ message }}
+    </div>
+    {% endfor %}
+    <div class="card mt-2 mb-2" style="width: 100%;">
+        <div class="card-header" style="padding:20px;background-color:#fff !important;">
+            <div class="d-flex justify-content-between">
+                <div class="mt-2">
+                    <h4>La liste des départements</h4>
+                </div>
+                <div>
+                    <a href="{{ path('app_user_new') }}" class="btn btn-secondary">ajouter</a>
+                    <a href="{{ path('app_user_add') }}" class="btn btn-success">Importer le fichier</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="content">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Prenom</th>
+                    <th>Téléphone</th>
+                    <th>Username</th>
+                    <th>Nom bureau de vote</th>
+                    <th>actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for users in users %}
+                <tr>
+                    <td>{{ users.nom }}</td>
+                    <td>{{ users.prenom }}</td>
+                    <td>{{ users.telephone }}</td>
+                    <td>{{ users.username }}</td>
+                    <td>{{ users.BV.nomBV }}</td>
+                    <td>
+                        <a href="{{ path('app_user_edit', {'id': users.id}) }}" class="btn btn-warning"><i
+                                class="fa-solid fa-pen-to-square"></i></a>
+                        <a href="{{ path('app_user_delete', {'id': users.id}) }} "
+                            class="btn btn-danger"><i class="fa-solid fa-trash-can"></i></a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5">no records found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

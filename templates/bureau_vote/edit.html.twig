@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier un bureau de vode{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="content">
+
+
+        <div class="card">
+            <div class="card-header">
+                <h4>Modifier un bureau de vote</h4>
+            </div>
+            <div class="card-body">
+                {{ include('bureau_vote/_form.html.twig', {'button_label': 'Modifier'}) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

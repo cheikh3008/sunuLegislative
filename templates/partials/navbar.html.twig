@@ -1,0 +1,40 @@
+<nav class="navbar navbar-expand-md sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            {# <img src="/img/logo-trans.png" width="50" alt="Auto Ecole Miftahou Chahada"> #}
+            <strong class="pt-4">SunuLegislatives</strong>
+        </a>
+        <a class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+            aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </a>
+        
+        <div class="container">
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_retenus_index') }}">Liste des retenues</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_departement_index') }}">Liste des départements</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">8 Circonscriptions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_user_index') }}">Liste des représentants</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_bureau_vote_index') }}">Bureau de vote</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_resultat_index') }}">Resultats</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
