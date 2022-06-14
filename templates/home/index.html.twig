@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HomeController!{% endblock %}
+{% block title %}Dashboard{% endblock %}
 
 {% block body %}
 <div class="container">
@@ -60,7 +60,7 @@
                 <div class="cards">
                     <div class="card-header">
                         <h6>Taux de participation</h6>
-                        <h2> <strong> {{taux}} % </strong> </h2>
+                        <h3> <strong> {{taux}} % </strong> </h3>
                     </div>
                 </div>
             </div>
@@ -90,7 +90,7 @@
 
                             {% endfor %}
                             <div class="alert alert-primary" role="alert">
-                                Nombre d'inscrit: <h3><strong> {{sommeNbInscrit}}</strong></h2> 
+                                Nombre d'inscrit: <h3><strong> {{sommeNbInscrit}}</strong></h3>
                             </div>
                         </div>
                         {# Nombre d'inscrit fin #}
@@ -103,8 +103,8 @@
                         {% set sommeNbVotant = sommeNbVotant+ t.nbVotant %}
 
                         {% endfor %}
-                        <div class="alert alert-info" role="alert">
-                            Nombre de votant: <h3><strong> {{sommeNbVotant}}</strong></h2> 
+                        <div class="alert alert-success" role="alert">
+                            Nombre de votant: <h3><strong> {{sommeNbVotant}}</strong></h3>
                         </div>
                         {# Nombre de votant fin #}
 
@@ -119,8 +119,8 @@
                             {% set sommeBuelletinNull = sommeBuelletinNull+ t.bulletinNull %}
 
                             {% endfor %}
-                            <div class="alert alert-success" role="alert">
-                                Nombre de bulletins nulls: <h3><strong> {{sommeBuelletinNull}}</strong></h2> 
+                            <div class="alert alert-danger" role="alert">
+                                Nombre de bulletins nulls: <h3><strong> {{sommeBuelletinNull}}</strong></h3>
                             </div>
                         </div>
                         {# Nombre d'inscrit fin #}
@@ -134,7 +134,7 @@
 
                         {% endfor %}
                         <div class="alert alert-warning" role="alert">
-                            Nombre de bulletins exprimés: <h3><strong> {{sommeBuelletinExp}}</strong></h2> 
+                            Nombre de bulletins exprimés: <h3><strong> {{sommeBuelletinExp}}</strong></h3>
                         </div>
                         {# Nombre de votant fin #}
 
@@ -148,6 +148,60 @@
         </div>
     </div>
 
+    {# Digramme pour le resultats #}
 
+    <div class="mt-3 pb-3 ">
+        <div class="row mx-1">
+            <div class="chart-bar card my-4" style="padding: 20px">
+                {{ render_chart(chartBar, {'class': 'my-chart'}) }}
+            </div>
+            <div class="chart-line card my-4" style="padding: 20px">
+                {{ render_chart(chartLine, {'class': 'my-chart'}) }}
+            </div>
+
+        </div>
+    </div>
+
+    <div class="resultDprt mt-3 mb-3">
+        <div class="alert alert-secondary">
+            Résultats par circonscription
+        </div>
+        {% for row in resultDprt %}
+        <div class="accordion" id="accordionExample">
+            <div class="accordion-item my-2">
+                <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#{{row.nomCir}}" aria-expanded="true" aria-controls="{{row.nomCir}}">
+                        <h3> <strong>{{row.nomCir}}</strong> </h3>
+                    </button>
+                </h2>
+                <div id="{{row.nomCir}}" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+                    data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Nombre d'inscrits</th>
+                                    <th scope="col">Nombre de votants</th>
+                                    <th scope="col">Nombre de bulletin nulls</th>
+                                    <th scope="col">Nombre de bulletin exprimés</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>{{row.nbInscrit}}</td>
+                                    <td>{{row.nbVotant}}</td>
+                                    <td>{{row.bulletinNull}}</td>
+                                    <td>{{row.bulletinExp}}</td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}

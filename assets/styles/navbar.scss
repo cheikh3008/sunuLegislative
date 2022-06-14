@@ -2,7 +2,7 @@
     width: 100%;
     background-color: #0253a5 !important;
     padding-bottom: 20px !important;
-    height: auto;
+    height: 60px;
     overflow: hidden;
   }
   .navbar-collapse ul {
@@ -46,7 +46,10 @@
     transform: scale(0);
     transition: transform 0.5s ease-in-out;
   }
-  
+  li a.active {
+    color: #000 !important;
+    background-color: #fff;
+  }
   li a:hover:before,
   li a:focus:before {
     transform: scale(1);
@@ -54,4 +57,10 @@
   }
   .navbar-toggler {
     background-color: #fff !important;
+  }
+
+  @media only screen and (max-width: 768px) {
+    .navbar {
+      height: auto !important;
+    }
   }

@@ -18,7 +18,6 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * @Route("/resultat")
- * @IsGranted("ROLE_REPRESENTANT")
  */
 class ResultatController extends AbstractController
 {
@@ -34,12 +33,13 @@ class ResultatController extends AbstractController
     public function index(ResultatRepository $resultatRepository): Response
     {
         return $this->render('resultat/index.html.twig', [
-            'resultats' => $resultatRepository->findAll(),
+            'resultats' => $resultatRepository->findBy([], ['id' => 'DESC']),
         ]);
     }
 
     /**
      * @Route("/new", name="app_resultat_new", methods={"GET", "POST"})
+     *  @IsGranted("ROLE_REPRESENTANT")
      */
     public function new(Request $request, ResultatRepository $resultatRepository, BureauVoteRepository $bureauVoteRepository): Response
     {
@@ -59,7 +59,7 @@ class ResultatController extends AbstractController
             $resultat->setUser($userConnected);
             foreach ($resultats as $value) {
                 if ($value->getRetenus() === $resultat->getRetenus() && $value->getUser() === $resultat->getUser()) {
-                    $this->addFlash('error', "Résultats déja ajoutés pour ".  $resultat->getRetenus());
+                    $this->addFlash('error', "Résultats déja ajoutés pour " .  $resultat->getRetenus());
                     return $this->redirectToRoute('app_resultat_new', [], Response::HTTP_SEE_OTHER);
                 }
             }
@@ -78,6 +78,7 @@ class ResultatController extends AbstractController
 
     /**
      * @Route("/new-add", name="app_resultat_new_add", methods={"GET", "POST"})
+     *  @IsGranted("ROLE_REPRESENTANT")
      */
     public function new_add(Request $request, ResultatRepository $resultatRepository, BureauVoteRepository $bureauVoteRepository): Response
     {
@@ -118,18 +119,19 @@ class ResultatController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="app_resultat_show", methods={"GET"})
-     */
-    public function show(Resultat $resultat): Response
-    {
-        return $this->render('resultat/show.html.twig', [
-            'resultat' => $resultat,
-        ]);
-    }
+    // /**
+    //  * @Route("/{id}", name="app_resultat_show", methods={"GET"})
+    //  */
+    // public function show(Resultat $resultat): Response
+    // {
+    //     return $this->render('resultat/show.html.twig', [
+    //         'resultat' => $resultat,
+    //     ]);
+    // }
 
     /**
      * @Route("/{id}/edit", name="app_resultat_edit", methods={"GET", "POST"})
+     *  @IsGranted("ROLE_REPRESENTANT")
      */
     public function edit(Request $request, Resultat $resultat, ResultatRepository $resultatRepository): Response
     {
@@ -150,6 +152,7 @@ class ResultatController extends AbstractController
 
     /**
      * @Route("/{id}/delete", name="app_resultat_delete")
+     * 
      */
     public function delete(Resultat $resultat): Response
     {

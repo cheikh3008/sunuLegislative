@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Log in!{% endblock %}
+{% block title %}Connexion{% endblock %}
 
 {% block body %}
 <div class="container">
@@ -9,7 +9,9 @@
             <div class="col-md-6 mx-auto">
                 <form method="post">
                     {% if error %}
-                    <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                    <div class="alert alert-danger">
+                        Nom d'utilisateur ou mot de passe incorrect !
+                    </div>
                     {% endif %}
 
                     <div class="card">
@@ -20,14 +22,15 @@
                             <div class="form-group">
 
                                 <label class="pb-2" for="inputUsername">Username</label>
-                                <input type="text" value="{{ last_username }}" name="username" id="inputUsername" placeholder="Entrer votre nom d'utilisateur"
-                                    class="form-control" autocomplete="username" required autofocus>
+                                <input type="text" value="{{ last_username }}" name="username" id="inputUsername"
+                                    placeholder="Entrer votre nom d'utilisateur" class="form-control"
+                                    autocomplete="username" required autofocus>
                             </div>
                             <div class="form-group mt-3">
 
                                 <label class="pb-2" for="inputPassword">Mot de passe</label>
-                                <input type="password" placeholder="Entrer votre mot de passe"  name="password" id="inputPassword" class="form-control"
-                                    autocomplete="current-password" required>
+                                <input type="password" placeholder="Entrer votre mot de passe" name="password"
+                                    id="inputPassword" class="form-control" autocomplete="current-password" required>
                             </div>
 
                             <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">

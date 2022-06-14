@@ -44,7 +44,11 @@
                     <td>{{ users.prenom }}</td>
                     <td>{{ users.telephone }}</td>
                     <td>{{ users.username }}</td>
-                    <td>{{ users.BV.nomBV }}</td>
+                    <td>
+                        {% if users.BV %}
+                        {{ users.BV.nomBV }}
+                        {% endif %}
+                    </td>
                     <td>
                         <a href="{{ path('app_user_edit', {'id': users.id}) }}" class="btn btn-warning"><i
                                 class="fa-solid fa-pen-to-square"></i></a>

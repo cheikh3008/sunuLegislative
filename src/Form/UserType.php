@@ -37,7 +37,8 @@ class UserType extends AbstractType
             ->add('BV', EntityType::class, [
                 'label' => 'Nom du bureau de vote',
                 'class' => BureauVote::class,
-                'choice_label' => 'nomCir',
+                'choice_label' => 'nomBV',
+                'placeholder' => 'Choisir le nom du bureau de vote'
             ]);
     }
 

@@ -1,0 +1,24 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Accés refusé | Bee Digital{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="erreur" style="margin-top:-60px">
+        <div class="container">
+            <div class="row  d-flex align-items-center">
+                <div class="col-md-6 mx-auto">
+                    <img src="{{asset('images/403.png')}}" width="100%" alt="Erreur 404" srcset="">
+                    <div class="text-center">
+                        <h2 class="mt-3">Vous n'avez pas les droits pour accéder à ce service.</h2>
+                        <p>Vous pouvez retournez à l'acceuil pour voir nos services. </p>
+
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -13,10 +13,12 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
  * @Route("/bureau/vote")
+ * @IsGranted("ROLE_ADMIN")
  */
 class BureauVoteController extends AbstractController
 {
@@ -26,7 +28,7 @@ class BureauVoteController extends AbstractController
     public function index(BureauVoteRepository $bureauVoteRepository): Response
     {
         return $this->render('bureau_vote/index.html.twig', [
-            'bureau_votes' => $bureauVoteRepository->findAll(),
+            'bureau_votes' => $bureauVoteRepository->findBy([], ['id' => 'DESC']),
         ]);
     }
 
@@ -106,17 +108,19 @@ class BureauVoteController extends AbstractController
             $count = "0";
             foreach ($data as $row) {
                 if ($count > 0) {
-                    $bureauVote = new BureauVote();
-                    $nomCir = $row["0"];
-                    $nomBV  = $row["1"];
-                    // try {
-                    $bureauVote->setNomBV("$nomBV")
-                        ->setNomCir($nomCir);
-                    $entityManagerInterface->persist($bureauVote);
-                    $entityManagerInterface->flush();
-                    // } catch (\Throwable $th) {
-                    //     throw new Exception("Impossible d'importer ce fichier.");
-                    // }
+                    try {
+                        $bureauVote = new BureauVote();
+                        $nomCir = $row["0"];
+                        $nomBV  = $row["1"];
+                        $bureauVote->setNomBV("$nomBV")
+                            ->setNomCir($nomCir);
+                        $entityManagerInterface->persist($bureauVote);
+                        $entityManagerInterface->flush();
+                    } catch (\Throwable $th) {
+                        // throw new Exception("Impossible d'importer ce fichier.");
+                        $this->addFlash('error', "Impossible d'importer ce fichier.");
+                        return $this->redirectToRoute('app_bureau_vote_add', [], Response::HTTP_SEE_OTHER);
+                    }
                 } else {
                     $count = "1";
                 }

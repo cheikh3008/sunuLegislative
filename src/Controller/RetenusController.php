@@ -5,6 +5,7 @@ namespace App\Controller;
 use Exception;
 use App\Entity\Upload;
 use App\Entity\Retenus;
+use App\Form\UploadType;
 use App\Form\RetenusType;
 use App\Repository\RetenusRepository;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -12,11 +13,12 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Form\UploadType;
 
 /**
  * @Route("/retenus")
+ * @IsGranted("ROLE_ADMIN")
  */
 class RetenusController extends AbstractController
 {
@@ -27,7 +29,7 @@ class RetenusController extends AbstractController
     {
         // dd($retenusRepository->findAll());
         return $this->render('retenus/index.html.twig', [
-            'retenuses' => $retenusRepository->findAll(),
+            'retenuses' => $retenusRepository->findBy([], ['id' => 'DESC']),
         ]);
     }
 
@@ -42,7 +44,7 @@ class RetenusController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $retenusRepository->add($retenu, true);
-
+            $this->addFlash('success', 'Votre coalition a été bien ajouté');
             return $this->redirectToRoute('app_retenus_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -107,14 +109,17 @@ class RetenusController extends AbstractController
             $count = "0";
             foreach ($data as $row) {
                 if ($count > 0) {
-                    $retenus = new Retenus();
-                    $nom = $row["0"];
                     try {
+                        $retenus = new Retenus();
+                        $nom = $row["0"];
                         $retenus->setNom($nom);
                         $entityManagerInterface->persist($retenus);
                         $entityManagerInterface->flush();
+                        // $this->addFlash('success', 'Votre fichier a été importé avec succés');
                     } catch (\Throwable $th) {
-                        throw new Exception("Impossible d'importer ce fichier.");
+                        // throw new Exception("Impossible d'importer ce fichier.");
+                        $this->addFlash('error', "Impossible d'importer ce fichier.");
+                        return $this->redirectToRoute('app_retenus_add', [], Response::HTTP_SEE_OTHER);
                     }
                 } else {
                     $count = "1";

@@ -10,15 +10,17 @@ use App\Form\DepartementType;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\DepartementRepository;
+use function PHPUnit\Framework\returnSelf;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-use function PHPUnit\Framework\returnSelf;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
  * @Route("/departement")
+ * @IsGranted("ROLE_ADMIN")
  */
 class DepartementController extends AbstractController
 {
@@ -28,7 +30,7 @@ class DepartementController extends AbstractController
     public function index(DepartementRepository $departementRepository): Response
     {
         return $this->render('departement/index.html.twig', [
-            'departements' => $departementRepository->findAll(),
+            'departements' => $departementRepository->findBy([], ['id' => 'DESC']),
         ]);
     }
 
@@ -117,19 +119,21 @@ class DepartementController extends AbstractController
             $count = "0";
             foreach ($data as  $row) {
                 if ($count > 0) {
-                    $departement = new Departement();
-                    $nom = $row['0'];
-                    $NBBV  = $row['1'];
-                    $NBin = $row['2'];
-                    // dd($departement);
                     try {
+                        $departement = new Departement();
+                        $nom = $row['0'];
+                        $NBBV  = $row['1'];
+                        $NBin = $row['2'];
+                        // dd($departement);
                         $departement->setNom($nom)
                             ->setNbBV($NBBV)
                             ->setNbInscrit($NBin);
                         $entityManagerInterface->persist($departement);
                         $entityManagerInterface->flush();
                     } catch (\Throwable $th) {
-                        throw new Exception("Impossible d'importer ce fichier.");
+                        // throw new Exception("Impossible d'importer ce fichier.");
+                        $this->addFlash('error', "Impossible d'importer ce fichier.");
+                        return $this->redirectToRoute('app_add_csv', [], Response::HTTP_SEE_OTHER);
                     }
                 } else {
                     $count = "1";

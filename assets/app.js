@@ -10,3 +10,13 @@ import './styles/app.scss';
 
 // start the Stimulus application
 import './bootstrap';
+const dash_link_href = location.href;
+console.log(dash_link_href);
+const link_dash = document.querySelectorAll('.nav-link');
+for (let i = 0; i < link_dash.length; i++) {
+    const element = link_dash[i];
+    if (element.href === dash_link_href) {
+        element.className = "active"
+    }
+    
+}

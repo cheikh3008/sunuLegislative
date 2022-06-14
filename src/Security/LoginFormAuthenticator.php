@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use App\Repository\RoleRepository;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,10 +23,14 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     public const LOGIN_ROUTE = 'app_login';
 
     private UrlGeneratorInterface $urlGenerator;
+    private $roleRepository;
+    private $security;
 
-    public function __construct(UrlGeneratorInterface $urlGenerator)
+    public function __construct(UrlGeneratorInterface $urlGenerator, RoleRepository $roleRepository, Security $security)
     {
         $this->urlGenerator = $urlGenerator;
+        $this->roleRepository = $roleRepository;
+        $this->security = $security;
     }
 
     public function authenticate(Request $request): Passport
@@ -45,13 +50,18 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
+        if ($this->security->getUser()->getRoles()['0'] === 'ROLE_ADMIN') {
+            return new RedirectResponse($this->urlGenerator->generate('app_home'));
+        }
+        if ($this->security->getUser()->getRoles()['0'] === 'ROLE_REPRESENTANT') {
+            return new RedirectResponse($this->urlGenerator->generate('app_resultat_new'));
+        }
+        // dd(($this->security->getUser()->getRoles()['0'] === 'ROLE_ADMIN'));
         if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
+            // dd($targetPath);
             return new RedirectResponse($targetPath);
         }
-
-        // For example:
-        // return new RedirectResponse($this->urlGenerator->generate('some_route'));
-        throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
+        //throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
     }
 
     protected function getLoginUrl(Request $request): string

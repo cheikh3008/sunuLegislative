@@ -7,36 +7,39 @@ use App\Entity\User;
 use App\Entity\Upload;
 use App\Form\UserType;
 use App\Form\UploadType;
-use App\Repository\BureauVoteRepository;
 use App\Repository\RoleRepository;
 use App\Repository\UserRepository;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use App\Repository\BureauVoteRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 /**
  * @Route("/user")
+ * @IsGranted("ROLE_ADMIN")
  */
 class UserController extends AbstractController
 {
     /**
      * @Route("/", name="app_user_index", methods={"GET"})
      */
-    public function index(UserRepository $userRepository): Response
+    public function index(UserRepository $userRepository, RoleRepository $roleRepository): Response
     {
+        $role = $roleRepository->findOneBy(['libelle' => 'ROLE_REPRESENTANT']);
         return $this->render('user/index.html.twig', [
-            'users' => $userRepository->findAll(),
+            'users' => $userRepository->findBy(["role" => $role], ['id' => 'DESC']),
         ]);
     }
 
     /**
      * @Route("/new", name="app_user_new", methods={"GET", "POST"})
      */
-    public function new(Request $request, UserRepository $userRepository, UserPasswordHasherInterface $userPasswordHasher, RoleRepository $roleRepository): Response
+    public function new(Request $request, UserRepository $userRepository, UserPasswordHasherInterface $userPasswordHasher, RoleRepository $roleRepository, BureauVoteRepository $bureauVoteRepository): Response
     {
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
@@ -46,6 +49,14 @@ class UserController extends AbstractController
         $password = substr(str_shuffle($chars), 0, 8);
         if ($form->isSubmitted() && $form->isValid()) {
             $username = ($form->get('telephone')->getData());
+            $nomBV =  ($form->get('BV')->getData());
+            // $bvExi = $bureauVoteRepository->findOneBy(['nomBV' => $nomBV]);
+            $userRS = $userRepository->findOneBy(['BV' => $nomBV]);
+            // dd($userRS);
+            if ($userRS) {
+                $this->addFlash('error', "Ce bureau a été dèja affecté par un représentant");
+                return $this->redirectToRoute('app_user_new', [], Response::HTTP_SEE_OTHER);
+            }
             $user->setRole($role);
             $user->setUuid($password);
             $user->setPassword(
@@ -129,38 +140,40 @@ class UserController extends AbstractController
             // dd($data);
             $count = "0";
             foreach ($data as $row) {
-                if (count($row) <= 3) {
-                    throw new Exception("Impossible d'importer ce fichier.");
-                }
+                // if (count($row) <= 3) {
+                //     throw new Exception("Impossible d'importer ce fichier.");
+                // }
                 $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
                 $password = substr(str_shuffle($chars), 0, 8);
                 if ($count > 0) {
-                    $user = new User();
-                    $nom = $row["0"];
-                    $prenom  = $row["1"];
-                    $telephone  = $row["2"];
-                    $nomBV = $row["3"];
-                    $nomBV1 = $bureauVoteRepository->findOneBy(['nomBV' => $nomBV]);
+                    try {
+                        $user = new User();
+                        $nom = $row["0"];
+                        $prenom  = $row["1"];
+                        $telephone  = $row["2"];
+                        $nomBV = $row["3"];
+                        $nomBV1 = $bureauVoteRepository->findOneBy(['nomBV' => $nomBV]);
 
-                    // try {
-                    $user->setNom($nom)
-                        ->setPrenom($prenom)
-                        ->setUsername($telephone)
-                        ->setTelephone($telephone)
-                        ->setUuid($password)
-                        ->setBV($nomBV1)
-                        ->setRole($role)
-                        ->setPassword(
-                            $userPasswordHasher->hashPassword(
-                                $user,
-                                $password
-                            )
-                        );
-                    $entityManagerInterface->persist($user);
-                    $entityManagerInterface->flush();
-                    // } catch (\Throwable $th) {
-                    //     throw new Exception("Impossible d'importer ce fichier.");
-                    // }
+                        $user->setNom($nom)
+                            ->setPrenom($prenom)
+                            ->setUsername($telephone)
+                            ->setTelephone($telephone)
+                            ->setUuid($password)
+                            ->setBV($nomBV1)
+                            ->setRole($role)
+                            ->setPassword(
+                                $userPasswordHasher->hashPassword(
+                                    $user,
+                                    $password
+                                )
+                            );
+                        $entityManagerInterface->persist($user);
+                        $entityManagerInterface->flush();
+                    } catch (\Throwable $th) {
+                        // throw new Exception("Impossible d'importer ce fichier.");
+                        $this->addFlash('error', "Impossible d'importer ce fichier.");
+                        return $this->redirectToRoute('app_user_add', [], Response::HTTP_SEE_OTHER);
+                    }
                 } else {
                     $count = "1";
                 }

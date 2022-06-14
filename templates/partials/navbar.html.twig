@@ -8,7 +8,7 @@
             aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </a>
-        
+
         <div class="container">
             <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
                 <ul class="navbar-nav ml-auto">
@@ -21,9 +21,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ path('app_departement_index') }}">Liste des départements</a>
                     </li>
-                    <li class="nav-item">
+                    {# <li class="nav-item">
                         <a class="nav-link" href="#">8 Circonscriptions</a>
-                    </li>
+                    </li> #}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ path('app_user_index') }}">Liste des représentants</a>
                     </li>
@@ -32,6 +32,11 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ path('app_resultat_index') }}">Resultats</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_logout') }}">
+                            Deconnexion
+                        </a>
                     </li>
                 </ul>
             </div>
