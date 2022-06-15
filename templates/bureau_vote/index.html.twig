@@ -18,14 +18,15 @@
                     <h4>La liste des bureaux de vote</h4>
                 </div>
                 <div>
-                    <a href="{{path('app_bureau_vote_new')}}" class="btn btn-secondary">Ajouter</a>
-                    <a href="{{path('app_bureau_vote_add')}}" class="btn btn-success">Importer le fichier</a>
+                    <a href="{{path('app_bureau_vote_new')}}" class="mx-1 my-2 btn  btn btn-secondary">Ajouter</a>
+                    <a href="{{path('app_bureau_vote_add')}}" class="mx-1 my-2 btn  btn btn-success">Importer le
+                        fichier</a>
                 </div>
             </div>
         </div>
 
     </div>
-    <div class="content">
+    <div class="content table-responsive">
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -40,15 +41,17 @@
                     <td>{{ bureau_vote.nomBV }}</td>
                     <td>{{ bureau_vote.nomCir }}</td>
                     <td>
-                        <a href="{{ path('app_bureau_vote_edit', {'id': bureau_vote.id}) }}" class="btn btn-warning"><i
+                        <a href="{{ path('app_bureau_vote_edit', {'id': bureau_vote.id}) }}" class="mx-1 my-2 btn btn-warning"><i
                                 class="fa-solid fa-pen-to-square"></i></a>
                         <a href="{{ path('app_bureau_vote_delete', {'id': bureau_vote.id}) }} "
-                            class="btn btn-danger"><i class="fa-solid fa-trash-can"></i></a>
+                            class="mx-1 my-2 btn btn-danger"><i class="fa-solid fa-trash-can"></i></a>
                     </td>
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="5">no records found</td>
+                    <div class="alert alert-danger">
+                        <td>Aucun enregistrement trouvé</td>
+                    </div>
                 </tr>
                 {% endfor %}
             </tbody>

@@ -54,10 +54,14 @@ class ResultatRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    public function findOneBySomeField($value): array
+    public function findOneBySomeField(): array
     {
-        return $this->createQueryBuilder('r.id')
-            ->andWhere('r.retenus = :val')
+        return $this->createQueryBuilder('r')
+            ->join('r.retenus', 're')
+            ->select('re.nom, SUM(r.bulletinExp) as bulletinExp')
+            ->andWhere('r.retenus = re.id')
+            ->groupBy('re.nom')
+            ->orderBy('bulletinExp','DESC')
             ->getQuery()
             ->getResult();
     }
@@ -77,7 +81,22 @@ class ResultatRepository extends ServiceEntityRepository
                     GROUP BY B.nomCir  '
             )->getResult();
     }
+
+    public function findNombreTotalVoix()
+    {
+        return $this->getEntityManager()
+            ->createQuery(
+                ' SELECT RE.nom, SUM(R.bulletinExp) as bulletinExp
+                    FROM App\Entity\Retenus RE, App\Entity\Resultat R
+                    WHERE R.retenus = RE.id 
+                    GROUP BY RE.nom  '
+            )->getResult();
+    }
+
+
     // SELECT  r.user_id , bureau_vote.nom_cir , retenus.nom , SUM(r.nb_inscrit), SUM(r.nb_votant), SUM(r.bulletin_null), SUM(r.bulletin_exp)  FROM resultat as r, bureau_vote, user, retenus WHERE r.retenus_id = retenus.id AND bureau_vote.id = user.bv_id and r.user_id = user.id   GROUP BY r.user_id, bureau_vote.nom_cir, retenus.nom
-   
+
     // SELECT   bureau_vote.nom_cir ,  SUM(r.nb_inscrit), SUM(r.nb_votant), SUM(r.bulletin_null), SUM(r.bulletin_exp)  FROM resultat as r, bureau_vote, user, retenus WHERE r.retenus_id = retenus.id AND bureau_vote.id = user.bv_id and r.user_id = user.id  GROUP BY  bureau_vote.nom_cir
+
+    // SELECT retenus.nom, SUM(resultat.bulletin_exp) as nbVoix FROM resultat, retenus WHERE retenus.id = resultat.retenus_id GROUP BY retenus.nom
 }

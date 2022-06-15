@@ -23,15 +23,15 @@
                     <h4>La liste des bureaux de vote</h4>
                 </div>
                 <div>
-                    <a href="{{path('app_resultat_new')}}" class="btn btn-secondary">Ajouter</a>
-                    <a href="" class="btn btn-success">Importer le fichier</a>
+                    <a href="{{path('app_resultat_new')}}" class="btn btn-success">Ajouter</a>
+                    {# <a href="" class="btn btn-success">Importer le fichier</a> #}
                 </div>
             </div>
         </div>
 
     </div>
-    
-    <div class="content">
+
+    <div class="content table-responsive">
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -56,15 +56,17 @@
                     <td>{{ resultat.user.prenom }} {{resultat.user.nom}}</td>
                     <td>{{ resultat.user.BV.NomBV }}</td>
                     <td>
-                        <a href="{{ path('app_resultat_edit', {'id': resultat.id}) }}" class="btn btn-warning"><i
+                        <a href="{{ path('app_resultat_edit', {'id': resultat.id}) }}" class="mx-1 my-2 btn btn-warning"><i
                                 class="fa-solid fa-pen-to-square"></i></a>
-                        <a href="{{ path('app_resultat_delete', {'id': resultat.id}) }} "
-                            class="btn btn-danger"><i class="fa-solid fa-trash-can"></i></a>
+                        <a href="{{ path('app_resultat_delete', {'id': resultat.id}) }} " class="mx-1 my-2 btn btn-danger"><i
+                                class="fa-solid fa-trash-can"></i></a>
                     </td>
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="5">no records found</td>
+                    <div class="alert alert-danger">
+                        <td>Aucun enregistrement trouvé</td>
+                    </div>
                 </tr>
                 {% endfor %}
             </tbody>

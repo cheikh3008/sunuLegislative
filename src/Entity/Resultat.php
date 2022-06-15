@@ -52,6 +52,7 @@ class Resultat
     /**
      * @ORM\ManyToOne(targetEntity=Retenus::class, inversedBy="resultats")
      * @ORM\JoinColumn(nullable=false)
+     * @Assert\NotBlank(message="Veuillez choisir une coalition")
      */
     private $retenus;
 

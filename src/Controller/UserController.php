@@ -25,21 +25,27 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
  */
 class UserController extends AbstractController
 {
+    private $userRepository;
+    public function __construct(UserRepository $userRepository)
+    {
+        $this->userRepository = $userRepository;
+    }
+
     /**
      * @Route("/", name="app_user_index", methods={"GET"})
      */
-    public function index(UserRepository $userRepository, RoleRepository $roleRepository): Response
+    public function index(RoleRepository $roleRepository): Response
     {
         $role = $roleRepository->findOneBy(['libelle' => 'ROLE_REPRESENTANT']);
         return $this->render('user/index.html.twig', [
-            'users' => $userRepository->findBy(["role" => $role], ['id' => 'DESC']),
+            'users' => $this->userRepository->findBy(["role" => $role], ['id' => 'DESC']),
         ]);
     }
 
     /**
      * @Route("/new", name="app_user_new", methods={"GET", "POST"})
      */
-    public function new(Request $request, UserRepository $userRepository, UserPasswordHasherInterface $userPasswordHasher, RoleRepository $roleRepository, BureauVoteRepository $bureauVoteRepository): Response
+    public function new(Request $request,  UserPasswordHasherInterface $userPasswordHasher, RoleRepository $roleRepository, BureauVoteRepository $bureauVoteRepository): Response
     {
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
@@ -51,7 +57,7 @@ class UserController extends AbstractController
             $username = ($form->get('telephone')->getData());
             $nomBV =  ($form->get('BV')->getData());
             // $bvExi = $bureauVoteRepository->findOneBy(['nomBV' => $nomBV]);
-            $userRS = $userRepository->findOneBy(['BV' => $nomBV]);
+            $userRS = $this->userRepository->findOneBy(['BV' => $nomBV]);
             // dd($userRS);
             if ($userRS) {
                 $this->addFlash('error', "Ce bureau a été dèja affecté par un représentant");
@@ -66,7 +72,7 @@ class UserController extends AbstractController
                 )
             );
             $user->setUsername($username);
-            $userRepository->add($user, true);
+            $this->userRepository->add($user, true);
 
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -77,26 +83,17 @@ class UserController extends AbstractController
         ]);
     }
 
-    // /**
-    //  * @Route("/{id}", name="app_user_show", methods={"GET"})
-    //  */
-    // public function show(User $user): Response
-    // {
-    //     return $this->render('user/show.html.twig', [
-    //         'user' => $user,
-    //     ]);
-    // }
 
     /**
      * @Route("/{id}/edit", name="app_user_edit", methods={"GET", "POST"})
      */
-    public function edit(Request $request, User $user, UserRepository $userRepository): Response
+    public function edit(Request $request, User $user): Response
     {
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $userRepository->add($user, true);
+            $this->userRepository->add($user, true);
 
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -185,5 +182,72 @@ class UserController extends AbstractController
             'form' => $form->createView()
             // 'erreur' => $erreur,
         ]);
+    }
+
+    /**
+     * @Route("/sms-all", name="app_user_sendsms_all")
+     */
+    public  function sendSMSAllUSer()
+    {
+        $users = $this->userRepository->findAll();
+        // $telephone = [];
+        // $uid = [];
+        $data = [];
+        $gateway_url = "https://sms.lws.fr/sms/api";
+        $action = "send-sms";
+        $apiKey  = "Y2hlaWtoOiQyeSQxMCRoa1FrRHNwZmp1THpUanROVUViRjEuY0ovRUV2UzdWaGQxZExQWndPT3J5ZkRGQUNkdTJxaQ";
+        foreach ($users as $key => $value) {
+            // $telephone = $value->getTelephone();
+            // $uid[] = $value->getUuid();
+            // $to = $telephone;
+            // $senderID  = "LWS";
+            // $message  = urlencode("Ceci est un message de test");
+            $data = array(
+                'action' => $action,
+                'api_key' => $apiKey,
+                'to' => $value->getTelephone(),
+                'from' => 'lws',
+                'sms' => 'Bonjour ' . $value->getFullname() . ', Vos identifiants de connexion sont:' . ' Username: ' . $value->getUsername() . '  Mot de passe: ' . $value->getUuid(),
+            );
+        }
+        $ch = curl_init($gateway_url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($ch);
+        curl_close($ch);
+        $get_data = json_decode($response, true);
+
+        dd($data);
+
+        return $this->render('user/sms-all.html.twig', []);
+    }
+
+    /**
+     * @Route("/sms-one", name="app_user_sendsms_one")
+     */
+    public  function sendSMSOneUSer()
+    {
+        $users = $this->userRepository->findAll();
+        foreach ($users as $value) {
+
+            $message = urlencode('Bonjour ' . $value->getFullname() . ', Vos identifiants de connexion sont:' . ' Username: ' . $value->getUsername() . '  Mot de passe: ' . $value->getUuid());
+            $username = 'SMS-473326';
+            $password = 'tzfydejbwktakz';
+            $expediteur = 'Cheikh3008';
+            $destinataire = '221773043248';
+            $sms = "
+            https://sms.lws.fr/sms/api?action=send-sms&api_key=Y2hlaWtoOiQyeSQxMCRoa1FrRHNwZmp1THpUanROVUViRjEuY0ovRUV2UzdWaGQxZExQWndPT3J5ZkRGQUNkdTJxaQ==&to=$destinataire&from=lws&sms=$message
+            ";
+        }
+        // dd($sms);
+        if ($sms[0] != 'Error') {
+
+            dd('votre sms est envoye');
+        } else {
+            dd('Erreur:' . $sms[0] . $sms[1]);
+        }
+        return $this->render('user/sms-all.html.twig', []);
     }
 }

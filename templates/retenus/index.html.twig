@@ -18,14 +18,14 @@
                     <h4>La liste des retenus</h4>
                 </div>
                 <div>
-                    <a href="{{path('app_retenus_new')}}" class="btn btn-secondary">Ajouter</a>
-                    <a href="{{path('app_retenus_add')}}" class="btn btn-success">Importer le fichier</a>
+                    <a href="{{path('app_retenus_new')}}" class="mx-1 my-2 btn btn-secondary">Ajouter</a>
+                    <a href="{{path('app_retenus_add')}}" class="mx-1 my-2 btn btn-success">Importer le fichier</a>
                 </div>
             </div>
         </div>
 
     </div>
-    <div class="content">
+    <div class="content table-responsive">
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -38,15 +38,17 @@
                 <tr>
                     <td>{{ retenus.nom}}</td>
                     <td>
-                        <a href="{{ path('app_retenus_edit', {'id': retenus.id}) }}" class="btn btn-warning"><i
+                        <a href="{{ path('app_retenus_edit', {'id': retenus.id}) }}" class="mx-1 my-2 btn btn-warning"><i
                                 class="fa-solid fa-pen-to-square"></i></a>
-                        <a href="{{ path('app_retenus_delete', {'id': retenus.id}) }} "
-                            class="btn btn-danger"><i class="fa-solid fa-trash-can"></i></a>
+                        <a href="{{ path('app_retenus_delete', {'id': retenus.id}) }} " class="mx-1 my-2 btn btn-danger"><i
+                                class="fa-solid fa-trash-can"></i></a>
                     </td>
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="5">no records found</td>
+                    <div class="alert alert-danger">
+                        <td>Aucun enregistrement trouvé</td>
+                    </div>
                 </tr>
                 {% endfor %}
             </tbody>

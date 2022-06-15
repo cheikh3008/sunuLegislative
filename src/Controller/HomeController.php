@@ -59,8 +59,8 @@ class HomeController extends AbstractController
         $taux = 0;
         $nomdprt = [];
         $resultDprt = [];
+        
         foreach ($this->resultatRepository->findByDepartement() as $key => $ddd) {
-
             $resultDprt[] = $ddd;
         }
         foreach ($retenus as $value) {
@@ -93,6 +93,7 @@ class HomeController extends AbstractController
 
             $taux = $nbVotant / $nbInscrit * 100;
         }
+        // dd($resultDprt);
         return $this->render('home/index.html.twig', [
             'nbInscrit' => $nbInscrit,
             'nbVotant' => $nbVotant,
@@ -105,6 +106,7 @@ class HomeController extends AbstractController
             'resultDprt' => $resultDprt,
             'chartBar' => $this->getChartBar($dataRetenusForChart, $dataResultForchard),
             'chartLine' => $this->getChartLine($dataRetenusForChart, $dataResultForchard),
+            'nbVoix' => $this->resultatRepository->findOneBySomeField()
         ]);
     }
 

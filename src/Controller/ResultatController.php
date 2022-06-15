@@ -56,6 +56,7 @@ class ResultatController extends AbstractController
         }
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
             $resultat->setUser($userConnected);
             foreach ($resultats as $value) {
                 if ($value->getRetenus() === $resultat->getRetenus() && $value->getUser() === $resultat->getUser()) {
@@ -63,10 +64,11 @@ class ResultatController extends AbstractController
                     return $this->redirectToRoute('app_resultat_new', [], Response::HTTP_SEE_OTHER);
                 }
             }
-            $this->session->set("dataForm", $resultat);
-            $resultatRepository->add($resultat, true);
-            $this->addFlash('success', "Les résultats ont été ajoutés avec succés");
-            return $this->redirectToRoute('app_resultat_index', [], Response::HTTP_SEE_OTHER);
+            $this->session->set("dataForm", $data);
+            // $resultatRepository->add($resultat, true);
+
+            $this->addFlash('success', "Veuillez saisir à nouveau les résultats");
+            return $this->redirectToRoute('app_resultat_new_add', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->renderForm('resultat/new.html.twig', [
@@ -94,13 +96,14 @@ class ResultatController extends AbstractController
         }
         if ($form->isSubmitted() && $form->isValid()) {
             $resultat->setUser($userConnected);
-
+            
             if (
-                $dataForm->getNbInscrit() !== $resultat->getNbInscrit() ||
-                $dataForm->getNbVotant()  !== $resultat->getNbVotant() ||
-                $dataForm->getBulletinnull() !== $resultat->getBulletinnull() || $dataForm->getBulletinExp() !== $resultat->getBulletinExp()  ||
-                $dataForm->getRetenus() !== $resultat->getRetenus()
+                $dataForm->getRetenus()->getId() !== $resultat->getRetenus()->getId() ||
+                (int)$dataForm->getNbInscrit() !== (int)$resultat->getNbInscrit() ||
+                    (int)$dataForm->getNbVotant()  !== (int)$resultat->getNbVotant() ||
+                    (int)$dataForm->getBulletinnull() !== (int)$resultat->getBulletinnull() || (int)$dataForm->getBulletinExp() !== (int)$resultat->getBulletinExp()
             ) {
+                // dd('error');
                 $this->addFlash('error', "Les résultats ne sont pas les mêmes !");
                 return $this->redirectToRoute('app_resultat_new', [], Response::HTTP_SEE_OTHER);
             } else {
@@ -118,16 +121,6 @@ class ResultatController extends AbstractController
             'dataForm' => $dataForm
         ]);
     }
-
-    // /**
-    //  * @Route("/{id}", name="app_resultat_show", methods={"GET"})
-    //  */
-    // public function show(Resultat $resultat): Response
-    // {
-    //     return $this->render('resultat/show.html.twig', [
-    //         'resultat' => $resultat,
-    //     ]);
-    // }
 
     /**
      * @Route("/{id}/edit", name="app_resultat_edit", methods={"GET", "POST"})
