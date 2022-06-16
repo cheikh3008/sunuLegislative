@@ -61,7 +61,7 @@ class ResultatRepository extends ServiceEntityRepository
             ->select('re.nom, SUM(r.bulletinExp) as bulletinExp')
             ->andWhere('r.retenus = re.id')
             ->groupBy('re.nom')
-            ->orderBy('bulletinExp','DESC')
+            ->orderBy('bulletinExp', 'DESC')
             ->getQuery()
             ->getResult();
     }
@@ -70,13 +70,11 @@ class ResultatRepository extends ServiceEntityRepository
     {
         return $this->getEntityManager()
             ->createQuery(
-                ' SELECT B.nomCir,  SUM(R.nbInscrit) as nbInscrit, SUM(R.nbVotant) as nbVotant, SUM(R.bulletinNull) as bulletinNull, SUM(R.bulletinExp) as bulletinExp
-                    FROM App\Entity\User U, 
-                    App\Entity\Retenus RE, 
+                ' SELECT B.nomCir,  SUM(R.nbVotant) as nbVotant, SUM(R.bulletinNull) as bulletinNull, SUM(R.bulletinExp) as bulletinExp
+                    FROM App\Entity\User U,
                     App\Entity\Resultat R,
                     App\Entity\BureauVote B
-                    WHERE R.retenus = RE.id 
-                    AND B.id = U.BV
+                    WHERE  B.id = U.BV
                     AND R.user = U.id  
                     GROUP BY B.nomCir  '
             )->getResult();

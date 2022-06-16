@@ -18,13 +18,6 @@ class Resultat
      */
     private $id;
 
-
-    /**
-     * @ORM\Column(type="integer")
-     * @Assert\NotBlank(message="Veuillez remplir ce champ")
-     */
-    private $nbInscrit;
-
     /**
      * @ORM\Column(type="integer")
      * @Assert\NotBlank(message="Veuillez remplir ce champ")
@@ -49,32 +42,10 @@ class Resultat
      */
     private $user;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Retenus::class, inversedBy="resultats")
-     * @ORM\JoinColumn(nullable=false)
-     * @Assert\NotBlank(message="Veuillez choisir une coalition")
-     */
-    private $retenus;
-
-    
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-
-
-    public function getNbInscrit(): ?int
-    {
-        return $this->nbInscrit;
-    }
-
-    public function setNbInscrit(?int $nbInscrit): self
-    {
-        $this->nbInscrit = $nbInscrit;
-
-        return $this;
     }
 
     public function getNbVotant(): ?int
@@ -124,18 +95,4 @@ class Resultat
 
         return $this;
     }
-
-    public function getRetenus(): ?Retenus
-    {
-        return $this->retenus;
-    }
-
-    public function setRetenus(?Retenus $retenus): self
-    {
-        $this->retenus = $retenus;
-
-        return $this;
-    }
-
-
 }

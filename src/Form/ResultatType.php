@@ -16,34 +16,24 @@ class ResultatType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('nbInscrit', TextType::class, [
-                'label' => 'Nombre d\'inscrit',
-                'attr' => [
-                    'placeholder' => 'Entrez le nombre d\'inscrit',
-                ]
-            ])
+
             ->add('nbVotant', NumberType::class, [
-                'label' => 'Nombre de votant',
+                'label' => 'Nombre de votants',
                 'attr' => [
-                    'placeholder' => 'Entrez le nombre de votant',
+                    'placeholder' => 'Entrez le nombre de votants',
                 ]
             ])
             ->add('bulletinNull', NumberType::class, [
-                'label' => 'Bulletin null',
+                'label' => 'Bulletins nuls',
                 'attr' => [
-                    'placeholder' => 'Entrez le nombre bulletin null',
+                    'placeholder' => 'Entrez le nombre bulletins nuls',
                 ]
             ])
             ->add('bulletinExp', NumberType::class, [
-                'label' => 'Bulletin exprimé',
+                'label' => 'Bulletins exprimés',
                 'attr' => [
-                    'placeholder' => 'Entrez le nombre bulletin exprimé',
+                    'placeholder' => 'Entrez le nombre bulletins exprimés',
                 ]
-            ])
-            ->add('retenus', EntityType::class, [
-                'label' => 'Nom de la coalition',
-                'placeholder' => 'Choisir un coalition',
-                'class' => Retenus::class
             ]);
     }
 

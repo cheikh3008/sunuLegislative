@@ -10,6 +10,13 @@ import './styles/app.scss';
 
 // start the Stimulus application
 import './bootstrap';
+import 'select2';
+
+$(document).ready(function () {
+    $('.form-select').select2();
+    console.log('ok cool');
+});
+
 const dash_link_href = location.href;
 console.log(dash_link_href);
 const link_dash = document.querySelectorAll('.nav-link');
@@ -20,3 +27,4 @@ for (let i = 0; i < link_dash.length; i++) {
     }
     
 }
+

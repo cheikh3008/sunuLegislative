@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}users index{% endblock %}
+{% block title %}Liste des représentants{% endblock %}
 
 {% block body %}
 
@@ -13,17 +13,28 @@
     {% endfor %}
     <div class="card mt-2 mb-2" style="width: 100%;">
         <div class="card-header" style="padding:20px;background-color:#fff !important;">
-            <div class="d-flex justify-content-between">
-                <div class="mt-2">
-                    <h4>La liste des départements</h4>
+            <div class="row">
+                <div class="col-6 col-md-8">
+                    <h4 class="mt-2">La liste des représentants</h4>
                 </div>
-                <div>
-                    <a href="{{ path('app_user_new') }}" class="mx-1 my-2 btn  btn btn-secondary">ajouter</a>
+
+                <div class="col-6 col-md-4">
+                    <a href="{{ path('app_user_new') }}" class="mx-1 my-2 btn  btn btn-secondary">Ajouter</a>
                     <a href="{{ path('app_user_add') }}" class="mx-1 my-2 btn  btn btn-success">Importer le fichier</a>
                 </div>
             </div>
-        </div>
 
+        </div>
+        <div class="card-hearder text-center">
+            <div class="col-md-12">
+                <a href="{{path('app_user_sendsms_all')}}" class="mx-1 my-2 btn  btn btn-primary">Envoyer les
+                    identifiants de connexion à tous les
+                    représentants</a>
+                <a href="{{path('app_user_sendsms_one')}}" class="mx-1 my-2 btn  btn btn-dark">Envoyer les identifiants
+                    de connexion à un
+                    représentant</a>
+            </div>
+        </div>
     </div>
     <div class="content table-responsive">
         <table class="table table-striped">
@@ -32,9 +43,9 @@
                     <th>Nom</th>
                     <th>Prenom</th>
                     <th>Téléphone</th>
-                    <th>Username</th>
+                    <th>Identifiant</th>
                     <th>Nom bureau de vote</th>
-                    <th>actions</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -50,10 +61,10 @@
                         {% endif %}
                     </td>
                     <td>
-                        <a href="{{ path('app_user_edit', {'id': users.id}) }}"
-                            class="mx-1 my-2 btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></a>
-                        <a href="{{ path('app_user_delete', {'id': users.id}) }} "
-                            class="mx-1 my-2 btn btn-danger"><i class="fa-solid fa-trash-can"></i></a>
+                        <a href="{{ path('app_user_edit', {'id': users.id}) }}" class="mx-1 my-2 btn btn-warning"><i
+                                class="fa-solid fa-pen-to-square"></i></a>
+                        <a href="{{ path('app_user_delete', {'id': users.id}) }} " class="mx-1 my-2 btn btn-danger"><i
+                                class="fa-solid fa-trash-can"></i></a>
                     </td>
                 </tr>
                 {% else %}

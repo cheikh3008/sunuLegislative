@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Resultat{% endblock %}
+{% block title %}nouveau le résultat{% endblock %}
 
 {% block body %}
 
@@ -18,29 +18,10 @@
     <div class="content">
         <div class="card">
             <div class="card-header">
-                <h4> Ajouter à nouveau le resultat</h4>
+                <h4>Confirmer les résultats du bureau de vote {{app.user.BV.nomBV}}</h4>
             </div>
             <div class="card-body">
-                {{ form_start(form, {attr: {'novalidate': 'novalidate'}}) }}
-                <div class="row">
-                    <div class="col-md-6">
-                        {{ form_row(form.bulletinExp) }}
-                    </div>
-                    <div class="col-md-6">
-                        {{ form_row(form.retenus) }}
-                    </div>
-                    <div class="col-md-4">
-                        {{ form_row(form.nbInscrit) }}
-                    </div>
-                    <div class="col-md-4">
-                        {{ form_row(form.nbVotant) }}
-                    </div>
-                    <div class="col-md-4">
-                        {{ form_row(form.bulletinNull) }}
-                    </div>
-                </div>
-                <button class="btn btn-success">{{ button_label|default('Ajouter') }}</button>
-                {{ form_end(form) }}
+                {{ include('resultat/_form.html.twig') }}
             </div>
         </div>
 

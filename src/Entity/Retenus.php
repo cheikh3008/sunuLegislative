@@ -31,17 +31,6 @@ class Retenus
      */
     private $nom;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Resultat::class, mappedBy="retenus")
-     */
-    private $resultats;
-
-    public function __construct()
-    {
-        $this->resultats = new ArrayCollection();
-    }
-
-
     public function getId(): ?int
     {
         return $this->id;
@@ -62,35 +51,5 @@ class Retenus
     public function __toString()
     {
         return $this->nom;
-    }
-
-    /**
-     * @return Collection<int, Resultat>
-     */
-    public function getResultats(): Collection
-    {
-        return $this->resultats;
-    }
-
-    public function addResultat(Resultat $resultat): self
-    {
-        if (!$this->resultats->contains($resultat)) {
-            $this->resultats[] = $resultat;
-            $resultat->setRetenus($this);
-        }
-
-        return $this;
-    }
-
-    public function removeResultat(Resultat $resultat): self
-    {
-        if ($this->resultats->removeElement($resultat)) {
-            // set the owning side to null (unless already changed)
-            if ($resultat->getRetenus() === $this) {
-                $resultat->setRetenus(null);
-            }
-        }
-
-        return $this;
     }
 }

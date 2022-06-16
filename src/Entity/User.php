@@ -235,12 +235,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function __toString()
     {
-        return $this->prenom . ' ' . $this->nom;
+        return $this->uuid;
     }
 
     public function getFullname()
     {
         return $this->prenom . ' ' . $this->nom;
+    }
+
+    public function getFullnameAndNumber()
+    {
+        return $this->telephone.' - '.$this->prenom . ' ' . $this->nom;
     }
 
     /**

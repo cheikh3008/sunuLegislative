@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Departement index{% endblock %}
+{% block title %}La liste des coalitions{% endblock %}
 
 {% block body %}
 
@@ -15,10 +15,10 @@
         <div class="card-header" style="padding:20px;background-color:#fff !important;">
             <div class="d-flex justify-content-between">
                 <div class="mt-2">
-                    <h4>La liste des départements</h4>
+                    <h4>La liste des circonscriptions</h4>
                 </div>
                 <div>
-                    <a href="{{ path('app_departement_new') }}" class=" mx-1 my-2 btn  btn btn-secondary">ajouter</a>
+                    <a href="{{ path('app_departement_new') }}" class=" mx-1 my-2 btn  btn btn-secondary">Ajouter</a>
                     <a href="{{ path('app_add_csv') }}" class=" mx-1 my-2 btn  btn btn-success">Importer le fichier</a>
                 </div>
             </div>
@@ -29,10 +29,10 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>Nom de la circonscriptions</th>
-                    <th>Nombre d'inscrit</th>
-                    <th>Nombre de bureau de vote</th>
-                    <th>actions</th>
+                    <th>Nom de la circonscription</th>
+                    <th>Nombre d'inscrits</th>
+                    <th>Nombre de bureaux de vote</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>

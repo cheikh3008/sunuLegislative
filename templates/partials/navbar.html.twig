@@ -1,8 +1,8 @@
 <nav class="navbar navbar-expand-md sticky-top">
-    <div class="container">
+    <div class="container-fluid">
         <a class="navbar-brand" href="/">
             {# <img src="/img/logo-trans.png" width="50" alt="Auto Ecole Miftahou Chahada"> #}
-            <strong class="pt-4">SunuLegislatives</strong>
+            <strong class="pt-4">SunuLégislatives</strong>
         </a>
         <a class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
             aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
@@ -10,26 +10,26 @@
         </a>
 
         <div class="container">
+            {% if app.user %}
             <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
                 <ul class="navbar-nav ml-auto">
+                    {% if app.user and app.user.roles[0] == 'ROLE_ADMIN' %}
                     <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="/">Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('app_retenus_index') }}">Liste des retenues</a>
+                        <a class="nav-link" href="{{ path('app_retenus_index') }}">Liste des coalitions</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('app_departement_index') }}">Liste des départements</a>
+                        <a class="nav-link" href="{{ path('app_departement_index') }}">Liste des circonscriptions</a>
                     </li>
-                    {# <li class="nav-item">
-                        <a class="nav-link" href="#">8 Circonscriptions</a>
-                    </li> #}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_bureau_vote_index') }}">Liste des bureaux de vote</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ path('app_user_index') }}">Liste des représentants</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ path('app_bureau_vote_index') }}">Bureau de vote</a>
-                    </li>
+
                     <li class="nav-item">
                         <a class="nav-link" href="{{ path('app_resultat_index') }}">Resultats</a>
                     </li>
@@ -38,8 +38,20 @@
                             Deconnexion
                         </a>
                     </li>
+                    {% endif %}
+                    {% if app.user and app.user.roles[0] == 'ROLE_REPRESENTANT' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_resultat_index') }}">Resultats</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_logout') }}">
+                            Deconnexion
+                        </a>
+                    </li>
+                    {% endif %}
                 </ul>
             </div>
+            {% endif %}
         </div>
     </div>
 </nav>

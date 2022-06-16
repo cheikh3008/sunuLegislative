@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\SendSMS;
 use Exception;
 use App\Entity\User;
 use App\Entity\Upload;
+use App\Form\SendSMSType;
 use App\Form\UserType;
 use App\Form\UploadType;
 use App\Repository\RoleRepository;
@@ -190,36 +192,19 @@ class UserController extends AbstractController
     public  function sendSMSAllUSer()
     {
         $users = $this->userRepository->findAll();
-        // $telephone = [];
-        // $uid = [];
-        $data = [];
-        $gateway_url = "https://sms.lws.fr/sms/api";
-        $action = "send-sms";
-        $apiKey  = "Y2hlaWtoOiQyeSQxMCRoa1FrRHNwZmp1THpUanROVUViRjEuY0ovRUV2UzdWaGQxZExQWndPT3J5ZkRGQUNkdTJxaQ";
-        foreach ($users as $key => $value) {
-            // $telephone = $value->getTelephone();
-            // $uid[] = $value->getUuid();
-            // $to = $telephone;
-            // $senderID  = "LWS";
-            // $message  = urlencode("Ceci est un message de test");
-            $data = array(
-                'action' => $action,
-                'api_key' => $apiKey,
-                'to' => $value->getTelephone(),
-                'from' => 'lws',
-                'sms' => 'Bonjour ' . $value->getFullname() . ', Vos identifiants de connexion sont:' . ' Username: ' . $value->getUsername() . '  Mot de passe: ' . $value->getUuid(),
-            );
+        $datas = [];
+        // dd($users);
+        foreach ($users as $value) {
+
+            $datas[] = $value;
+            $telephone = '221' . $value->getTelephone();
+            $message = ('Bonjour ' . $value->getFullname() . ', sos identifiants de connexion sont:' . ' Username: ' . $value->getUsername() . '  Mot de passe: ' . $value->getUuid());
+            $this->getSMS($telephone, $message);
+            $this->addFlash('success', "Les identifiants de connexion ont été envoyés  à tous les représentants .");
+            return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
         }
-        $ch = curl_init($gateway_url);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($ch);
-        curl_close($ch);
-        $get_data = json_decode($response, true);
-
-        dd($data);
+        // dd();
 
         return $this->render('user/sms-all.html.twig', []);
     }
@@ -227,27 +212,53 @@ class UserController extends AbstractController
     /**
      * @Route("/sms-one", name="app_user_sendsms_one")
      */
-    public  function sendSMSOneUSer()
+    public  function sendSMSOneUSer(Request $request)
     {
-        $users = $this->userRepository->findAll();
-        foreach ($users as $value) {
-
-            $message = urlencode('Bonjour ' . $value->getFullname() . ', Vos identifiants de connexion sont:' . ' Username: ' . $value->getUsername() . '  Mot de passe: ' . $value->getUuid());
-            $username = 'SMS-473326';
-            $password = 'tzfydejbwktakz';
-            $expediteur = 'Cheikh3008';
-            $destinataire = '221773043248';
-            $sms = "
-            https://sms.lws.fr/sms/api?action=send-sms&api_key=Y2hlaWtoOiQyeSQxMCRoa1FrRHNwZmp1THpUanROVUViRjEuY0ovRUV2UzdWaGQxZExQWndPT3J5ZkRGQUNkdTJxaQ==&to=$destinataire&from=lws&sms=$message
-            ";
+        $sms = new SendSMS();
+        $form = $this->createForm(SendSMSType::class, $sms);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $tel = $data->getTelephone();
+            $user = $this->userRepository->findOneBy(["uuid" => $tel]);
+            $message = ('Bonjour ' . $user->getFullname() . ', Vos identifiants de connexion sont:' . ' Username: ' . $user->getUsername() . '  Mot de passe: ' . $user->getUuid());
+            $this->getSMS('221' . $user->getTelephone(), $message);
+            $this->addFlash('success', "Le message a été bien envoyé .");
+            return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
         }
-        // dd($sms);
-        if ($sms[0] != 'Error') {
+        return $this->render('user/sms-one.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
 
-            dd('votre sms est envoye');
+
+    public function getSMS($to, $message)
+
+    {
+        $gateway_url = "https://sms.lws.fr/sms/api";
+        $action = "send-sms";
+        $apiKey  = "Y2hlaWtoOiQyeSQxMCRoa1FrRHNwZmp1THpUanROVUViRjEuY0ovRUV2UzdWaGQxZExQWndPT3J5ZkRGQUNkdTJxaQ==";
+        $senderID  = "sn2022";
+        $data = array(
+            'action' => $action,
+            'api_key' => $apiKey,
+            'to' => $to,
+            'from' => $senderID,
+            'sms' => urlencode($message),
+        );
+        $ch = curl_init($gateway_url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($ch);
+        curl_close($ch);
+        $get_data = json_decode($response, true);
+        if ($get_data['code'] === 'ok') {
+
+            echo ('<div class = "alert alert-success">Le message a bien été envoyé</div>');
         } else {
-            dd('Erreur:' . $sms[0] . $sms[1]);
+
+            echo ('<div class = "alert alert-danger">Message non envoyé !</div>');
         }
-        return $this->render('user/sms-all.html.twig', []);
     }
 }

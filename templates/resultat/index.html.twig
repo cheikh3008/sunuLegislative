@@ -20,7 +20,7 @@
         <div class="card-header" style="padding:20px;background-color:#fff !important;">
             <div class="d-flex justify-content-between">
                 <div class="mt-2">
-                    <h4>La liste des bureaux de vote</h4>
+                    <h4>Résultats des bureaux de vote pour chaque coalition</h4>
                 </div>
                 <div>
                     <a href="{{path('app_resultat_new')}}" class="btn btn-success">Ajouter</a>
@@ -32,6 +32,8 @@
     </div>
 
     <div class="content table-responsive">
+        {% if resultats %}
+
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -42,13 +44,12 @@
                     <th>Bulletin exprimé</th>
                     <th>Présentant</th>
                     <th>Bureau de vote</th>
-                    <th>actions</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for resultat in resultats %}
                 <tr>
-                    <td>{{ resultat.retenus.nom }}</td>
                     <td>{{ resultat.nbInscrit }}</td>
                     <td>{{ resultat.nbVotant }}</td>
                     <td>{{ resultat.bulletinNull }}</td>
@@ -56,21 +57,21 @@
                     <td>{{ resultat.user.prenom }} {{resultat.user.nom}}</td>
                     <td>{{ resultat.user.BV.NomBV }}</td>
                     <td>
-                        <a href="{{ path('app_resultat_edit', {'id': resultat.id}) }}" class="mx-1 my-2 btn btn-warning"><i
-                                class="fa-solid fa-pen-to-square"></i></a>
-                        <a href="{{ path('app_resultat_delete', {'id': resultat.id}) }} " class="mx-1 my-2 btn btn-danger"><i
-                                class="fa-solid fa-trash-can"></i></a>
+                        <a href="{{ path('app_resultat_edit', {'id': resultat.id}) }}"
+                            class="mx-1 my-2 btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></a>
+                        <a href="{{ path('app_resultat_delete', {'id': resultat.id}) }} "
+                            class="mx-1 my-2 btn btn-danger"><i class="fa-solid fa-trash-can"></i></a>
                     </td>
-                </tr>
-                {% else %}
-                <tr>
-                    <div class="alert alert-danger">
-                        <td>Aucun enregistrement trouvé</td>
-                    </div>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
+
+        {% else %}
+        <div class="alert alert-danger text-center" role="alert">
+            <span>Aucun enregistrement trouvé </span>
+        </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

@@ -1,15 +1,10 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Resultat{% endblock %}
+{% block title %}Envoi de message{% endblock %}
 
 {% block body %}
 
 <div class="container">
-    {% for message in app.flashes('success') %}
-    <div class="alert alert-warning mt-2">
-        {{ message }}
-    </div>
-    {% endfor %}
     {% for message in app.flashes('error') %}
     <div class="text-center alert alert-danger mt-2" role="alert">
         {{ message }}
@@ -18,14 +13,16 @@
     <div class="content">
         <div class="card">
             <div class="card-header">
-                <h4>Ajouter les résultats du bureau de vote {{app.user.BV.nomBV}}</h4>
+                <h4>Envoyer les identifiants de connexion à un
+                    représentant</h4>
             </div>
             <div class="card-body">
-                {{ include('resultat/_form.html.twig') }}
+                {{ form_start(form, {attr: {'novalidate': 'novalidate'}}) }}
+                {{ form_widget(form) }}
+                <button class="btn btn-success">{{ button_label|default('Envoyer le message') }}</button>
+                {{ form_end(form) }}
             </div>
         </div>
-
     </div>
 </div>
-
 {% endblock %}

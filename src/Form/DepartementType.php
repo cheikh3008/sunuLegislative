@@ -14,25 +14,24 @@ class DepartementType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('nom',TextType::class, [
-                'label' => 'Nom du département',
+            ->add('nom', TextType::class, [
+                'label' => 'Nom de la circonscription',
                 'attr' => [
-                    'placeholder' => 'Entrez le nom du département',
+                    'placeholder' => 'Entrez le nom de la circonscription',
                 ]
             ])
-            ->add('nbInscrit',NumberType::class, [
-                'label' => 'Nombre d\'inscrit',
+            ->add('nbInscrit', NumberType::class, [
+                'label' => 'Nombre d\'inscrits',
                 'attr' => [
-                    'placeholder' => 'Entrez le nombre d\'inscrit',
+                    'placeholder' => 'Entrez le nombre d\'inscrits',
                 ]
             ])
-            ->add('nbBV',NumberType::class, [
-                'label' => 'Nombre de bureau de vote',
+            ->add('nbBV', NumberType::class, [
+                'label' => 'Nombre de bureaux de vote',
                 'attr' => [
-                    'placeholder' => 'Entrez le nombre de bureau de vote',
+                    'placeholder' => 'Entrez le nombre de bureaux de vote',
                 ]
-            ])
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

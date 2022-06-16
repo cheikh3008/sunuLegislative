@@ -59,26 +59,26 @@ class HomeController extends AbstractController
         $taux = 0;
         $nomdprt = [];
         $resultDprt = [];
-        
+
         foreach ($this->resultatRepository->findByDepartement() as $key => $ddd) {
             $resultDprt[] = $ddd;
         }
-        foreach ($retenus as $value) {
-            $nbCol[$value->getNom()] = $value->getResultats()->toArray();
+        // foreach ($retenus as $value) {
+        //     $nbCol[$value->getNom()] = $value->getResultats()->toArray();
 
-            foreach ($nbCol as  $val) {
-                $tt = 0;
-                foreach ($val as $key => $dd) {
-                    $tt += $dd->getNbInscrit();
-                }
-                $dataResultForchard[$value->getNom()] = $tt;
-            }
-        }
+        //     foreach ($nbCol as  $val) {
+        //         $tt = 0;
+        //         foreach ($val as $key => $dd) {
+        //             $tt += $dd->getNbInscrit();
+        //         }
+        //         $dataResultForchard[$value->getNom()] = $tt;
+        //     }
+        // }
         // dd($dataResultForchard);
-        foreach ($retenus as $value) {
-            $nb[$value->getNom()] = $value->getResultats()->toArray();
-            $dataRetenusForChart[] = $value->getNom();
-        }
+        // foreach ($retenus as $value) {
+        //     $nb[$value->getNom()] = $value->getResultats()->toArray();
+        //     $dataRetenusForChart[] = $value->getNom();
+        // }
 
         foreach ($departements as  $value) {
             $nbInscrit += $value->getNbInscrit();
@@ -106,7 +106,8 @@ class HomeController extends AbstractController
             'resultDprt' => $resultDprt,
             'chartBar' => $this->getChartBar($dataRetenusForChart, $dataResultForchard),
             'chartLine' => $this->getChartLine($dataRetenusForChart, $dataResultForchard),
-            'nbVoix' => $this->resultatRepository->findOneBySomeField()
+            // 'nbVoix' => $this->resultatRepository->findOneBySomeField()
+            'nbVoix' => []
         ]);
     }
 
@@ -118,7 +119,7 @@ class HomeController extends AbstractController
             'labels' => $data,
             'datasets' => [
                 [
-                    'label' => 'Resulstats des élections par coaltion',
+                    'label' => 'Resulstats  par coaltion sous forme de diagramme en barre',
                     'backgroundColor' => [
                         'rgba(255, 99, 132, 0.2)',
                         'rgba(255, 159, 64, 0.2)',
@@ -163,7 +164,7 @@ class HomeController extends AbstractController
             'labels' => $data,
             'datasets' => [
                 [
-                    'label' => 'My First dataset',
+                    'label' => 'Resulstats  par coaltion sous forme de courbe d\'évolution ',
                     'backgroundColor' => 'rgb(255, 99, 132)',
                     'borderColor' => 'rgb(255, 99, 132)',
                     'data' => $datas,

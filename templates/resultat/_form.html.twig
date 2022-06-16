@@ -1,19 +1,14 @@
 {{ form_start(form, {attr: {'novalidate': 'novalidate'}}) }}
 <div class="row">
-    <div class="col-md-6">
-        {{ form_row(form.bulletinExp) }}
-    </div>
-    <div class="col-md-6">
-        {{ form_row(form.retenus) }}
-    </div>
-    <div class="col-md-4">
-        {{ form_row(form.nbInscrit) }}
-    </div>
-    <div class="col-md-4">
+
+    <div class="col-md-12">
         {{ form_row(form.nbVotant) }}
     </div>
-    <div class="col-md-4">
+    <div class="col-md-12">
         {{ form_row(form.bulletinNull) }}
+    </div>
+    <div class="col-md-12">
+        {{ form_row(form.bulletinExp) }}
     </div>
 </div>
 <button class="btn btn-success">{{ button_label|default('Ajouter') }}</button>

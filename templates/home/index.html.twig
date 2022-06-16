@@ -11,7 +11,7 @@
             <div class="col-sm-6 col-md-6 col-lg-4 my-3">
                 <div class="cards">
                     <div class="card-header">
-                        <h6> Nombre total de bureau de vote</h6>
+                        <h6> Nombre total de bureaux de vote</h6>
                         <h2> <strong> {{nbBVvote}} </strong> </h2>
                     </div>
 
@@ -21,13 +21,21 @@
             <div class="col-sm-6 col-md-6 col-lg-4 my-3">
                 <div class="cards">
                     <div class="card-header">
-                        <h6> Nombre total de votants</h6>
+                        <h6> Nombre d'inscrits</h6>
                         <h2> <strong> {{nbInscrit}} </strong> </h2>
                     </div>
 
                 </div>
             </div>
+            <div class="col-sm-6 col-md-6 col-lg-4 my-3">
+                <div class="cards">
+                    <div class="card-header">
+                        <h6>Nombre total de votants</h6>
+                        <h2> <strong> {{nbVotant}} </strong> </h2>
+                    </div>
 
+                </div>
+            </div>
             <div class="col-sm-6 col-md-6 col-lg-4 my-3">
                 <div class="cards">
                     <div class="card-header">
@@ -47,15 +55,7 @@
                 </div>
             </div>
 
-            <div class="col-sm-6 col-md-6 col-lg-4 my-3">
-                <div class="cards">
-                    <div class="card-header">
-                        <h6>Nombre total de votants</h6>
-                        <h2> <strong> {{nbVotant}} </strong> </h2>
-                    </div>
 
-                </div>
-            </div>
             <div class="col-sm-6 col-md-6 col-lg-4 my-3">
                 <div class="cards">
                     <div class="card-header">
@@ -68,85 +68,7 @@
         </div>
     </div>
 
-    {# total des elections #}
 
-    <div class="mt-3 pb-3 card">
-        <div class="row">
-
-            {% for key, row in nb %}
-            <div class="col-sm-6 col-md-6 col-lg-4 my-3">
-
-                <div class="cards" style="padding: 15px">
-                    <div class="card-header mb-3">
-                        <h5>{{key}}</h5>
-                    </div>
-                    <div>
-
-                        {# Nombre d'inscrit #}
-                        <div>
-                            {% set sommeNbInscrit = 0 %}
-                            {% for t in row %}
-                            {% set sommeNbInscrit = sommeNbInscrit+ t.nbInscrit %}
-
-                            {% endfor %}
-                            <div class="alert alert-primary" role="alert">
-                                Nombre d'inscrit: <h3><strong> {{sommeNbInscrit}}</strong></h3>
-                            </div>
-                        </div>
-                        {# Nombre d'inscrit fin #}
-
-
-
-                        {# Nombre de votant #}
-                        {% set sommeNbVotant = 0 %}
-                        {% for t in row %}
-                        {% set sommeNbVotant = sommeNbVotant+ t.nbVotant %}
-
-                        {% endfor %}
-                        <div class="alert alert-success" role="alert">
-                            Nombre de votant: <h3><strong> {{sommeNbVotant}}</strong></h3>
-                        </div>
-                        {# Nombre de votant fin #}
-
-                    </div>
-
-                    <div>
-
-                        {# Nombre d'inscrit #}
-                        <div>
-                            {% set sommeBuelletinNull = 0 %}
-                            {% for t in row %}
-                            {% set sommeBuelletinNull = sommeBuelletinNull+ t.bulletinNull %}
-
-                            {% endfor %}
-                            <div class="alert alert-danger" role="alert">
-                                Nombre de bulletins nulls: <h3><strong> {{sommeBuelletinNull}}</strong></h3>
-                            </div>
-                        </div>
-                        {# Nombre d'inscrit fin #}
-
-
-
-                        {# Nombre de votant #}
-                        {% set sommeBuelletinExp = 0 %}
-                        {% for t in row %}
-                        {% set sommeBuelletinExp = sommeBuelletinExp+ t.bulletinExp %}
-
-                        {% endfor %}
-                        <div class="alert alert-warning" role="alert">
-                            Nombre de bulletins exprimés: <h3><strong> {{sommeBuelletinExp}}</strong></h3>
-                        </div>
-                        {# Nombre de votant fin #}
-
-                    </div>
-
-
-                </div>
-            </div>
-
-            {% endfor %}
-        </div>
-    </div>
 
     {# Digramme pour le resultats #}
 
@@ -170,18 +92,16 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th scope="col">Nom de la irconscription</th>
-                        <th scope="col">Nombre d'inscrits</th>
+                        <th scope="col">Nom de la circonscription</th>
                         <th scope="col">Nombre de votants</th>
-                        <th scope="col">Nombre de bulletin nulls</th>
-                        <th scope="col">Nombre de bulletin exprimés</th>
+                        <th scope="col">Nombre de bulletins nuls</th>
+                        <th scope="col">Nombre de bulletins exprimés</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for row in resultDprt %}
                     <tr>
                         <td>{{row.nomCir}}</td>
-                        <td>{{row.nbInscrit}}</td>
                         <td>{{row.nbVotant}}</td>
                         <td>{{row.bulletinNull}}</td>
                         <td>{{row.bulletinExp}}</td>

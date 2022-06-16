@@ -30,9 +30,9 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>Nom des bureaux de vote</th>
-                    <th>Nom de la circonscriptions</th>
-                    <th>actions</th>
+                    <th>Nom du bureau de vote</th>
+                    <th>Nom de la circonscription</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -41,8 +41,8 @@
                     <td>{{ bureau_vote.nomBV }}</td>
                     <td>{{ bureau_vote.nomCir }}</td>
                     <td>
-                        <a href="{{ path('app_bureau_vote_edit', {'id': bureau_vote.id}) }}" class="mx-1 my-2 btn btn-warning"><i
-                                class="fa-solid fa-pen-to-square"></i></a>
+                        <a href="{{ path('app_bureau_vote_edit', {'id': bureau_vote.id}) }}"
+                            class="mx-1 my-2 btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></a>
                         <a href="{{ path('app_bureau_vote_delete', {'id': bureau_vote.id}) }} "
                             class="mx-1 my-2 btn btn-danger"><i class="fa-solid fa-trash-can"></i></a>
                     </td>

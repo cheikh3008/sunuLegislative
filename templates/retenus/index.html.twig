@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}La liste des retenus{% endblock %}
+{% block title %}La liste des coalitions{% endblock %}
 
 {% block body %}
 
@@ -15,7 +15,7 @@
         <div class="card-header" style="padding:20px;background-color:#fff !important;">
             <div class="d-flex justify-content-between">
                 <div class="mt-2">
-                    <h4>La liste des retenus</h4>
+                    <h4>La liste des coalitions</h4>
                 </div>
                 <div>
                     <a href="{{path('app_retenus_new')}}" class="mx-1 my-2 btn btn-secondary">Ajouter</a>
@@ -29,8 +29,8 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>Nom des coalitions</th>
-                    <th>actions</th>
+                    <th>Nom de la coalition</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -38,10 +38,10 @@
                 <tr>
                     <td>{{ retenus.nom}}</td>
                     <td>
-                        <a href="{{ path('app_retenus_edit', {'id': retenus.id}) }}" class="mx-1 my-2 btn btn-warning"><i
-                                class="fa-solid fa-pen-to-square"></i></a>
-                        <a href="{{ path('app_retenus_delete', {'id': retenus.id}) }} " class="mx-1 my-2 btn btn-danger"><i
-                                class="fa-solid fa-trash-can"></i></a>
+                        <a href="{{ path('app_retenus_edit', {'id': retenus.id}) }}"
+                            class="mx-1 my-2 btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></a>
+                        <a href="{{ path('app_retenus_delete', {'id': retenus.id}) }} "
+                            class="mx-1 my-2 btn btn-danger"><i class="fa-solid fa-trash-can"></i></a>
                     </td>
                 </tr>
                 {% else %}

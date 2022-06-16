@@ -11,6 +11,7 @@ use App\Repository\BureauVoteRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -29,6 +30,7 @@ class ResultatController extends AbstractController
 
     /**
      * @Route("/", name="app_resultat_index", methods={"GET"})
+     * @Security("is_granted('ROLE_ADMIN') or is_granted('ROLE_REPRESENTANT')")
      */
     public function index(ResultatRepository $resultatRepository): Response
     {
@@ -96,12 +98,12 @@ class ResultatController extends AbstractController
         }
         if ($form->isSubmitted() && $form->isValid()) {
             $resultat->setUser($userConnected);
-            
+
             if (
                 $dataForm->getRetenus()->getId() !== $resultat->getRetenus()->getId() ||
                 (int)$dataForm->getNbInscrit() !== (int)$resultat->getNbInscrit() ||
-                    (int)$dataForm->getNbVotant()  !== (int)$resultat->getNbVotant() ||
-                    (int)$dataForm->getBulletinnull() !== (int)$resultat->getBulletinnull() || (int)$dataForm->getBulletinExp() !== (int)$resultat->getBulletinExp()
+                (int)$dataForm->getNbVotant()  !== (int)$resultat->getNbVotant() ||
+                (int)$dataForm->getBulletinnull() !== (int)$resultat->getBulletinnull() || (int)$dataForm->getBulletinExp() !== (int)$resultat->getBulletinExp()
             ) {
                 // dd('error');
                 $this->addFlash('error', "Les résultats ne sont pas les mêmes !");
