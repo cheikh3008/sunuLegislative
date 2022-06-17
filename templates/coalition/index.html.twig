@@ -18,14 +18,16 @@
                     <h4>La liste des coalitions</h4>
                 </div>
                 <div>
-                    <a href="{{path('app_retenus_new')}}" class="mx-1 my-2 btn btn-secondary">Ajouter</a>
-                    <a href="{{path('app_retenus_add')}}" class="mx-1 my-2 btn btn-success">Importer le fichier</a>
+                    <a href="{{ path('app_coalition_new') }}" class=" mx-1 my-2 btn  btn btn-secondary">Ajouter</a>
+                    <a href="{{path('app_coalition_add')}}" class=" mx-1 my-2 btn  btn btn-success">Importer le fichier</a>
                 </div>
             </div>
         </div>
 
     </div>
     <div class="content table-responsive">
+        {% if coalitions %}
+
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -34,25 +36,25 @@
                 </tr>
             </thead>
             <tbody>
-                {% for retenus in retenuses %}
+                {% for coalition in coalitions %}
                 <tr>
-                    <td>{{ retenus.nom}}</td>
+                    <td>{{ coalition.nom }}</td>
                     <td>
-                        <a href="{{ path('app_retenus_edit', {'id': retenus.id}) }}"
+                        <a href="{{ path('app_coalition_edit', {'id': coalition.id}) }}"
                             class="mx-1 my-2 btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></a>
-                        <a href="{{ path('app_retenus_delete', {'id': retenus.id}) }} "
+                        <a href="{{ path('app_coalition_delete', {'id': coalition.id}) }} "
                             class="mx-1 my-2 btn btn-danger"><i class="fa-solid fa-trash-can"></i></a>
                     </td>
-                </tr>
-                {% else %}
-                <tr>
-                    <div class="alert alert-danger">
-                        <td>Aucun enregistrement trouvé</td>
-                    </div>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
+
+        {% else %}
+        <div class="alert alert-danger text-center">
+            Aucun enregistrement trouvé
+        </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

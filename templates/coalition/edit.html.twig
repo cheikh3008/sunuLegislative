@@ -1,19 +1,20 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Nouvelle coalition{% endblock %}
+{% block title %}Modifier une coalition{% endblock %}
 
 {% block body %}
 <div class="container">
     <div class="content">
+
+
         <div class="card">
             <div class="card-header">
-                <h4>Ajouter une nouvelle coalition</h4>
+                <h4>Modifier la coalition</h4>
             </div>
             <div class="card-body">
-                {{ include('retenus/_form.html.twig') }}
+                {{ include('coalition/_form.html.twig', {'button_label': 'Modifier'}) }}
             </div>
         </div>
     </div>
 </div>
-
 {% endblock %}

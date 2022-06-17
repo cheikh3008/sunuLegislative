@@ -28,12 +28,12 @@ class HomeController extends AbstractController
     public function __construct(
         DepartementRepository $departementRepository,
         ResultatRepository $resultatRepository,
-        RetenusRepository $retenusRepository,
+        // RetenusRepository $retenusRepository,
         ChartBuilderInterface $chartBuilder
     ) {
         $this->departementRepository = $departementRepository;
         $this->resultatRepository = $resultatRepository;
-        $this->retenusRepository = $retenusRepository;
+        // $this->retenusRepository = $retenusRepository;
         $this->chartBuilder = $chartBuilder;
     }
     /**
@@ -46,43 +46,38 @@ class HomeController extends AbstractController
     {
         $departements = $this->departementRepository->findAll();
         $resultats =  $this->resultatRepository->findAll();
-        $retenus = $this->retenusRepository->findAll();
+        // $retenus = $this->retenusRepository->findAll();
         $nbInscrit = 0;
         $nbVotant = 0;
         $bulletinNull = 0;
         $bulletinExp = 0;
-        $nbBVvote = 0;
+        $nombreTotalBV = 0;
+        $nombreResultatBV = $this->resultatRepository->findBy([], ['id' => 'DESC']);
+        $nombreBVCirconscription = $this->resultatRepository->findNombreBureauVoteCoalition();
         $nb = [];
-        $nbCol = [];
-        $dataRetenusForChart = [];
-        $dataResultForchard = [];
+        $nbTotalVoixPourCoalition = [];
+        $nomCoalition  = [];
+        $nbVoix  = [];
+        // dd($nbVoix);
+        foreach ($this->resultatRepository->findNombreTotalVoix()[0] as $key => $value) {
+            $nomCoalition[] = str_replace('_', ' ', $key);
+            $nbVoix[] = $value;
+            $nbTotalVoixPourCoalition[$key] = $value;
+        }
+        // foreach ($this->resultatRepository->findNombreBureauVoteCoalition() as $key => $value) {
+        //     $nombreBVCir[$key] = $value;
+        // }
+        // dd($nombreBVCir);
         $taux = 0;
-        $nomdprt = [];
         $resultDprt = [];
 
         foreach ($this->resultatRepository->findByDepartement() as $key => $ddd) {
             $resultDprt[] = $ddd;
         }
-        // foreach ($retenus as $value) {
-        //     $nbCol[$value->getNom()] = $value->getResultats()->toArray();
-
-        //     foreach ($nbCol as  $val) {
-        //         $tt = 0;
-        //         foreach ($val as $key => $dd) {
-        //             $tt += $dd->getNbInscrit();
-        //         }
-        //         $dataResultForchard[$value->getNom()] = $tt;
-        //     }
-        // }
-        // dd($dataResultForchard);
-        // foreach ($retenus as $value) {
-        //     $nb[$value->getNom()] = $value->getResultats()->toArray();
-        //     $dataRetenusForChart[] = $value->getNom();
-        // }
-
+        
         foreach ($departements as  $value) {
             $nbInscrit += $value->getNbInscrit();
-            $nbBVvote += $value->getNbBV();
+            $nombreTotalBV += $value->getNbBV();
         }
         foreach ($resultats as  $res) {
             $nbVotant += $res->getNbVotant();
@@ -95,23 +90,25 @@ class HomeController extends AbstractController
         }
         // dd($resultDprt);
         return $this->render('home/index.html.twig', [
-            'nbInscrit' => $nbInscrit,
-            'nbVotant' => $nbVotant,
-            'bulletinExp' => $bulletinExp,
-            'nbBVvote' => $nbBVvote,
-            'bulletinNull' => $bulletinNull,
+            'nbInscrit' => number_format($nbInscrit, 0, '.', ' '),
+            'nbVotant' => number_format($nbVotant, 0, '.', ' '),
+            'bulletinExp' => number_format($bulletinExp, 0, '.', ' '),
+            'nombreTotalBV' => number_format($nombreTotalBV, 0, '.', ' '),
+            'bulletinNull' => number_format($bulletinNull, 0, '.', ' '),
             'taux' => number_format($taux, 2),
-            'retenus' => $retenus,
+            // 'retenus' => $retenus,
             'nb' => $nb,
             'resultDprt' => $resultDprt,
-            'chartBar' => $this->getChartBar($dataRetenusForChart, $dataResultForchard),
-            'chartLine' => $this->getChartLine($dataRetenusForChart, $dataResultForchard),
-            // 'nbVoix' => $this->resultatRepository->findOneBySomeField()
-            'nbVoix' => []
+            'chartBar' => $this->getChartBar($nomCoalition, $nbVoix),
+            'chartLine' => $this->getChartLine($nomCoalition, $nbVoix),
+            'nomCoalition' => $nomCoalition,
+            'nbTotalVoixPourCoalition' => $nbTotalVoixPourCoalition,
+            'nombreBVCirconscription' => $nombreBVCirconscription,
+            'nombreResultatBV' => $nombreResultatBV
         ]);
     }
 
-    public function getChartBar($data = [], $datas = [])
+    public function getChartBar($data, $datas)
     {
         $chart = $this->chartBuilder->createChart(Chart::TYPE_BAR);
 
@@ -121,22 +118,26 @@ class HomeController extends AbstractController
                 [
                     'label' => 'Resulstats  par coaltion sous forme de diagramme en barre',
                     'backgroundColor' => [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(255, 159, 64, 0.2)',
-                        'rgba(255, 205, 86, 0.2)',
-                        'rgba(75, 192, 5, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(201, 203, 207, 0.2)'
+                        'rgb(255, 99, 132)',
+                        'rgb(0, 128, 0)',
+                        'rgb(255, 205, 86)',
+                        'rgb(95,106,106)',
+                        'rgb(54, 162, 235)',
+                        'rgb(153, 102, 255)',
+                        'rgb( 230, 126, 34 )',
+                        'rgb(255, 0, 0)'
+                        
                     ],
                     'borderColor' => [
                         'rgb(255, 99, 132)',
-                        'rgb(255, 159, 64)',
+                        'rgb(0, 128, 0)',
                         'rgb(255, 205, 86)',
-                        'rgb(75, 192, 5)',
+                        'rgb(95,106,106)',
                         'rgb(54, 162, 235)',
                         'rgb(153, 102, 255)',
-                        'rgb(201, 203, 207)'
+                        'rgb( 230, 126, 34 )',
+                        'rgb(255, 0, 0)'
+                        
                     ],
                     'borderWidth' => '1',
                     'data' => $datas,

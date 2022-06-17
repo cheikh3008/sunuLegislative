@@ -30,12 +30,14 @@ class Departement
     /**
      * @ORM\Column(type="integer")
      * @Assert\NotBlank(message="Veuillez remplir ce champ")
+     * @Assert\PositiveOrZero(message="Veuillez entrez un nombre positive")
      */
     private $nbInscrit;
 
     /**
      * @ORM\Column(type="integer")
      * @Assert\NotBlank(message="Veuillez remplir ce champ")
+     * @Assert\PositiveOrZero(message="Veuillez entrez un nombre positive")
      */
     private $nbBV;
 
@@ -49,7 +51,7 @@ class Departement
         return $this->nom;
     }
 
-    public function setNom(string $nom): self
+    public function setNom(?string $nom): self
     {
         $this->nom = $nom;
 
@@ -61,7 +63,7 @@ class Departement
         return $this->nbInscrit;
     }
 
-    public function setNbInscrit(int $nbInscrit): self
+    public function setNbInscrit(?int $nbInscrit): self
     {
         $this->nbInscrit = $nbInscrit;
 
@@ -73,7 +75,7 @@ class Departement
         return $this->nbBV;
     }
 
-    public function setNbBV(int $nbBV): self
+    public function setNbBV(?int $nbBV): self
     {
         $this->nbBV = $nbBV;
 

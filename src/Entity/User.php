@@ -55,6 +55,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="integer")
      * @Assert\NotBlank(message="Veuillez remplir ce champ")
+     * @Assert\PositiveOrZero(message="Veuillez entrez un nombre positive")
      */
     private $telephone;
 
@@ -176,7 +177,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->nom;
     }
 
-    public function setNom(string $nom): self
+    public function setNom(?string $nom): self
     {
         $this->nom = $nom;
 
@@ -188,7 +189,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->prenom;
     }
 
-    public function setPrenom(string $prenom): self
+    public function setPrenom(?string $prenom): self
     {
         $this->prenom = $prenom;
 
@@ -200,7 +201,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->telephone;
     }
 
-    public function setTelephone(int $telephone): self
+    public function setTelephone(?int $telephone): self
     {
         $this->telephone = $telephone;
 
@@ -245,7 +246,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getFullnameAndNumber()
     {
-        return $this->telephone.' - '.$this->prenom . ' ' . $this->nom;
+        return $this->telephone . ' - ' . $this->prenom . ' ' . $this->nom;
     }
 
     /**

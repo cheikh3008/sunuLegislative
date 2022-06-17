@@ -60,15 +60,19 @@ class ResultatController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $resultat->setUser($userConnected);
+
+            if (($data->getNbVotant() < $data->getBulletinExp()) || ($data->getNbVotant() < $data->getBulletinNull())) {
+                $this->addFlash('error', "Le nombre de votants doit supérieur au nombre bulletins exprimés et au bulletins nuls ");
+                return $this->redirectToRoute('app_resultat_new', [], Response::HTTP_SEE_OTHER);
+            }
             foreach ($resultats as $value) {
-                if ($value->getRetenus() === $resultat->getRetenus() && $value->getUser() === $resultat->getUser()) {
-                    $this->addFlash('error', "Résultats déja ajoutés pour " .  $resultat->getRetenus());
+                if ($value->getUser() === $resultat->getUser()) {
+                    $this->addFlash('error', "Le bureau de vote " .  $resultat->getUser()->getBV()->getNomBV() . ' a dèja saisi ces résultats ');
                     return $this->redirectToRoute('app_resultat_new', [], Response::HTTP_SEE_OTHER);
                 }
             }
             $this->session->set("dataForm", $data);
-            // $resultatRepository->add($resultat, true);
-
+            //  $resultatRepository->add($resultat, true);
             $this->addFlash('success', "Veuillez saisir à nouveau les résultats");
             return $this->redirectToRoute('app_resultat_new_add', [], Response::HTTP_SEE_OTHER);
         }
@@ -100,10 +104,17 @@ class ResultatController extends AbstractController
             $resultat->setUser($userConnected);
 
             if (
-                $dataForm->getRetenus()->getId() !== $resultat->getRetenus()->getId() ||
-                (int)$dataForm->getNbInscrit() !== (int)$resultat->getNbInscrit() ||
                 (int)$dataForm->getNbVotant()  !== (int)$resultat->getNbVotant() ||
-                (int)$dataForm->getBulletinnull() !== (int)$resultat->getBulletinnull() || (int)$dataForm->getBulletinExp() !== (int)$resultat->getBulletinExp()
+                (int)$dataForm->getBulletinnull() !== (int)$resultat->getBulletinnull() ||
+                (int)$dataForm->getBulletinExp() !== (int)$resultat->getBulletinExp() ||
+                (int)$dataForm->getWallu() !== (int)$resultat->getWallu() ||
+                (int)$dataForm->getYewi() !== (int)$resultat->getYewi() ||
+                (int)$dataForm->getAar() !== (int)$resultat->getAar() ||
+                (int)$dataForm->getBby() !== (int)$resultat->getBby() ||
+                (int)$dataForm->getNatangue() !== (int)$resultat->getNatangue() ||
+                (int)$dataForm->getBokkgisgis() !== (int)$resultat->getBokkgisgis() ||
+                (int)$dataForm->getUcb() !== (int)$resultat->getUcb() ||
+                (int)$dataForm->getServiteur() !== (int)$resultat->getServiteur()
             ) {
                 // dd('error');
                 $this->addFlash('error', "Les résultats ne sont pas les mêmes !");

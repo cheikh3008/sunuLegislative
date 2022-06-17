@@ -1,29 +1,23 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Importer le fichier{% endblock %}
+{% block title %}Nouvelle coalition{% endblock %}
 
 {% block body %}
 <div class="container">
-    {% for message in app.flashes('error') %}
-    <div class="text-center alert alert-danger mt-2" role="alert">
-        {{ message }}
-    </div>
-    {% endfor %}
-    <div class="content">
 
+    <div class="content">
         <div class="card">
             <div class="card-header">
-                <h4>Choisir un fichier CSV ou XLSX, XLS</h4>
+                Ajouter une nouvelle coalition
             </div>
             <div class="card-body">
                 {{ form_start(form, {attr: {'novalidate': 'novalidate'}}) }}
                 {{ form_widget(form) }}
-                <button class="btn btn-primary">{{ button_label|default('Importer le fichier') }}</button>
+                <button class="btn btn-primary">{{ button_label|default('Ajouter') }}</button>
                 {{ form_end(form) }}
             </div>
         </div>
 
     </div>
-
 </div>
 {% endblock %}

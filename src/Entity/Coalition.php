@@ -3,20 +3,17 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use App\Repository\RetenusRepository;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\ArrayCollection;
+use App\Repository\CoalitionRepository;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
- * @ORM\Entity(repositoryClass=RetenusRepository::class)
+ * @ORM\Entity(repositoryClass=CoalitionRepository::class)
  * @UniqueEntity(
- *     fields={"nom"},
- *     message="Cette coaliation existe dèja !"
- * )
+ * {"nom"}, 
+ * message="Cette coalition existe déja .")
  */
-class Retenus
+class Coalition
 {
     /**
      * @ORM\Id
@@ -41,15 +38,10 @@ class Retenus
         return $this->nom;
     }
 
-    public function setNom(string $nom): self
+    public function setNom(?string $nom): self
     {
         $this->nom = $nom;
 
         return $this;
-    }
-
-    public function __toString()
-    {
-        return $this->nom;
     }
 }

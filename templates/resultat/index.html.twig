@@ -37,23 +37,37 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>Nom coalition</th>
-                    <th>Nombre d'inscit</th>
-                    <th>Nombre de vote</th>
-                    <th>Bulletin null</th>
-                    <th>Bulletin exprimé</th>
-                    <th>Présentant</th>
-                    <th>Bureau de vote</th>
+                    {# <th>Nom coalition</th> #}
+                    <th>Nombres de votants</th>
+                    <th>Bulletins nuls</th>
+                    <th>Bulletins exprimés</th>
+                    <th>Wallu Sénégal</th>
+                    <th>Yewi Askan Wi</th>
+                    <th>Benno Bokk Yakaar (mouvance présidentielle)</th>
+                    <th>Alternatives pour une Assemblée de rupture (AAR)</th>
+                    <th>Les serviteurs</th>
+                    <th>Naatangué Sénégal</th>
+                    <th>Bokk Gis-Gis</th>
+                    <th>Union citoyenne Bunt Bi</th>
+                    <th>Présentants</th>
+                    <th>Bureaux de vote</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for resultat in resultats %}
                 <tr>
-                    <td>{{ resultat.nbInscrit }}</td>
                     <td>{{ resultat.nbVotant }}</td>
                     <td>{{ resultat.bulletinNull }}</td>
                     <td>{{ resultat.bulletinExp }}</td>
+                    <td>{{ resultat.wallu }}</td>
+                    <td>{{ resultat.yewi }}</td>
+                    <td>{{ resultat.bby }}</td>
+                    <td>{{ resultat.aar }}</td>
+                    <td>{{ resultat.serviteur }}</td>
+                    <td>{{ resultat.natangue }}</td>
+                    <td>{{ resultat.bokkgisgis }}</td>
+                    <td>{{ resultat.ucb }}</td>
                     <td>{{ resultat.user.prenom }} {{resultat.user.nom}}</td>
                     <td>{{ resultat.user.BV.NomBV }}</td>
                     <td>

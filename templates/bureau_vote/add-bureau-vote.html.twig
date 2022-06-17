@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HomeController!{% endblock %}
+{% block title %}Importer le fichier{% endblock %}
 
 {% block body %}
 <div class="container">
@@ -17,7 +17,11 @@
             <div class="card-body">
                 {{ form_start(form, {attr: {'novalidate': 'novalidate'}}) }}
                 {{ form_widget(form) }}
-                <button class="btn btn-primary">{{ button_label|default('Importer le fichier') }}</button>
+                <div>
+                    <p style="color:red">NB veuillez importer le fichier sous ce format</p>
+                    <img src="{{asset('images/ImageBV.png')}}" width="500px" alt="Erreur 404" srcset="">
+                </div>
+                <button class="btn btn-primary mt-2">{{ button_label|default('Importer le fichier') }}</button>
                 {{ form_end(form) }}
             </div>
         </div>
