@@ -27,6 +27,8 @@
 
     </div>
     <div class="content table-responsive">
+        {% if bureau_votes %}
+
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -56,6 +58,11 @@
                 {% endfor %}
             </tbody>
         </table>
+        {% else %}
+        <div class="alert alert-danger text-center">
+            Aucun enregistrement trouvé
+        </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

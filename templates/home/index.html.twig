@@ -81,17 +81,23 @@
                 <div class="card-header pt-2">
                     <h3>Digramme en barre pour le nombre de voix de chaque coalition</h3>
                 </div>
+                {% if chartBar | length > 0 %}
+
                 <div class="chart-bar my-4" style="padding: 20px">
                     {{ render_chart(chartBar, {'class': 'my-chart'}) }}
                 </div>
+                {% endif %}
             </div>
             <div class="card mt-3 mb-3">
                 <div class="card-header pt-2">
                     <h3>Courbe d'évolution pour le nombre de voix de chaque coalition</h3>
                 </div>
+                {% if chartLine | length > 0 %}
+
                 <div class="chart-line my-4" style="padding: 20px">
                     {{ render_chart(chartLine, {'class': 'my-chart'}) }}
                 </div>
+                {% endif %}
             </div>
 
         </div>
@@ -106,6 +112,7 @@
         </div>
         <div class="card-body mt-3 mb-3">
             <div class="table-responsive">
+                {% if resultDprt %}
 
                 <table class="table table-striped">
                     <thead>
@@ -143,6 +150,12 @@
                         {% endfor %}
                     </tbody>
                 </table>
+                {% else %}
+                <div class="alert alert-danger text-center" role="alert">
+                    <span>Aucun enregistrement trouvé </span>
+                </div>
+                {% endif %}
+
             </div>
         </div>
     </div>
@@ -156,6 +169,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
+                {% if nbTotalVoixPourCoalition | length > 0 %}
 
                 <table class="table table-striped">
                     <thead>
@@ -166,44 +180,97 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>Wallu Senegal</td>
-                            <td> <strong class="h3">{{nbTotalVoixPourCoalition.wallu}}</strong> </td>
+                            <td>Naatangué Sénégal</td>
+                            <td> <strong class="h3">
+                                    {% if nbTotalVoixPourCoalition.wallu | length > 0 %}
+                                    {{nbTotalVoixPourCoalition.wallu}}
+                                    {% else %}
+                                    0
+                                    {% endif %}
+                                </strong> </td>
                         </tr>
                         <tr>
                             <td>Yewi Askan Wi</td>
-                            <td> <strong class="h3">{{nbTotalVoixPourCoalition.yewi}}</strong> </td>
+                            <td> <strong class="h3">
+                                    {% if nbTotalVoixPourCoalition.yewi | length > 0 %}
+                                    {{nbTotalVoixPourCoalition.yewi}}
+                                    {% else %}
+                                    0
+                                    {% endif %}
+                                </strong> </td>
                         </tr>
 
                         <tr>
                             <td>Benno Bokk Yakaar (mouvance présidentielle) </td>
-                            <td> <strong class="h3">{{nbTotalVoixPourCoalition.bby}}</strong> </td>
+                            <td> <strong class="h3">
+                                    {% if nbTotalVoixPourCoalition.bby | length > 0 %}
+                                    {{nbTotalVoixPourCoalition.bby}}
+                                    {% else %}
+                                    0
+                                    {% endif %}
+                                </strong> </td>
                         </tr>
                         <tr>
                             <td>Alternatives pour une Assemblée de rupture (AAR) </td>
-                            <td> <strong class="h3">{{nbTotalVoixPourCoalition.aar}}</strong> </td>
+                            <td> <strong class="h3">
+                                    {% if nbTotalVoixPourCoalition.aar | length > 0 %}
+                                    {{nbTotalVoixPourCoalition.aar}}
+                                    {% else %}
+                                    0
+                                    {% endif %}
+                                </strong> </td>
                         </tr>
                         {# #}
                         <tr>
-                            <td>Wallu Senegal</td>
-                            <td> <strong class="h3">{{nbTotalVoixPourCoalition.natangue}}</strong> </td>
+                            <td>Naatangué Sénégal</td>
+                            <td> <strong class="h3">
+                                    {% if nbTotalVoixPourCoalition.natangue | length > 0 %}
+                                    {{nbTotalVoixPourCoalition.natangue}}
+                                    {% else %}
+                                    0
+                                    {% endif %}
+                                </strong> </td>
                         </tr>
                         <tr>
                             <td>Les serviteurs</td>
-                            <td> <strong class="h3">{{nbTotalVoixPourCoalition.serviteur}}</strong> </td>
+                            <td> <strong class="h3">
+                                    {% if nbTotalVoixPourCoalition.serviteur | length > 0 %}
+                                    {{nbTotalVoixPourCoalition.serviteur}}
+                                    {% else %}
+                                    0
+                                    {% endif %}
+                                </strong> </td>
                         </tr>
 
                         <tr>
                             <td>Bokk Gis-Gis</td>
-                            <td> <strong class="h3">{{nbTotalVoixPourCoalition.bokkgisgis}} </strong> </td>
+                            <td> <strong class="h3">
+                                    {% if nbTotalVoixPourCoalition.bokkgisgis | length > 0 %}
+                                    {{nbTotalVoixPourCoalition.bokkgisgis}}
+                                    {% else %}
+                                    0
+                                    {% endif %}
+                                </strong> </td>
                         </tr>
                         <tr>
                             <td>Union citoyenne Bunt Bi </td>
-                            <td> <strong class="h3">{{nbTotalVoixPourCoalition.ucb}}</strong> </td>
+                            <td> <strong class="h3">
+                                    {% if nbTotalVoixPourCoalition.ucb | length > 0 %}
+                                    {{nbTotalVoixPourCoalition.ucb}}
+                                    {% else %}
+                                    0
+                                    {% endif %}
+                                </strong> </td>
                         </tr>
 
 
                     </tbody>
                 </table>
+                {% else %}
+                <div class="alert alert-danger text-center" role="alert">
+                    <span>Aucun enregistrement trouvé </span>
+                </div>
+                {% endif %}
             </div>
 
         </div>
@@ -217,6 +284,8 @@
             <h3>Nombre de bureaux de vote par circonscription</h3>
         </div>
         <div class="card-body">
+            {% if nombreBVCirconscription %}
+
             <table class="table table-hover">
                 <thead>
                     <tr>
@@ -234,6 +303,11 @@
                 </tbody>
 
             </table>
+            {% else %}
+            <div class="alert alert-danger text-center" role="alert">
+                <span>Aucun enregistrement trouvé </span>
+            </div>
+            {% endif %}
 
         </div>
     </div>

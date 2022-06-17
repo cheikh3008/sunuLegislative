@@ -37,6 +37,8 @@
         </div>
     </div>
     <div class="content table-responsive">
+        {% if users %}
+
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -76,6 +78,11 @@
                 {% endfor %}
             </tbody>
         </table>
+        {% else %}
+        <div class="alert alert-danger text-center">
+            Aucun enregistrement trouvé
+        </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
