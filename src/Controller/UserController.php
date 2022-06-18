@@ -95,6 +95,8 @@ class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $user->setUsername($data->getTelephone());
             $this->userRepository->add($user, true);
 
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
@@ -193,20 +195,19 @@ class UserController extends AbstractController
     {
         $users = $this->userRepository->findAll();
         $datas = [];
-        // dd($users);
         foreach ($users as $value) {
 
             $datas[] = $value;
             $telephone = '221' . $value->getTelephone();
-            $message = ('Bonjour ' . $value->getFullname() . ', sos identifiants de connexion sont:' . ' Username: ' . $value->getUsername() . '  Mot de passe: ' . $value->getUuid());
+            $message = ('Bonjour ' . $value->getFullname() . ', vos identifiants de connexion sont:' . ' Username: ' . $value->getUsername() . '  Mot de passe: ' . $value->getUuid());
+
             $this->getSMS($telephone, $message);
-            $this->addFlash('success', "Les identifiants de connexion ont été envoyés  à tous les représentants .");
-            return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
         }
+        $this->addFlash('success', "Les identifiants de connexion ont été envoyés  à tous les représentants .");
+        return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
 
-        // dd();
 
-        return $this->render('user/sms-all.html.twig', []);
+        // return $this->render('user/sms-all.html.twig', []);
     }
 
     /**
@@ -223,7 +224,7 @@ class UserController extends AbstractController
             $user = $this->userRepository->findOneBy(["uuid" => $tel]);
             $message = ('Bonjour ' . $user->getFullname() . ', Vos identifiants de connexion sont:' . ' Username: ' . $user->getUsername() . '  Mot de passe: ' . $user->getUuid());
             $this->getSMS('221' . $user->getTelephone(), $message);
-            $this->addFlash('success', "Le message a été bien envoyé .");
+            $this->addFlash('success', "Les identifiants de connexion ont été envoyé à " . $user->getFullname());
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
         }
         return $this->render('user/sms-one.html.twig', [
@@ -238,7 +239,7 @@ class UserController extends AbstractController
         $gateway_url = "https://sms.lws.fr/sms/api";
         $action = "send-sms";
         $apiKey  = "Y2hlaWtoOiQyeSQxMCRoa1FrRHNwZmp1THpUanROVUViRjEuY0ovRUV2UzdWaGQxZExQWndPT3J5ZkRGQUNkdTJxaQ==";
-        $senderID  = "sn2022";
+        $senderID  = "SunuL2022";
         $data = array(
             'action' => $action,
             'api_key' => $apiKey,
@@ -255,7 +256,7 @@ class UserController extends AbstractController
         $get_data = json_decode($response, true);
         if ($get_data['code'] === 'ok') {
 
-            echo ('<div class = "alert alert-success">Le message a bien été envoyé</div>');
+            echo ('<div class= "alert alert-success">Le message a bien été envoyé</div>');
         } else {
 
             echo ('<div class = "alert alert-danger">Message non envoyé !</div>');

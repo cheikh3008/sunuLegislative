@@ -108,7 +108,7 @@ class HomeController extends AbstractController
         ]);
     }
 
-    public function getChartBar($data, $datas)
+    public function getChartBar($data = [], $datas = [])
     {
         $chart = $this->chartBuilder->createChart(Chart::TYPE_BAR);
 

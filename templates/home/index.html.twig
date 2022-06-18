@@ -7,7 +7,7 @@
     {# resultats gloaaux #}
     <div class="mt-3 pb-3 card">
         <div class="card-header pt-2">
-            <h3>Les résultats gloaaux </h3>
+            <h3>Les résultats globaux </h3>
         </div>
         {# total des elections #}
         <div class="row mx-auto total">
@@ -75,33 +75,42 @@
 
     {# Digramme pour le nombre de voix pour chaque coalition #}
 
-    <div class="mt-3 pb-3 ">
-        <div class="row mx-1">
-            <div class="card mt-3 mb-3">
-                <div class="card-header pt-2">
-                    <h3>Digramme en barre pour le nombre de voix de chaque coalition</h3>
-                </div>
-                {% if chartBar | length > 0 %}
 
-                <div class="chart-bar my-4" style="padding: 20px">
-                    {{ render_chart(chartBar, {'class': 'my-chart'}) }}
-                </div>
-                {% endif %}
+    <div class="card mt-3 mb-3">
+        <div class="card-header pt-2">
+            <h3>Digramme en barre pour le nombre de voix de chaque coalition</h3>
+        </div>
+        <div class="card-body">
+            {% if chartBar.data['datasets'][0].data[0] != null %}
+
+            <div class="chart-bar my-4" style="padding: 20px">
+                {{ render_chart(chartBar, {'class': 'my-chart'}) }}
             </div>
-            <div class="card mt-3 mb-3">
-                <div class="card-header pt-2">
-                    <h3>Courbe d'évolution pour le nombre de voix de chaque coalition</h3>
-                </div>
-                {% if chartLine | length > 0 %}
-
-                <div class="chart-line my-4" style="padding: 20px">
-                    {{ render_chart(chartLine, {'class': 'my-chart'}) }}
-                </div>
-                {% endif %}
+            {% else %}
+            <div class="alert alert-danger">
+                Aucune donnée n'est dispobible pour le diagramme
             </div>
-
+            {% endif %}
         </div>
     </div>
+    <div class="card mt-3 mb-3">
+        <div class="card-header pt-2">
+            <h3>Courbe d'évolution pour le nombre de voix de chaque coalition</h3>
+        </div>
+        <div class="card-body">
+            {% if chartLine.data['datasets'][0].data[0] != null %}
+
+            <div class="chart-line my-4" style="padding: 20px">
+                {{ render_chart(chartLine, {'class': 'my-chart'}) }}
+            </div>
+            {% else %}
+            <div class="alert alert-danger">
+                Aucune donnée n'est dispobible pour la courbe d'évolution
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
 
     {# Fin Digramme pour le nombre de voix pour chaque coalition #}
 

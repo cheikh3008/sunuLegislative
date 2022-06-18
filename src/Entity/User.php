@@ -66,6 +66,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\OneToOne(targetEntity=BureauVote::class, cascade={"persist", "remove"})
+     * @Assert\NotBlank(message="Veuillez remplir ce champ")
      */
     private $BV;
 
