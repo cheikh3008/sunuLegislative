@@ -107,7 +107,8 @@ class HomeController extends AbstractController
             'labels' => $data,
             'datasets' => [
                 [
-                    'label' => 'Resulstats  par coaltion sous forme de diagramme en barre',
+                    'label' => 'Nombre de voix total de chaque Coalition
+                    ',
                     'backgroundColor' => [
                         'rgb(255, 99, 132)',
                         'rgb(0, 128, 0)',

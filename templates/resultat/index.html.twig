@@ -23,7 +23,9 @@
                     <h4>Résultats des bureaux de vote pour chaque coalition</h4>
                 </div>
                 <div>
+                    {% if app.user and app.user.roles[0] == 'ROLE_REPRESENTANT' %}
                     <a href="{{path('app_resultat_new')}}" class="btn btn-success">Ajouter</a>
+                    {% endif %}
                     {# <a href="" class="btn btn-success">Importer le fichier</a> #}
                 </div>
             </div>
@@ -38,8 +40,8 @@
             <thead>
                 <tr>
                     <th>Nom de la circonscription</th>
-                    <th>Bureaux de vote</th>
-                    <th>Nombres de votants</th>
+                    <th>Bureau de vote</th>
+                    <th>Nombre de votants</th>
                     <th>Bulletins nuls</th>
                     <th>Bulletins exprimés</th>
                     <th>Wallu Sénégal</th>
@@ -50,7 +52,7 @@
                     <th>Naatangué Sénégal</th>
                     <th>Bokk Gis-Gis</th>
                     <th>Union citoyenne Bunt Bi</th>
-                    <th>Présentants</th>
+                    <th>Représentant</th>
                     <th>Actions</th>
                 </tr>
             </thead>

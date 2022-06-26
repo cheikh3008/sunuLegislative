@@ -55,7 +55,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="integer")
      * @Assert\NotBlank(message="Veuillez remplir ce champ")
-     * @Assert\PositiveOrZero(message="Veuillez entrez un nombre positive")
+     * @Assert\Regex( pattern  = "#^(77||78||76||70||75)[0-9]{9}$#",
+     *      message="Veuillez entrer un numéro de téléphone valide ."
+     * )
      */
     private $telephone;
 
