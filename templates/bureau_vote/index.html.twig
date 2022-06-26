@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}La liste des bureaux de vote{% endblock %}
+{% block title %}SunuLégislatives2022 | La liste des bureaux de vote{% endblock %}
 
 {% block body %}
 
@@ -32,16 +32,16 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>Nom du bureau de vote</th>
                     <th>Nom de la circonscription</th>
+                    <th>Nom du bureau de vote</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for bureau_vote in bureau_votes %}
                 <tr>
-                    <td>{{ bureau_vote.nomBV }}</td>
                     <td>{{ bureau_vote.nomCir }}</td>
+                    <td>{{ bureau_vote.nomBV }}</td>
                     <td>
                         <a href="{{ path('app_bureau_vote_edit', {'id': bureau_vote.id}) }}"
                             class="mx-1 my-2 btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></a>

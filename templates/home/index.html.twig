@@ -1,13 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}SunuLégislatives2022 | Dashboard{% endblock %}
 
 {% block body %}
 <div class="container-fluid">
     {# resultats gloaaux #}
     <div class="mt-3 pb-3 card">
         <div class="card-header pt-2">
-            <h3>Les résultats globaux </h3>
+            <h3>Principaux chiffres des élections</h3>
         </div>
         {# total des elections #}
         <div class="row mx-auto total">
@@ -73,15 +73,58 @@
     </div>
     {# Fin resultats gloaaux #}
 
+    {# Nombre de bureaux de vote par circonscription #}
+    <div class="card mt-3 mb-3">
+        <div class="card-header pt-2">
+            <h3>Nombre de bureaux de vote par circonscription</h3>
+        </div>
+        <div class="card-body">
+            {% if nombreBVCirconscription %}
+
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Le nom de la circonscription</th>
+                        <th scope="col">Nombre de bureaux de vote</th>
+                        <th scope="col">Nombre de résultats de bureaux de vote obtenus</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in nombreBVCirconscription %}
+                    <tr>
+                        <td> {{row.nomCir}} </td>
+                        <td> {{row.nbBureauVote}} </td>
+                        <td> 
+                            {% for test in man %}
+                                {% if row.nomCir == test.nomCir %}
+                                    {{test.NBresultat}}
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+            {% else %}
+            <div class="alert alert-danger text-center" role="alert">
+                <span>Aucun enregistrement trouvé </span>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+    {# Fin Nombre de bureaux de vote par circonscription #}
+
     {# Digramme pour le nombre de voix pour chaque coalition #}
 
 
     <div class="card mt-3 mb-3">
         <div class="card-header pt-2">
-            <h3>Digramme en barre pour le nombre de voix de chaque coalition</h3>
+            <h3>Nombre de voix total de chaque Coalition</h3>
         </div>
         <div class="card-body">
-            {% if chartBar.data['datasets'][0].data[0] != null %}
+            {% if chartBar %}
 
             <div class="chart-bar my-4" style="padding: 20px">
                 {{ render_chart(chartBar, {'class': 'my-chart'}) }}
@@ -93,88 +136,13 @@
             {% endif %}
         </div>
     </div>
-    <div class="card mt-3 mb-3">
-        <div class="card-header pt-2">
-            <h3>Courbe d'évolution pour le nombre de voix de chaque coalition</h3>
-        </div>
-        <div class="card-body">
-            {% if chartLine.data['datasets'][0].data[0] != null %}
-
-            <div class="chart-line my-4" style="padding: 20px">
-                {{ render_chart(chartLine, {'class': 'my-chart'}) }}
-            </div>
-            {% else %}
-            <div class="alert alert-danger">
-                Aucune donnée n'est dispobible pour la courbe d'évolution
-            </div>
-            {% endif %}
-        </div>
-    </div>
-
-
-    {# Fin Digramme pour le nombre de voix pour chaque coalition #}
-
     {# Les résultats pour chaque coalition et circonscription #}
-    <div class="card mt-3 mb-3">
-        <div class="card-header pt-2">
-            <h3>Les résultats pour chaque coalition et circonscription</h3>
-        </div>
-        <div class="card-body mt-3 mb-3">
-            <div class="table-responsive">
-                {% if resultDprt %}
-
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th scope="col">Nom de la circonscription</th>
-                            <th scope="col">Nombre de votants</th>
-                            <th scope="col">Nombre de bulletins nuls</th>
-                            <th scope="col">Nombre de bulletins exprimés</th>
-                            <th scope="col">Wallu Sénégal</th>
-                            <th scope="col">Yewi Askan Wi</th>
-                            <th scope="col">Benno Bokk Yakaar (mouvance présidentielle)</th>
-                            <th scope="col">Alternatives pour une Assemblée de rupture (AAR)</th>
-                            <th scope="col">Les serviteurs</th>
-                            <th scope="col">Naatangué Sénégal</th>
-                            <th scope="col">Bokk Gis-Gis</th>
-                            <th scope="col">Union citoyenne Bunt Bi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for row in resultDprt %}
-                        <tr>
-                            <td>{{row.nomCir}}</td>
-                            <td>{{row.nbVotant}}</td>
-                            <td>{{row.bulletinNull}}</td>
-                            <td>{{row.bulletinExp}}</td>
-                            <td>{{row.wallu }}</td>
-                            <td>{{row.yewi }}</td>
-                            <td>{{row.bby }}</td>
-                            <td>{{row.aar }}</td>
-                            <td>{{row.serviteur }}</td>
-                            <td>{{row.natangue }}</td>
-                            <td>{{row.bokkgisgis }}</td>
-                            <td>{{row.ucb }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                {% else %}
-                <div class="alert alert-danger text-center" role="alert">
-                    <span>Aucun enregistrement trouvé </span>
-                </div>
-                {% endif %}
-
-            </div>
-        </div>
-    </div>
-    {# Fin Les résultats pour chaque coalition et circonscription #}
 
     {# Nombre de voix pour chaque liste #}
 
     <div class="card mt-3 mb-3">
         <div class="card-header pt-2">
-            <h3>les résultats obtenus pour chaque coalition</h3>
+            <h3>Tableau du nombre de voix total de chaque Coalition</h3>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -287,40 +255,63 @@
 
     {# Fin Nombre de voix pour chaque liste #}
 
-    {# Nombre de bureaux de vote par circonscription #}
     <div class="card mt-3 mb-3">
         <div class="card-header pt-2">
-            <h3>Nombre de bureaux de vote par circonscription</h3>
+            <h3>Nombre de voix de chaque Coalition par Circonscription électorale</h3>
         </div>
-        <div class="card-body">
-            {% if nombreBVCirconscription %}
+        <div class="card-body mt-3 mb-3">
+            <div class="table-responsive">
+                {% if resultDprt %}
 
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th scope="col">Le nom de la circonscription</th>
-                        <th scope="col">Nombre de bureaux de vote</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for row in nombreBVCirconscription %}
-                    <tr>
-                        <td> {{row.nomCir}} </td>
-                        <td> {{row.nbBureauVote}} </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">Nom de la circonscription</th>
+                            <th scope="col">Nombre de votants</th>
+                            <th scope="col">Nombre de bulletins nuls</th>
+                            <th scope="col">Nombre de bulletins exprimés</th>
+                            <th scope="col">Wallu Sénégal</th>
+                            <th scope="col">Yewi Askan Wi</th>
+                            <th scope="col">Benno Bokk Yakaar (mouvance présidentielle)</th>
+                            <th scope="col">Alternatives pour une Assemblée de rupture (AAR)</th>
+                            <th scope="col">Les serviteurs</th>
+                            <th scope="col">Naatangué Sénégal</th>
+                            <th scope="col">Bokk Gis-Gis</th>
+                            <th scope="col">Union citoyenne Bunt Bi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in resultDprt %}
+                        <tr>
+                            <td>{{row.nomCir}}</td>
+                            <td>{{row.nbVotant}}</td>
+                            <td>{{row.bulletinNull}}</td>
+                            <td>{{row.bulletinExp}}</td>
+                            <td>{{row.wallu }}</td>
+                            <td>{{row.yewi }}</td>
+                            <td>{{row.bby }}</td>
+                            <td>{{row.aar }}</td>
+                            <td>{{row.serviteur }}</td>
+                            <td>{{row.natangue }}</td>
+                            <td>{{row.bokkgisgis }}</td>
+                            <td>{{row.ucb }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="alert alert-danger text-center" role="alert">
+                    <span>Aucun enregistrement trouvé </span>
+                </div>
+                {% endif %}
 
-            </table>
-            {% else %}
-            <div class="alert alert-danger text-center" role="alert">
-                <span>Aucun enregistrement trouvé </span>
             </div>
-            {% endif %}
-
         </div>
     </div>
-    {# Fin Nombre de bureaux de vote par circonscription #}
+    {# Fin Les résultats pour chaque coalition et circonscription #}
+
+
+
 
     {# Nombre de résultats de Bureaux de Vote obtenus #}
     <div class="card mt-3 mb-3">
@@ -332,7 +323,7 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        {# <th>Nom coalition</th> #}
+                        <th>Nom de la circonscription</th>
                         <th>Bureaux de vote</th>
                         <th>Nombres de votants</th>
                         <th>Bulletins nuls</th>
@@ -350,6 +341,7 @@
                 <tbody>
                     {% for resultat in nombreResultatBV %}
                     <tr>
+                        <td>{{ resultat.user.BV.nomCir }}</td>
                         <td>{{ resultat.user.BV.NomBV }}</td>
                         <td>{{ resultat.nbVotant }}</td>
                         <td>{{ resultat.bulletinNull }}</td>

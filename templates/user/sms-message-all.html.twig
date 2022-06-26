@@ -1,8 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}SunuLégislatives2022 | Importer le fichier{% endblock %}
+{% block title %}Envoi de message{% endblock %}
 
 {% block body %}
+
 <div class="container">
     {% for message in app.flashes('error') %}
     <div class="text-center alert alert-danger mt-2" role="alert">
@@ -12,23 +13,17 @@
     <div class="content">
         <div class="card">
             <div class="card-header">
-                Choisir un fichier CSV ou XLSX, XLS
+                <h4>
+                    Envoyer un message spécifique à tous les représentants
+                </h4>
             </div>
             <div class="card-body">
                 {{ form_start(form, {attr: {'novalidate': 'novalidate'}}) }}
                 {{ form_widget(form) }}
-                <div>
-                    <p style="color:red">
-                        Remarque : Veuillez importer un fichier sous ce format
-                    </p>
-                    <img src="{{asset('images/ImageBV.png')}}" width="500px" alt="Erreur 404" srcset="">
-                </div>
-                <button class="btn btn-primary mt-2">{{ button_label|default('Importer le fichier') }}</button>
+                <button class="btn btn-success">{{ button_label|default('Envoyer le message') }}</button>
                 {{ form_end(form) }}
             </div>
         </div>
-
     </div>
-
 </div>
 {% endblock %}

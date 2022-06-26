@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}La liste des coalitions{% endblock %}
+{% block title %}SunuLégislatives2022 | La liste des coalitions{% endblock %}
 
 {% block body %}
 
@@ -41,8 +41,8 @@
                 {% for departement in departements %}
                 <tr>
                     <td>{{ departement.nom }}</td>
-                    <td>{{ departement.nbInscrit }}</td>
                     <td>{{ departement.nbBV }}</td>
+                    <td>{{ departement.nbInscrit }}</td>
                     <td>
                         <a href="{{ path('app_departement_edit', {'id': departement.id}) }}"
                             class="mx-1 my-2 btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></a>

@@ -25,14 +25,36 @@
             </div>
 
         </div>
+        <style>
+            .btn-send {
+                height: 90px !important;
+            }
+        </style>
         <div class="card-hearder text-center">
-            <div class="col-md-12">
-                <a href="{{path('app_user_sendsms_all')}}" class="mx-1 my-2 btn  btn btn-primary">Envoyer les
-                    identifiants de connexion à tous les
-                    représentants</a>
-                <a href="{{path('app_user_sendsms_one')}}" class="mx-1 my-2 btn  btn btn-dark">Envoyer les identifiants
-                    de connexion à un
-                    représentant</a>
+            <div class="row">
+                <div class="col-md-6 col-lg-3">
+                    <a href="{{path('app_user_sendsms_all')}}" class="mx-1 my-2 btn btn-send btn btn-primary">Envoyer
+                        les
+                        identifiants de connexion à tous les
+                        représentants</a>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <a href="{{path('app_user_sendsms_one')}}" class="mx-1 my-2 btn btn-send btn btn-primary">Envoyer
+                        les
+                        identifiants
+                        de connexion à un
+                        représentant</a>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <a href="{{path('app_user_send_message_all')}}"
+                        class="mx-1 my-2 btn btn-send btn btn-primary">Envoyer un message spécifique à tous les
+                        représentants</a>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <a href="{{path('app_user_send_message_one')}}"
+                        class="mx-1 my-2 btn btn-send btn btn-primary">Envoyer un message spécifique à un
+                        représentant</a>
+                </div>
             </div>
         </div>
     </div>

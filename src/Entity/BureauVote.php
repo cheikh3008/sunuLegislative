@@ -30,6 +30,7 @@ class BureauVote
      */
     private $nomCir;
 
+
     public function getId(): ?int
     {
         return $this->id;
@@ -58,4 +59,6 @@ class BureauVote
 
         return $this;
     }
+
+    
 }

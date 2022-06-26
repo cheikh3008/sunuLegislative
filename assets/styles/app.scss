@@ -2,6 +2,12 @@
 body {
     background-color: #f5f5f6;
 }
+.btn-primary {
+    background-color: #0253a5 !important;
+    &:hover {
+        background-color: #0253b3 !important;
+    }
+}
 .content {
     background-color: #fff;
     padding: 25px;
@@ -56,5 +62,17 @@ body {
         .form-login {
             margin-top: 15px !important;
         }
+    }
+
+    .btn-send {
+        width: 100% !important;
+        height: 100% !important;
+    }
+    
+}
+@media only screen and (max-width: 1000px) {
+    .btn-send {
+        width: 100% !important;
+        height: 100% !important;
     }
 }

@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}La liste des bureaux de vote{% endblock %}
+{% block title %}SunuLégislatives2022 | Résultats des bureaux de vote pour chaque coalition{% endblock %}
 
 {% block body %}
 
@@ -37,7 +37,8 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    {# <th>Nom coalition</th> #}
+                    <th>Nom de la circonscription</th>
+                    <th>Bureaux de vote</th>
                     <th>Nombres de votants</th>
                     <th>Bulletins nuls</th>
                     <th>Bulletins exprimés</th>
@@ -50,13 +51,14 @@
                     <th>Bokk Gis-Gis</th>
                     <th>Union citoyenne Bunt Bi</th>
                     <th>Présentants</th>
-                    <th>Bureaux de vote</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for resultat in resultats %}
                 <tr>
+                    <td>{{ resultat.user.BV.nomCir }}</td>
+                    <td>{{ resultat.user.BV.NomBV }}</td>
                     <td>{{ resultat.nbVotant }}</td>
                     <td>{{ resultat.bulletinNull }}</td>
                     <td>{{ resultat.bulletinExp }}</td>
@@ -69,7 +71,6 @@
                     <td>{{ resultat.bokkgisgis }}</td>
                     <td>{{ resultat.ucb }}</td>
                     <td>{{ resultat.user.prenom }} {{resultat.user.nom}}</td>
-                    <td>{{ resultat.user.BV.NomBV }}</td>
                     <td>
                         <a href="{{ path('app_resultat_edit', {'id': resultat.id}) }}"
                             class="mx-1 my-2 btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></a>

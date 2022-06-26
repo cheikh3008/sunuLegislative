@@ -132,6 +132,21 @@ class ResultatRepository extends ServiceEntityRepository
             )->getResult();
     }
 
+    public function findNombreResultBureauVoteCoalition()
+    {
+        return $this->getEntityManager()
+            ->createQuery(
+                " SELECT 
+                    B.nomCir , COUNT (R.bulletinExp) as NBresultat
+                    FROM  App\Entity\BureauVote B,  App\Entity\Resultat R,  App\Entity\User U
+                    WHERE R.user = U.id AND B.id = U.BV
+                    GROUP BY B.nomCir
+                 "
+            )->getResult();
+    }
+
+    // SELECT BV.nom_cir, COUNT(BV.nom_bv), COUNT(R.bulletin_exp) FROM resultat R, bureau_vote BV, user U WHERE R.user_id = U.id AND BV.id = U.bv_id GROUP BY BV.nom_cir
+
     // SELECT  r.user_id , bureau_vote.nom_cir , retenus.nom , SUM(r.nb_inscrit), SUM(r.nb_votant), SUM(r.bulletin_null), SUM(r.bulletin_exp)  FROM resultat as r, bureau_vote, user, retenus WHERE r.retenus_id = retenus.id AND bureau_vote.id = user.bv_id and r.user_id = user.id   GROUP BY r.user_id, bureau_vote.nom_cir, retenus.nom
 
     // SELECT   bureau_vote.nom_cir ,  SUM(r.nb_inscrit), SUM(r.nb_votant), SUM(r.bulletin_null), SUM(r.bulletin_exp)  FROM resultat as r, bureau_vote, user, retenus WHERE r.retenus_id = retenus.id AND bureau_vote.id = user.bv_id and r.user_id = user.id  GROUP BY  bureau_vote.nom_cir

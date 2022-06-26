@@ -28,7 +28,7 @@ class BureauVoteController extends AbstractController
     public function index(BureauVoteRepository $bureauVoteRepository): Response
     {
         return $this->render('bureau_vote/index.html.twig', [
-            'bureau_votes' => $bureauVoteRepository->findBy([], ['id' => 'DESC']),
+            'bureau_votes' => $bureauVoteRepository->findBy([], ['nomCir' => 'DESC']),
         ]);
     }
 

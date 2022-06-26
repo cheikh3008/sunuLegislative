@@ -35,7 +35,7 @@ class ResultatController extends AbstractController
     public function index(ResultatRepository $resultatRepository): Response
     {
         return $this->render('resultat/index.html.twig', [
-            'resultats' => $resultatRepository->findBy([], ['id' => 'DESC']),
+            'resultats' => $resultatRepository->findBy([], ['user' => 'DESC']),
         ]);
     }
 

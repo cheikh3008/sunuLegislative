@@ -2,13 +2,19 @@
 
 namespace App\Controller;
 
-use App\Entity\SendSMS;
 use Exception;
 use App\Entity\User;
 use App\Entity\Upload;
-use App\Form\SendSMSType;
 use App\Form\UserType;
+use App\Entity\SendSMS;
 use App\Form\UploadType;
+use App\Form\SendSMSType;
+use App\Entity\SendMessageAll;
+use App\Entity\SendMessageOne;
+use App\Entity\SendIdentifiant;
+use App\Form\SendMessageAllType;
+use App\Form\SendMessageOneType;
+use App\Form\SendIdentifiantType;
 use App\Repository\RoleRepository;
 use App\Repository\UserRepository;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -189,7 +195,7 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/sms-all", name="app_user_sendsms_all")
+     * @Route("/send-identifiant-all", name="app_user_sendsms_all")
      */
     public  function sendSMSAllUSer()
     {
@@ -211,12 +217,12 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/sms-one", name="app_user_sendsms_one")
+     * @Route("/send-identifiant-one", name="app_user_sendsms_one")
      */
     public  function sendSMSOneUSer(Request $request)
     {
-        $sms = new SendSMS();
-        $form = $this->createForm(SendSMSType::class, $sms);
+        $sms = new SendIdentifiant();
+        $form = $this->createForm(SendIdentifiantType::class, $sms);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
@@ -232,6 +238,53 @@ class UserController extends AbstractController
         ]);
     }
 
+
+    /**
+     * @Route("/send-message-one", name="app_user_send_message_one")
+     */
+    public  function sendMessage(Request $request)
+    {
+        $sms = new SendMessageOne();
+        $form = $this->createForm(SendMessageOneType::class, $sms);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $tel = $data->getTelephone();
+            $user = $this->userRepository->findOneBy(["uuid" => $tel]);
+            $message = $data->getMessage();
+            $this->getSMS('221' . $user->getTelephone(), $message);
+            $this->addFlash('success', "Votre message a été bien envoyé à " . $user->getFullname());
+            return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
+        }
+        return $this->render('user/sms-message-one.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/send-message-all", name="app_user_send_message_all")
+     */
+    public  function sendMessageAll(Request $request)
+    {
+        $sms = new SendMessageAll();
+        $form = $this->createForm(SendMessageAllType::class, $sms);
+        $users = $this->userRepository->findAll();
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $message = $data->getMessage();
+            foreach ($users as $value) {
+                $telephone = '221' . $value->getTelephone();
+    
+                $this->getSMS($telephone, $message);
+            }
+            $this->addFlash('success', "Votre message a été bien envoyé à tous les représentants ");
+            return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
+        }
+        return $this->render('user/sms-message-all.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
 
     public function getSMS($to, $message)
 
