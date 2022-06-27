@@ -300,7 +300,7 @@ class UserController extends AbstractController
         $gateway_url = "https://sms.lws.fr/sms/api";
         $action = "send-sms";
         $apiKey  = "Y2hlaWtoOiQyeSQxMCRoa1FrRHNwZmp1THpUanROVUViRjEuY0ovRUV2UzdWaGQxZExQWndPT3J5ZkRGQUNkdTJxaQ==";
-        $senderID  = "SunuL2022";
+        $senderID  = "SN2022";
         $data = array(
             'action' => $action,
             'api_key' => $apiKey,

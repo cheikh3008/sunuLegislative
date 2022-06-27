@@ -53,7 +53,9 @@
                     <th>Bokk Gis-Gis</th>
                     <th>Union citoyenne Bunt Bi</th>
                     <th>Représentant</th>
+                    {% if app.user and app.user.roles[0] == 'ROLE_REPRESENTANT' %}
                     <th>Actions</th>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody>
@@ -73,12 +75,15 @@
                     <td>{{ resultat.bokkgisgis }}</td>
                     <td>{{ resultat.ucb }}</td>
                     <td>{{ resultat.user.prenom }} {{resultat.user.nom}}</td>
+                    {% if app.user == resultat.user %}
                     <td>
+
                         <a href="{{ path('app_resultat_edit', {'id': resultat.id}) }}"
                             class="mx-1 my-2 btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></a>
                         <a href="{{ path('app_resultat_delete', {'id': resultat.id}) }} "
                             class="mx-1 my-2 btn btn-danger"><i class="fa-solid fa-trash-can"></i></a>
                     </td>
+                    {% endif %}
                 </tr>
                 {% endfor %}
             </tbody>

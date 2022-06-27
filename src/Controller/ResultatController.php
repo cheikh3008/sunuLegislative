@@ -137,7 +137,7 @@ class ResultatController extends AbstractController
 
     /**
      * @Route("/{id}/edit", name="app_resultat_edit", methods={"GET", "POST"})
-     *  @IsGranted("ROLE_REPRESENTANT")
+     * @Security("is_granted('ROLE_REPRESENTANT') && resultat.getUser() == user")
      */
     public function edit(Request $request, Resultat $resultat, ResultatRepository $resultatRepository): Response
     {
@@ -158,7 +158,7 @@ class ResultatController extends AbstractController
 
     /**
      * @Route("/{id}/delete", name="app_resultat_delete")
-     * 
+     * @Security("is_granted('ROLE_REPRESENTANT') && resultat.getUser() == user")
      */
     public function delete(Resultat $resultat): Response
     {
