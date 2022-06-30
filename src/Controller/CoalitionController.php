@@ -46,7 +46,6 @@ class CoalitionController extends AbstractController
         $coalition = new Coalition();
         $form = $this->createForm(CoalitionType::class, $coalition);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $coalition->setSlug($this->slugger->slug($data->getNom()));
@@ -103,13 +102,13 @@ class CoalitionController extends AbstractController
      * @param EntityManagerInterface $entityManagerInterface
      * @return Response
      */
-    public function addByCSV(Request $request, EntityManagerInterface $entityManagerInterface): Response
+    public function addByCSV(Request $request, CoalitionRepository $coalitionRepository, EntityManagerInterface $entityManagerInterface): Response
 
     {
 
         $upload = new Upload();
         $form = $this->createForm(UploadType::class, $upload);
-
+        $coalitions = $coalitionRepository->findAll();
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $fileName = $request->files->get("upload");
@@ -145,6 +144,12 @@ class CoalitionController extends AbstractController
                         $nom = $row["0"];
                         $coalition->setNom($nom);
                         $coalition->setSlug($this->slugger->slug($nom));
+                        foreach ($coalitions as $key => $value) {
+                            if ($value->getNom() == $nom) {
+                                $this->addFlash('error', 'Certaines coalitions existent dèja !');
+                                return $this->redirectToRoute('app_coalition_add', [], Response::HTTP_SEE_OTHER);
+                            }
+                        }
                         $entityManagerInterface->persist($coalition);
                         $entityManagerInterface->flush();
                         // $this->addFlash('success', 'Votre fichier a été importé avec succés');
