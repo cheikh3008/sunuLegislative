@@ -177,26 +177,26 @@ class ResultatController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/edit", name="app_resultat_edit", methods={"GET", "POST"})
-     * @Security("is_granted('ROLE_REPRESENTANT') && resultat.getUser() == user")
-     */
-    public function edit(Request $request, Resultat $resultat, ResultatRepository $resultatRepository): Response
-    {
-        $form = $this->createForm(ResultatType::class, $resultat);
-        $form->handleRequest($request);
+    // /**
+    //  * @Route("/{id}/edit", name="app_resultat_edit", methods={"GET", "POST"})
+    //  * @Security("is_granted('ROLE_REPRESENTANT') && resultat.getUser() == user")
+    //  */
+    // public function edit(Request $request, Resultat $resultat, ResultatRepository $resultatRepository): Response
+    // {
+    //     $form = $this->createForm(ResultatType::class, $resultat);
+    //     $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $resultatRepository->add($resultat, true);
+    //     if ($form->isSubmitted() && $form->isValid()) {
+    //         $resultatRepository->add($resultat, true);
 
-            return $this->redirectToRoute('app_resultat_index', [], Response::HTTP_SEE_OTHER);
-        }
+    //         return $this->redirectToRoute('app_resultat_index', [], Response::HTTP_SEE_OTHER);
+    //     }
 
-        return $this->renderForm('resultat/edit.html.twig', [
-            'resultat' => $resultat,
-            'form' => $form,
-        ]);
-    }
+    //     return $this->renderForm('resultat/edit.html.twig', [
+    //         'resultat' => $resultat,
+    //         'form' => $form,
+    //     ]);
+    // }
 
     /**
      * @Route("/{id}/delete", name="app_resultat_delete")
