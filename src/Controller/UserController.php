@@ -28,8 +28,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 /**
- * @Route("/user")
  * @IsGranted("ROLE_ADMIN")
+ * @Route("/user")
  */
 class UserController extends AbstractController
 {
@@ -58,6 +58,7 @@ class UserController extends AbstractController
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
+        $usersAll = $this->userRepository->findAll();
         $role = $roleRepository->findOneBy(["libelle" => "ROLE_REPRESENTANT"]);
         $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         $password = substr(str_shuffle($chars), 0, 8);
@@ -66,7 +67,12 @@ class UserController extends AbstractController
             $nomBV =  ($form->get('BV')->getData());
             // $bvExi = $bureauVoteRepository->findOneBy(['nomBV' => $nomBV]);
             $userRS = $this->userRepository->findOneBy(['BV' => $nomBV]);
-            // dd($userRS);
+            foreach ($usersAll as $key => $value) {
+                if ($value->getTelephone() === (int)$username) {
+                    $this->addFlash('error', 'ce numéro de téléphone existe dèja !');
+                    return $this->redirectToRoute('app_user_add', [], Response::HTTP_SEE_OTHER);
+                }
+            }
             if ($userRS) {
                 $this->addFlash('error', "Ce bureau a été dèja affecté par un représentant");
                 return $this->redirectToRoute('app_user_new', [], Response::HTTP_SEE_OTHER);
@@ -81,7 +87,7 @@ class UserController extends AbstractController
             );
             $user->setUsername($username);
             $this->userRepository->add($user, true);
-
+            $this->addFlash('success', 'Ce représentant a été bien ajouté');
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -104,7 +110,7 @@ class UserController extends AbstractController
             $data = $form->getData();
             $user->setUsername($data->getTelephone());
             $this->userRepository->add($user, true);
-
+            $this->addFlash('success', 'Ce représentant a été bien modifié');
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -122,7 +128,7 @@ class UserController extends AbstractController
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($user);
         $entityManager->flush();
-        $this->addFlash('success', 'Votre utlisateur a été bien supprimé');
+        $this->addFlash('success', 'Ce représentant a été bien supprimé');
         return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
     }
 
@@ -135,35 +141,63 @@ class UserController extends AbstractController
 
         $upload = new Upload();
         $form = $this->createForm(UploadType::class, $upload);
-
+        $usersAll = $this->userRepository->findAll();
         $form->handleRequest($request);
         $role = $roleRepository->findOneBy(["libelle" => "ROLE_REPRESENTANT"]);
         if ($form->isSubmitted() && $form->isValid()) {
 
             $fileName = $request->files->get("upload");
             $fileNamePath = $fileName['file']->getRealPath();
-            $spreadsheet = IOFactory::load($fileNamePath);
+            if ($fileName['file']->guessExtension() == "xlsx") {
+                # code...
+                $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx;
+            }
+            if ($fileName['file']->guessExtension() == "xls") {
+                # code...
+                $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xls;
+            }
+            if ($fileName['file']->guessExtension() == "csv") {
+                # code...
+                $reader = new \PhpOffice\PhpSpreadsheet\Reader\Csv;
+            }
+            if ($fileName['file']->guessExtension() == "txt") {
+                # code...
+                $reader = new \PhpOffice\PhpSpreadsheet\Reader\Csv;
+            }
+
+            $spreadsheet = $reader->load($fileNamePath);
             $data = $spreadsheet->getActiveSheet()->toArray();
-            // dd($data);
+            // $spreadsheet = IOFactory::load($fileNamePath);
+            // $data = $spreadsheet->getActiveSheet()->toArray();
+
+            $data = array_filter($data, function ($v) {
+                return array_filter($v) != array();
+            });
             $count = "0";
             foreach ($data as $row) {
-                // if (count($row) <= 3) {
-                //     throw new Exception("Impossible d'importer ce fichier.");
-                // }
+                $user = new User();
                 $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
                 $password = substr(str_shuffle($chars), 0, 8);
                 if ($count > 0) {
                     try {
-                        $user = new User();
+                        if (empty($row)) {
+                            dd($data);
+                        }
                         $nom = $row["0"];
                         $prenom  = $row["1"];
                         $telephone  = $row["2"];
+                        $username  = $row["2"];
                         $nomBV = $row["3"];
+                        foreach ($usersAll as $key => $value) {
+                            if ($value->getTelephone() === $telephone) {
+                                $this->addFlash('error', 'Certains numéros de téléphone existent dèja !');
+                                return $this->redirectToRoute('app_user_add', [], Response::HTTP_SEE_OTHER);
+                            }
+                        }
                         $nomBV1 = $bureauVoteRepository->findOneBy(['nomBV' => $nomBV]);
-
                         $user->setNom($nom)
+                            ->setUsername($username)
                             ->setPrenom($prenom)
-                            ->setUsername($telephone)
                             ->setTelephone($telephone)
                             ->setUuid($password)
                             ->setBV($nomBV1)
@@ -177,9 +211,9 @@ class UserController extends AbstractController
                         $entityManagerInterface->persist($user);
                         $entityManagerInterface->flush();
                     } catch (\Throwable $th) {
-                        // throw new Exception("Impossible d'importer ce fichier.");
-                        $this->addFlash('error', "Impossible d'importer ce fichier.");
+                        throw new Exception("Impossible d'importer ce fichier.");
                         return $this->redirectToRoute('app_user_add', [], Response::HTTP_SEE_OTHER);
+                        $this->addFlash('error', "Impossible d'importer ce fichier.");
                     }
                 } else {
                     $count = "1";

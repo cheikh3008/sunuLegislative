@@ -32,7 +32,6 @@
         </div>
 
     </div>
-
     <div class="content table-responsive">
         {% if resultats %}
 
@@ -44,14 +43,9 @@
                     <th>Nombre de votants</th>
                     <th>Bulletins nuls</th>
                     <th>Bulletins exprimés</th>
-                    <th>Wallu Sénégal</th>
-                    <th>Yewi Askan Wi</th>
-                    <th>Benno Bokk Yakaar (mouvance présidentielle)</th>
-                    <th>Alternatives pour une Assemblée de rupture (AAR)</th>
-                    <th>Les serviteurs</th>
-                    <th>Naatangué Sénégal</th>
-                    <th>Bokk Gis-Gis</th>
-                    <th>Union citoyenne Bunt Bi</th>
+                    {% for row in coalitions %}
+                    <th> {{row.nom}} </th>
+                    {% endfor %}
                     <th>Représentant</th>
                     {% if app.user and app.user.roles[0] == 'ROLE_REPRESENTANT' %}
                     <th>Actions</th>
@@ -66,14 +60,9 @@
                     <td>{{ resultat.nbVotant }}</td>
                     <td>{{ resultat.bulletinNull }}</td>
                     <td>{{ resultat.bulletinExp }}</td>
-                    <td>{{ resultat.wallu }}</td>
-                    <td>{{ resultat.yewi }}</td>
-                    <td>{{ resultat.bby }}</td>
-                    <td>{{ resultat.aar }}</td>
-                    <td>{{ resultat.serviteur }}</td>
-                    <td>{{ resultat.natangue }}</td>
-                    <td>{{ resultat.bokkgisgis }}</td>
-                    <td>{{ resultat.ucb }}</td>
+                    {% for row in resultat.getResultatCoalitions %}
+                    <td> {{row.nombre}} </td>
+                    {% endfor %}
                     <td>{{ resultat.user.prenom }} {{resultat.user.nom}}</td>
                     {% if app.user == resultat.user %}
                     <td>

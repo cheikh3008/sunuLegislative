@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ResultatRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -46,60 +48,14 @@ class Resultat
     private $user;
 
     /**
-     * @ORM\Column(type="integer")
-     * @Assert\NotBlank(message="Veuillez remplir ce champ")
-     * @Assert\PositiveOrZero(message="Veuillez entrez un nombre positive")
+     * @ORM\OneToMany(targetEntity=ResultatCoalition::class, mappedBy="resulat", cascade={"persist", "remove"})
      */
-    private $wallu;
+    private $resultatCoalitions;
 
-    /**
-     * @ORM\Column(type="integer")
-     * @Assert\NotBlank(message="Veuillez remplir ce champ")
-     * @Assert\PositiveOrZero(message="Veuillez entrez un nombre positive")
-     */
-    private $yewi;
-
-    /**
-     * @ORM\Column(type="integer")
-     * @Assert\NotBlank(message="Veuillez remplir ce champ")
-     * @Assert\PositiveOrZero(message="Veuillez entrez un nombre positive")
-     */
-    private $serviteur;
-
-    /**
-     * @ORM\Column(type="integer")
-     * @Assert\NotBlank(message="Veuillez remplir ce champ")
-     * @Assert\PositiveOrZero(message="Veuillez entrez un nombre positive")
-     */
-    private $aar;
-
-    /**
-     * @ORM\Column(type="integer")
-     * @Assert\NotBlank(message="Veuillez remplir ce champ")
-     * @Assert\PositiveOrZero(message="Veuillez entrez un nombre positive")
-     */
-    private $bby;
-
-    /**
-     * @ORM\Column(type="integer")
-     * @Assert\NotBlank(message="Veuillez remplir ce champ")
-     * @Assert\PositiveOrZero(message="Veuillez entrez un nombre positive")
-     */
-    private $natangue;
-
-    /**
-     * @ORM\Column(type="integer")
-     * @Assert\NotBlank(message="Veuillez remplir ce champ")
-     * @Assert\PositiveOrZero(message="Veuillez entrez un nombre positive")
-     */
-    private $bokkgisgis;
-
-    /**
-     * @ORM\Column(type="integer")
-     * @Assert\NotBlank(message="Veuillez remplir ce champ")
-     * @Assert\PositiveOrZero(message="Veuillez entrez un nombre positive")
-     */
-    private $ucb;
+    public function __construct()
+    {
+        $this->resultatCoalitions = new ArrayCollection();
+    }
 
 
     public function getId(): ?int
@@ -155,98 +111,32 @@ class Resultat
         return $this;
     }
 
-    public function getWallu(): ?int
+    /**
+     * @return Collection<int, ResultatCoalition>
+     */
+    public function getResultatCoalitions(): Collection
     {
-        return $this->wallu;
+        return $this->resultatCoalitions;
     }
 
-    public function setWallu(int $wallu): self
+    public function addResultatCoalition(ResultatCoalition $resultatCoalition): self
     {
-        $this->wallu = $wallu;
+        if (!$this->resultatCoalitions->contains($resultatCoalition)) {
+            $this->resultatCoalitions[] = $resultatCoalition;
+            $resultatCoalition->setResulat($this);
+        }
 
         return $this;
     }
 
-    public function getYewi(): ?int
+    public function removeResultatCoalition(ResultatCoalition $resultatCoalition): self
     {
-        return $this->yewi;
-    }
-
-    public function setYewi(int $yewi): self
-    {
-        $this->yewi = $yewi;
-
-        return $this;
-    }
-
-    public function getServiteur(): ?int
-    {
-        return $this->serviteur;
-    }
-
-    public function setServiteur(int $serviteur): self
-    {
-        $this->serviteur = $serviteur;
-
-        return $this;
-    }
-
-    public function getAar(): ?int
-    {
-        return $this->aar;
-    }
-
-    public function setAar(int $aar): self
-    {
-        $this->aar = $aar;
-
-        return $this;
-    }
-
-    public function getBby(): ?int
-    {
-        return $this->bby;
-    }
-
-    public function setBby(int $bby): self
-    {
-        $this->bby = $bby;
-
-        return $this;
-    }
-
-    public function getNatangue(): ?int
-    {
-        return $this->natangue;
-    }
-
-    public function setNatangue(int $natangue): self
-    {
-        $this->natangue = $natangue;
-
-        return $this;
-    }
-
-    public function getBokkgisgis(): ?int
-    {
-        return $this->bokkgisgis;
-    }
-
-    public function setBokkgisgis(int $bokkgisgis): self
-    {
-        $this->bokkgisgis = $bokkgisgis;
-
-        return $this;
-    }
-
-    public function getUcb(): ?int
-    {
-        return $this->ucb;
-    }
-
-    public function setUcb(int $ucb): self
-    {
-        $this->ucb = $ucb;
+        if ($this->resultatCoalitions->removeElement($resultatCoalition)) {
+            // set the owning side to null (unless already changed)
+            if ($resultatCoalition->getResulat() === $this) {
+                $resultatCoalition->setResulat(null);
+            }
+        }
 
         return $this;
     }

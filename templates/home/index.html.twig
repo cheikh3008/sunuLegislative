@@ -95,11 +95,16 @@
                         <td> {{row.nomCir}} </td>
                         <td> {{row.nbBureauVote}} </td>
                         <td>
+                            {% if man == [] %}
+                            0
+                            {% else %}
                             {% for test in man %}
                             {% if row.nomCir == test.nomCir %}
                             {{test.NBresultat}}
                             {% endif %}
                             {% endfor %}
+                            {% endif %}
+
                         </td>
                     </tr>
                     {% endfor %}
@@ -124,7 +129,7 @@
             <h3>Nombre de voix total de chaque Coalition</h3>
         </div>
         <div class="card-body">
-            {% if chartBar %}
+            {% if chartBar.data.labels %}
 
             <div class="chart-bar my-4" style="padding: 20px">
                 {{ render_chart(chartBar, {'class': 'my-chart'}) }}
@@ -146,7 +151,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                {% if nbTotalVoixPourCoalition | length > 0 %}
+                {% if findNombreTotalVoix | length > 0 %}
 
                 <table class="table table-striped">
                     <thead>
@@ -156,91 +161,12 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {% for row in findNombreTotalVoix %}
                         <tr>
-                            <td>Naatangué Sénégal</td>
-                            <td> <strong class="h3">
-                                    {% if nbTotalVoixPourCoalition.wallu | length > 0 %}
-                                    {{nbTotalVoixPourCoalition.wallu}}
-                                    {% else %}
-                                    0
-                                    {% endif %}
-                                </strong> </td>
+                            <td> {{row.nom}} </td>
+                            <td> {{row.nbVoix}} </td>
                         </tr>
-                        <tr>
-                            <td>Yewi Askan Wi</td>
-                            <td> <strong class="h3">
-                                    {% if nbTotalVoixPourCoalition.yewi | length > 0 %}
-                                    {{nbTotalVoixPourCoalition.yewi}}
-                                    {% else %}
-                                    0
-                                    {% endif %}
-                                </strong> </td>
-                        </tr>
-
-                        <tr>
-                            <td>Benno Bokk Yakaar (mouvance présidentielle) </td>
-                            <td> <strong class="h3">
-                                    {% if nbTotalVoixPourCoalition.bby | length > 0 %}
-                                    {{nbTotalVoixPourCoalition.bby}}
-                                    {% else %}
-                                    0
-                                    {% endif %}
-                                </strong> </td>
-                        </tr>
-                        <tr>
-                            <td>Alternatives pour une Assemblée de rupture (AAR) </td>
-                            <td> <strong class="h3">
-                                    {% if nbTotalVoixPourCoalition.aar | length > 0 %}
-                                    {{nbTotalVoixPourCoalition.aar}}
-                                    {% else %}
-                                    0
-                                    {% endif %}
-                                </strong> </td>
-                        </tr>
-                        {# #}
-                        <tr>
-                            <td>Naatangué Sénégal</td>
-                            <td> <strong class="h3">
-                                    {% if nbTotalVoixPourCoalition.natangue | length > 0 %}
-                                    {{nbTotalVoixPourCoalition.natangue}}
-                                    {% else %}
-                                    0
-                                    {% endif %}
-                                </strong> </td>
-                        </tr>
-                        <tr>
-                            <td>Les serviteurs</td>
-                            <td> <strong class="h3">
-                                    {% if nbTotalVoixPourCoalition.serviteur | length > 0 %}
-                                    {{nbTotalVoixPourCoalition.serviteur}}
-                                    {% else %}
-                                    0
-                                    {% endif %}
-                                </strong> </td>
-                        </tr>
-
-                        <tr>
-                            <td>Bokk Gis-Gis</td>
-                            <td> <strong class="h3">
-                                    {% if nbTotalVoixPourCoalition.bokkgisgis | length > 0 %}
-                                    {{nbTotalVoixPourCoalition.bokkgisgis}}
-                                    {% else %}
-                                    0
-                                    {% endif %}
-                                </strong> </td>
-                        </tr>
-                        <tr>
-                            <td>Union citoyenne Bunt Bi </td>
-                            <td> <strong class="h3">
-                                    {% if nbTotalVoixPourCoalition.ucb | length > 0 %}
-                                    {{nbTotalVoixPourCoalition.ucb}}
-                                    {% else %}
-                                    0
-                                    {% endif %}
-                                </strong> </td>
-                        </tr>
-
-
+                        {% endfor %}
                     </tbody>
                 </table>
                 {% else %}
@@ -270,14 +196,7 @@
                             <th scope="col">Nombre de votants</th>
                             <th scope="col">Nombre de bulletins nuls</th>
                             <th scope="col">Nombre de bulletins exprimés</th>
-                            <th scope="col">Wallu Sénégal</th>
-                            <th scope="col">Yewi Askan Wi</th>
-                            <th scope="col">Benno Bokk Yakaar (mouvance présidentielle)</th>
-                            <th scope="col">Alternatives pour une Assemblée de rupture (AAR)</th>
-                            <th scope="col">Les serviteurs</th>
-                            <th scope="col">Naatangué Sénégal</th>
-                            <th scope="col">Bokk Gis-Gis</th>
-                            <th scope="col">Union citoyenne Bunt Bi</th>
+
                         </tr>
                     </thead>
                     <tbody>
@@ -287,14 +206,6 @@
                             <td>{{row.nbVotant}}</td>
                             <td>{{row.bulletinNull}}</td>
                             <td>{{row.bulletinExp}}</td>
-                            <td>{{row.wallu }}</td>
-                            <td>{{row.yewi }}</td>
-                            <td>{{row.bby }}</td>
-                            <td>{{row.aar }}</td>
-                            <td>{{row.serviteur }}</td>
-                            <td>{{row.natangue }}</td>
-                            <td>{{row.bokkgisgis }}</td>
-                            <td>{{row.ucb }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -328,34 +239,36 @@
                         <th>Nombre de votants</th>
                         <th>Bulletins nuls</th>
                         <th>Bulletins exprimés</th>
-                        <th>Wallu Sénégal</th>
-                        <th>Yewi Askan Wi</th>
-                        <th>Benno Bokk Yakaar (mouvance présidentielle)</th>
-                        <th>Alternatives pour une Assemblée de rupture (AAR)</th>
-                        <th>Les serviteurs</th>
-                        <th>Naatangué Sénégal</th>
-                        <th>Bokk Gis-Gis</th>
-                        <th>Union citoyenne Bunt Bi</th>
+                        {% for row in coalitions %}
+                        <th> {{row.nom}} </th>
+                        {% endfor %}
+                        <th>Représentant</th>
+                        {% if app.user and app.user.roles[0] == 'ROLE_REPRESENTANT' %}
+                        <th>Actions</th>
+                        {% endif %}
                     </tr>
                 </thead>
                 <tbody>
-                    {% for resultat in nombreResultatBV %}
+                    {% for resultat in resultats %}
                     <tr>
                         <td>{{ resultat.user.BV.nomCir }}</td>
                         <td>{{ resultat.user.BV.NomBV }}</td>
                         <td>{{ resultat.nbVotant }}</td>
                         <td>{{ resultat.bulletinNull }}</td>
                         <td>{{ resultat.bulletinExp }}</td>
-                        <td>{{ resultat.wallu }}</td>
-                        <td>{{ resultat.yewi }}</td>
-                        <td>{{ resultat.bby }}</td>
-                        <td>{{ resultat.aar }}</td>
-                        <td>{{ resultat.serviteur }}</td>
-                        <td>{{ resultat.natangue }}</td>
-                        <td>{{ resultat.bokkgisgis }}</td>
-                        <td>{{ resultat.ucb }}</td>
-                        {# <td>{{ resultat.user.prenom }} {{resultat.user.nom}}</td> #}
+                        {% for row in resultat.getResultatCoalitions %}
+                        <td> {{row.nombre}} </td>
+                        {% endfor %}
+                        <td>{{ resultat.user.prenom }} {{resultat.user.nom}}</td>
+                        {% if app.user == resultat.user %}
+                        <td>
 
+                            <a href="{{ path('app_resultat_edit', {'id': resultat.id}) }}"
+                                class="mx-1 my-2 btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></a>
+                            <a href="{{ path('app_resultat_delete', {'id': resultat.id}) }} "
+                                class="mx-1 my-2 btn btn-danger"><i class="fa-solid fa-trash-can"></i></a>
+                        </td>
+                        {% endif %}
                     </tr>
                     {% endfor %}
                 </tbody>

@@ -17,6 +17,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 /**
  * @Route("/departement")
@@ -24,6 +25,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
  */
 class DepartementController extends AbstractController
 {
+    private $slugger;
+    public function __construct(SluggerInterface $slugger)
+    {
+        $this->slugger = $slugger;
+    }
+
     /**
      * @Route("/", name="app_departement_index", methods={"GET"})
      */
@@ -45,7 +52,7 @@ class DepartementController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $departementRepository->add($departement, true);
-
+            $this->addFlash('success', 'Cette circonscription a été bien ajoutée');
             return $this->redirectToRoute('app_departement_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -75,7 +82,7 @@ class DepartementController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $departementRepository->add($departement, true);
-
+            $this->addFlash('success', 'Cette circonscription a été bien modifiée');
             return $this->redirectToRoute('app_departement_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -93,7 +100,7 @@ class DepartementController extends AbstractController
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($departement);
         $entityManager->flush();
-        $this->addFlash('success', 'Votre Departement a été bien supprimé');
+        $this->addFlash('success', 'Cette circonscription a été bien supprimée');
 
         return $this->redirectToRoute('app_departement_index', [], Response::HTTP_SEE_OTHER);
     }
@@ -113,18 +120,36 @@ class DepartementController extends AbstractController
 
             $fileName = $request->files->get("upload");
             $fileNamePath = $fileName['file']->getRealPath();
-            $spreadsheet = IOFactory::load($fileNamePath);
-            $data = $spreadsheet->getActiveSheet()->toArray();
+            if ($fileName['file']->guessExtension() == "xlsx") {
+                # code...
+                $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx;
+            }
+            if ($fileName['file']->guessExtension() == "xls") {
+                # code...
+                $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xls;
+            }
+            if ($fileName['file']->guessExtension() == "csv") {
+                # code...
+                $reader = new \PhpOffice\PhpSpreadsheet\Reader\Csv;
+            }
+            if ($fileName['file']->guessExtension() == "txt") {
+                # code...
+                $reader = new \PhpOffice\PhpSpreadsheet\Reader\Csv;
+            }
 
+            $spreadsheet = $reader->load($fileNamePath);
+            $data = $spreadsheet->getActiveSheet()->toArray();
+            $data = array_filter($data, function ($v) {
+                return array_filter($v) != array();
+            });
             $count = "0";
             foreach ($data as  $row) {
                 if ($count > 0) {
                     try {
                         $departement = new Departement();
                         $nom = $row['0'];
-                        $NBBV  = $row['1'];
-                        $NBin = $row['2'];
-                        // dd($departement);
+                        $NBBV  = $row['2'];
+                        $NBin = $row['1'];
                         $departement->setNom($nom)
                             ->setNbBV($NBBV)
                             ->setNbInscrit($NBin);

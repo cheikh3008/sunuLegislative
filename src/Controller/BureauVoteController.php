@@ -43,7 +43,7 @@ class BureauVoteController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $bureauVoteRepository->add($bureauVote, true);
-
+            $this->addFlash('success', 'Ce bureau de vote a été bien supprimé');
             return $this->redirectToRoute('app_bureau_vote_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -64,7 +64,7 @@ class BureauVoteController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $bureauVoteRepository->add($bureauVote, true);
-
+            $this->addFlash('success', 'Ce bureau de vote a été bien modifié');
             return $this->redirectToRoute('app_bureau_vote_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -82,7 +82,7 @@ class BureauVoteController extends AbstractController
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($bureauVote);
         $entityManager->flush();
-        $this->addFlash('success', 'Votre bureau de vote a été bien supprimé');
+        $this->addFlash('success', 'Ce bureau de vote a été bien supprimé');
         return $this->redirectToRoute('app_bureau_vote_index', [], Response::HTTP_SEE_OTHER);
     }
 
@@ -102,8 +102,30 @@ class BureauVoteController extends AbstractController
 
             $fileName = $request->files->get("upload");
             $fileNamePath = $fileName['file']->getRealPath();
-            $spreadsheet = IOFactory::load($fileNamePath);
+            if ($fileName['file']->guessExtension() == "xlsx") {
+                # code...
+                $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx;
+            }
+            if ($fileName['file']->guessExtension() == "xls") {
+                # code...
+                $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xls;
+            }
+            if ($fileName['file']->guessExtension() == "csv") {
+                # code...
+                $reader = new \PhpOffice\PhpSpreadsheet\Reader\Csv;
+            }
+            if ($fileName['file']->guessExtension() == "txt") {
+                # code...
+                $reader = new \PhpOffice\PhpSpreadsheet\Reader\Csv;
+            }
+
+            $spreadsheet = $reader->load($fileNamePath);
             $data = $spreadsheet->getActiveSheet()->toArray();
+            $data = array_filter($data, function ($v) {
+                return array_filter($v) != array();
+            });
+            // $spreadsheet = IOFactory::load($fileNamePath);
+            // $data = $spreadsheet->getActiveSheet()->toArray();
             // dd($data);
             $count = "0";
             foreach ($data as $row) {

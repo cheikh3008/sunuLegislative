@@ -27,7 +27,7 @@ class AppFixtures extends Fixture
         $manager->persist($role_admin);
 
         $user = new User();
-        $user->setUsername('cheikh3008')
+        $user->setUsername(773043248)
             ->setPassword($this->encoder->hashPassword($user, "admin123"))
             ->setNom('Dieng')
             ->setPrenom('Cheikh')

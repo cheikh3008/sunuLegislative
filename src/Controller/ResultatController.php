@@ -2,14 +2,19 @@
 
 namespace App\Controller;
 
+use App\Entity\Coalition;
 use Twilio\Rest\Client;
 use App\Entity\Resultat;
 use App\Form\ResultatType;
+use App\Entity\ResultatCoalition;
 use App\Repository\UserRepository;
 use App\Repository\ResultatRepository;
+use App\Repository\CoalitionRepository;
 use App\Repository\BureauVoteRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use App\Repository\ResultatCoalitionRepository;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -23,19 +28,25 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 class ResultatController extends AbstractController
 {
     private $session;
-    public function __construct(SessionInterface $session)
+    private $coalitionRepository;
+    public function __construct(SessionInterface $session, CoalitionRepository $coalitionRepository)
     {
         $this->session = $session;
+        $this->coalitionRepository = $coalitionRepository;
     }
 
     /**
      * @Route("/", name="app_resultat_index", methods={"GET"})
      * @Security("is_granted('ROLE_ADMIN') or is_granted('ROLE_REPRESENTANT')")
      */
-    public function index(ResultatRepository $resultatRepository): Response
+    public function index(ResultatRepository $resultatRepository, CoalitionRepository $coalitionRepository): Response
     {
+        $resultats = $resultatRepository->findBy([], ['user' => 'DESC']);
+        $coalitions = $coalitionRepository->findBy([], []);
+
         return $this->render('resultat/index.html.twig', [
-            'resultats' => $resultatRepository->findBy([], ['user' => 'DESC']),
+            'resultats' => $resultats,
+            'coalitions' => $coalitions,
         ]);
     }
 
@@ -43,13 +54,14 @@ class ResultatController extends AbstractController
      * @Route("/new", name="app_resultat_new", methods={"GET", "POST"})
      *  @IsGranted("ROLE_REPRESENTANT")
      */
-    public function new(Request $request, ResultatRepository $resultatRepository, BureauVoteRepository $bureauVoteRepository): Response
+    public function new(Request $request, ResultatRepository $resultatRepository, BureauVoteRepository $bureauVoteRepository, EntityManagerInterface $manager): Response
     {
         $resultat = new Resultat();
-        $form = $this->createForm(ResultatType::class, $resultat);
+        $form = $this->createForm(ResultatType::class);
         $form->handleRequest($request);
         $userConnected = $this->getUser();
         $resultats = $resultatRepository->findBy(['user' => $userConnected]);
+        $coalitions = $this->coalitionRepository->findAll();
         // dd($resultats);
         $dataForm = $this->session->get("dataForm", []);
         $Bv = $bureauVoteRepository->findOneBy(["nomBV" => $userConnected->getBV()->getNomBV()]);
@@ -58,21 +70,39 @@ class ResultatController extends AbstractController
         }
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
             $resultat->setUser($userConnected);
-
-            if (($data->getNbVotant() < $data->getBulletinExp()) || ($data->getNbVotant() < $data->getBulletinNull())) {
-                $this->addFlash('error', "Le nombre de votants doit supérieur au nombre bulletins exprimés et au bulletins nuls ");
-                return $this->redirectToRoute('app_resultat_new', [], Response::HTTP_SEE_OTHER);
-            }
             foreach ($resultats as $value) {
                 if ($value->getUser() === $resultat->getUser()) {
                     $this->addFlash('error', "Le bureau de vote " .  $resultat->getUser()->getBV()->getNomBV() . ' a dèja saisi ces résultats ');
                     return $this->redirectToRoute('app_resultat_new', [], Response::HTTP_SEE_OTHER);
                 }
             }
-            $this->session->set("dataForm", $data);
-            //  $resultatRepository->add($resultat, true);
+            $data = $form->getData();
+            $this->session->set('data_session', $data);
+            $resultat->setNbVotant($data['nbVotant'])
+                ->setBulletinNull($data['bulletinNull'])
+                ->setBulletinExp($data['bulletinExp']);
+            $manager->persist($resultat);
+            unset($data["nbVotant"]);
+            unset($data["bulletinNull"]);
+            unset($data["bulletinExp"]);
+            foreach ($data as $key => $value) {
+                $res[] = [
+                    "nom" => $this->coalitionRepository->findOneBy(["slug" => $key]),
+                    "nombre" => $value,
+
+                ];
+                $res_coal = new ResultatCoalition();
+                $res_coal->setResulat($resultat);
+                foreach ($res as $key => $value) {
+
+                    $res_coal->setCoaltion($value['nom']);
+                    $res_coal->setNombre($value['nombre']);
+                }
+
+                $manager->persist($res_coal);
+            }
+
             $this->addFlash('success', "Veuillez saisir à nouveau les résultats");
             return $this->redirectToRoute('app_resultat_new_add', [], Response::HTTP_SEE_OTHER);
         }
@@ -88,41 +118,53 @@ class ResultatController extends AbstractController
      * @Route("/new-add", name="app_resultat_new_add", methods={"GET", "POST"})
      *  @IsGranted("ROLE_REPRESENTANT")
      */
-    public function new_add(Request $request, ResultatRepository $resultatRepository, BureauVoteRepository $bureauVoteRepository): Response
+    public function new_add(Request $request,  BureauVoteRepository $bureauVoteRepository, EntityManagerInterface $manager): Response
     {
 
         $resultat = new Resultat();
-        $form = $this->createForm(ResultatType::class, $resultat);
+        $form = $this->createForm(ResultatType::class);
         $form->handleRequest($request);
         $userConnected = $this->getUser();
-        $dataForm = $this->session->get("dataForm", []);
+        $resultat_session = $this->session->get("data_session", []);
+
         $Bv = $bureauVoteRepository->findOneBy(["nomBV" => $userConnected->getBV()->getNomBV()]);
         if ($Bv !== $userConnected->getBV()) {
             throw new AccessDeniedException("Permission non accordé !");
         }
         if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
             $resultat->setUser($userConnected);
 
-            if (
-                (int)$dataForm->getNbVotant()  !== (int)$resultat->getNbVotant() ||
-                (int)$dataForm->getBulletinnull() !== (int)$resultat->getBulletinnull() ||
-                (int)$dataForm->getBulletinExp() !== (int)$resultat->getBulletinExp() ||
-                (int)$dataForm->getWallu() !== (int)$resultat->getWallu() ||
-                (int)$dataForm->getYewi() !== (int)$resultat->getYewi() ||
-                (int)$dataForm->getAar() !== (int)$resultat->getAar() ||
-                (int)$dataForm->getBby() !== (int)$resultat->getBby() ||
-                (int)$dataForm->getNatangue() !== (int)$resultat->getNatangue() ||
-                (int)$dataForm->getBokkgisgis() !== (int)$resultat->getBokkgisgis() ||
-                (int)$dataForm->getUcb() !== (int)$resultat->getUcb() ||
-                (int)$dataForm->getServiteur() !== (int)$resultat->getServiteur()
-            ) {
-                // dd('error');
+            if ($resultat_session != $data) {
                 $this->addFlash('error', "Les résultats ne sont pas les mêmes !");
                 return $this->redirectToRoute('app_resultat_new', [], Response::HTTP_SEE_OTHER);
             } else {
-                // dd('ok');
-                $resultatRepository->add($resultat, true);
-                $this->session->remove("dataForm");
+                $resultat->setNbVotant($data['nbVotant'])
+                    ->setBulletinNull($data['bulletinNull'])
+                    ->setBulletinExp($data['bulletinExp']);
+                $resultat->setUser($userConnected);
+                $manager->persist($resultat);
+                unset($data["nbVotant"]);
+                unset($data["bulletinNull"]);
+                unset($data["bulletinExp"]);
+                foreach ($data as $key => $value) {
+                    $res[] = [
+                        "nom" => $this->coalitionRepository->findOneBy(["slug" => $key]),
+                        "nombre" => $value,
+
+                    ];
+                    $res_coal = new ResultatCoalition();
+                    $res_coal->setResulat($resultat);
+                    foreach ($res as $key => $value) {
+
+                        $res_coal->setCoaltion($value['nom']);
+                        $res_coal->setNombre($value['nombre']);
+                    }
+
+                    $manager->persist($res_coal);
+                }
+                $manager->flush();
+                $this->session->remove("data_session");
                 $this->addFlash('success', "Les résultats ont été ajoutés avec succés");
                 return $this->redirectToRoute('app_resultat_index', [], Response::HTTP_SEE_OTHER);
             }
@@ -131,7 +173,7 @@ class ResultatController extends AbstractController
         return $this->renderForm('resultat/new-add.html.twig', [
             'resultat' => $resultat,
             'form' => $form,
-            'dataForm' => $dataForm
+            'resultat_session' => $resultat_session
         ]);
     }
 

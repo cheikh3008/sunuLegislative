@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
@@ -19,6 +20,14 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
  */
 class CoalitionController extends AbstractController
 {
+
+    private $slugger;
+    public function __construct(SluggerInterface $slugger)
+    {
+        $this->slugger = $slugger;
+    }
+
+
     /**
      * @Route("/", name="app_coalition_index", methods={"GET"})
      */
@@ -39,8 +48,10 @@ class CoalitionController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $coalition->setSlug($this->slugger->slug($data->getNom()));
             $coalitionRepository->add($coalition, true);
-
+            $this->addFlash('success', 'Cette coalition a été bien ajoutée');
             return $this->redirectToRoute('app_coalition_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -59,7 +70,10 @@ class CoalitionController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $coalition->setSlug($this->slugger->slug($data->getNom()));
             $coalitionRepository->add($coalition, true);
+            $this->addFlash('success', 'Cette coalition a été bien modifée');
 
             return $this->redirectToRoute('app_coalition_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -78,7 +92,7 @@ class CoalitionController extends AbstractController
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($coalition);
         $entityManager->flush();
-        $this->addFlash('success', 'Votre coalition de vote a été bien supprimée');
+        $this->addFlash('success', 'Cette coalition a été bien supprimée');
 
         return $this->redirectToRoute('app_coalition_index', [], Response::HTTP_SEE_OTHER);
     }
@@ -98,27 +112,47 @@ class CoalitionController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-
             $fileName = $request->files->get("upload");
             $fileNamePath = $fileName['file']->getRealPath();
-            $spreadsheet = IOFactory::load($fileNamePath);
+            // dd($fileName['file']->guessExtension());
+            if ($fileName['file']->guessExtension() == "xlsx") {
+                # code...
+                $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx;
+            }
+            if ($fileName['file']->guessExtension() == "xls") {
+                # code...
+                $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xls;
+            }
+            if ($fileName['file']->guessExtension() == "csv") {
+                # code...
+                $reader = new \PhpOffice\PhpSpreadsheet\Reader\Csv;
+            }
+            if ($fileName['file']->guessExtension() == "txt") {
+                # code...
+                $reader = new \PhpOffice\PhpSpreadsheet\Reader\Csv;
+            }
+
+            $spreadsheet = $reader->load($fileNamePath);
             $data = $spreadsheet->getActiveSheet()->toArray();
-            // dd($data);
+            $data = array_filter($data, function ($v) {
+                return array_filter($v) != array();
+            });
             $count = "0";
             foreach ($data as $row) {
                 if ($count > 0) {
-                    // try {
-                    $coalition = new Coalition();
-                    $nom = $row["0"];
-                    $coalition->setNom($nom);
-                    $entityManagerInterface->persist($coalition);
-                    $entityManagerInterface->flush();
-                    // $this->addFlash('success', 'Votre fichier a été importé avec succés');
-                    // } catch (\Throwable $th) {
-                    // throw new Exception("Impossible d'importer ce fichier.");
-                    // $this->addFlash('error', "Impossible d'importer ce fichier.");
-                    // return $this->redirectToRoute('app_coalition_add', [], Response::HTTP_SEE_OTHER);
-                    // }
+                    try {
+                        $coalition = new Coalition();
+                        $nom = $row["0"];
+                        $coalition->setNom($nom);
+                        $coalition->setSlug($this->slugger->slug($nom));
+                        $entityManagerInterface->persist($coalition);
+                        $entityManagerInterface->flush();
+                        // $this->addFlash('success', 'Votre fichier a été importé avec succés');
+                    } catch (\Throwable $th) {
+                        throw new \Exception("Impossible d'importer ce fichier.");
+                        $this->addFlash('error', "Impossible d'importer ce fichier.");
+                        return $this->redirectToRoute('app_coalition_add', [], Response::HTTP_SEE_OTHER);
+                    }
                 } else {
                     $count = "1";
                 }

@@ -3,9 +3,10 @@
 namespace App\Controller;
 
 
-use App\Repository\BureauVoteRepository;
 use Symfony\UX\Chartjs\Model\Chart;
 use App\Repository\ResultatRepository;
+use App\Repository\CoalitionRepository;
+use App\Repository\BureauVoteRepository;
 use App\Repository\DepartementRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,16 +20,20 @@ class HomeController extends AbstractController
     private $resultatRepository;
     private $bureauVoteRepository;
     private $chartBuilder;
+    private $coalitionRepository;
     public function __construct(
         DepartementRepository $departementRepository,
         ResultatRepository $resultatRepository,
         ChartBuilderInterface $chartBuilder,
-        BureauVoteRepository $bureauVoteRepository
+        BureauVoteRepository $bureauVoteRepository,
+        CoalitionRepository $coalitionRepository
     ) {
         $this->departementRepository = $departementRepository;
         $this->resultatRepository = $resultatRepository;
         $this->chartBuilder = $chartBuilder;
         $this->bureauVoteRepository = $bureauVoteRepository;
+        $this->coalitionRepository = $coalitionRepository;
+
     }
     /**
      * @Route("/", name="app_home")
@@ -40,6 +45,7 @@ class HomeController extends AbstractController
     {
         $departements = $this->departementRepository->findAll();
         $resultats =  $this->resultatRepository->findAll();
+        $coalitions = $this->coalitionRepository->findBy([], []);
         $nbInscrit = 0;
         $nbVotant = 0;
         $bulletinNull = 0;
@@ -48,24 +54,21 @@ class HomeController extends AbstractController
         $nombreResultatBV = $this->resultatRepository->findBy([], ['id' => 'DESC']);
         $nombreBVCirconscription = $this->resultatRepository->findNombreBureauVoteCoalition();
         $man = $this->resultatRepository->findNombreResultBureauVoteCoalition();
-        // dd($nombreBVCirconscription, $man);
+        $findNombreTotalVoix =  $this->resultatRepository->findNombreTotalVoix() ;       
         $nb = [];
-        $nbTotalVoixPourCoalition = [];
-        $nomCoalition  = [];
-        $nbVoix  = [];
-        foreach ($this->resultatRepository->findNombreTotalVoix()[0] as $key => $value) {
-            $nomCoalition[] = str_replace('_', ' ', $key);
-            $nbVoix[] = $value;
-            $nbTotalVoixPourCoalition[$key] = $value;
-        }
-
+        $nbVoix = [];
+        $nom_de_la_coaltion = [];
         $taux = 0;
         $resultDprt = [];
 
         foreach ($this->resultatRepository->findByDepartement() as $key => $ddd) {
             $resultDprt[] = $ddd;
         }
-
+        // dd($this->resultatRepository->findNombreTotalVoix());
+        foreach ($findNombreTotalVoix as $key => $value) {
+            $nbVoix [$key] = $value['nbVoix'];
+            $nom_de_la_coaltion [$key] = $value['nom'];
+        }
         foreach ($departements as  $value) {
             $nbInscrit += $value->getNbInscrit();
             $nombreTotalBV += $value->getNbBV();
@@ -76,10 +79,11 @@ class HomeController extends AbstractController
             $bulletinExp += $res->getBulletinExp();
         }
         if ($nbVotant && $nbInscrit) {
-
             $taux = $nbVotant / $nbInscrit * 100;
         }
-        // dd($man);
+        // foreach ($coalitions as $key => $value) {
+        //     $nom_de_la_coaltion [] = $value->getNom();
+        // }
         return $this->render('home/index.html.twig', [
             'nbInscrit' => number_format($nbInscrit, 0, '.', ' '),
             'nbVotant' => number_format($nbVotant, 0, '.', ' '),
@@ -89,13 +93,13 @@ class HomeController extends AbstractController
             'taux' => number_format($taux, 2),
             'nb' => $nb,
             'resultDprt' => $resultDprt,
-            'chartBar' => $this->getChartBar($nomCoalition, $nbVoix),
-            'nomCoalition' => $nomCoalition,
-            'nbTotalVoixPourCoalition' => $nbTotalVoixPourCoalition,
+            'chartBar' => $this->getChartBar($nom_de_la_coaltion, $nbVoix),
             'nombreBVCirconscription' => $nombreBVCirconscription,
             'nombreResultatBV' => $nombreResultatBV,
             'man' => $man,
-
+            'coalitions' => $coalitions,
+            'findNombreTotalVoix' => $findNombreTotalVoix,
+            'resultats' => $resultats
         ]);
     }
 

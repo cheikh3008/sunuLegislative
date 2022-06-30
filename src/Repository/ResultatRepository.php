@@ -69,15 +69,7 @@ class ResultatRepository extends ServiceEntityRepository
                 ' SELECT B.nomCir,  
                 SUM(R.nbVotant) as nbVotant,
                 SUM(R.bulletinNull) as bulletinNull,
-                SUM(R.bulletinExp) as bulletinExp,
-                SUM(R.wallu) as wallu,
-                SUM(R.yewi) as yewi,
-                SUM(R.bby) as bby,
-                SUM(R.aar) as aar,
-                SUM(R.natangue) as natangue,
-                SUM(R.serviteur) as serviteur,
-                SUM(R.bokkgisgis) as bokkgisgis,
-                SUM(R.ucb) as ucb
+                SUM(R.bulletinExp) as bulletinExp
                     FROM App\Entity\User U,
                     App\Entity\Resultat R,
                     App\Entity\BureauVote B
@@ -91,16 +83,11 @@ class ResultatRepository extends ServiceEntityRepository
     {
         return $this->getEntityManager()
             ->createQuery(
-                " SELECT 
-                SUM(R.wallu) as wallu,
-                SUM(R.yewi) as yewi,
-                SUM(R.bby) as bby,
-                SUM(R.aar) as aar,
-                SUM(R.natangue) as natangue,
-                SUM(R.serviteur) as serviteur,
-                SUM(R.bokkgisgis) as bokkgisgis,
-                SUM(R.ucb) as ucb
-                FROM  App\Entity\Resultat R "
+                " SELECT C.nom, SUM(CR.nombre) as nbVoix
+                FROM App\Entity\Resultat R, App\Entity\Coalition C, App\Entity\ResultatCoalition CR
+                WHERE C.id = CR.coaltion AND R.id = CR.resulat
+                GROUP BY C.nom
+                 "
             )->getResult();
     }
 
@@ -109,14 +96,7 @@ class ResultatRepository extends ServiceEntityRepository
         return $this->getEntityManager()
             ->createQuery(
                 " SELECT 
-                SUM(R.wallu) as Wallu_Senegal,
-                SUM(R.yewi) as Yewi_Askan_Wi,
-                SUM(R.bby) as Benno_Bokk_Yakaar,
-                SUM(R.aar) as Alternativespour_une_Assemblee_de_rupture,
-                SUM(R.natangue) as Naatangue_Senegal,
-                SUM(R.serviteur) as Les_serviteurs,
-                SUM(R.bokkgisgis) as Bokk_Guis_Guis,
-                SUM(R.ucb) as Union_citoyenne_Bunt_Bi
+                R
                 FROM  App\Entity\Resultat R "
             )->getResult();
     }

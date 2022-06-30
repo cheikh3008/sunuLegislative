@@ -1,40 +1,6 @@
 {{ form_start(form, {attr: {'novalidate': 'novalidate'}}) }}
 <div class="row">
-
-    <div class="col-md-4">
-        {{ form_row(form.nbVotant) }}
-    </div>
-    <div class="col-md-4">
-        {{ form_row(form.bulletinNull) }}
-    </div>
-    <div class="col-md-4">
-        {{ form_row(form.bulletinExp) }}
-    </div>
-    <div class="col-md-6">
-        {{ form_row(form.wallu) }}
-    </div>
-
-    <div class="col-md-6">
-        {{ form_row(form.yewi) }}
-    </div>
-    <div class="col-md-6">
-        {{ form_row(form.serviteur) }}
-    </div>
-    <div class="col-md-6">
-        {{ form_row(form.aar) }}
-    </div>
-    <div class="col-md-6">
-        {{ form_row(form.bby) }}
-    </div>
-    <div class="col-md-6">
-        {{ form_row(form.natangue) }}
-    </div>
-    <div class="col-md-6">
-        {{ form_row(form.bokkgisgis) }}
-    </div>
-    <div class="col-md-6">
-        {{ form_row(form.ucb) }}
-    </div>
+    {{ form_widget(form) }}
 </div>
 <button class="btn btn-success">{{ button_label|default('Ajouter') }}</button>
 {{ form_end(form) }}
