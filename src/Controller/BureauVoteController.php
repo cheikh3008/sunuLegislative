@@ -43,7 +43,7 @@ class BureauVoteController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $bureauVoteRepository->add($bureauVote, true);
-            $this->addFlash('success', 'Ce bureau de vote a été bien supprimé');
+            $this->addFlash('success', 'Ce bureau de vote a été bien ajouté');
             return $this->redirectToRoute('app_bureau_vote_index', [], Response::HTTP_SEE_OTHER);
         }
 

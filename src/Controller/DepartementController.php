@@ -108,13 +108,13 @@ class DepartementController extends AbstractController
     /**
      * @Route("/add-csv", name="app_add_csv")
      */
-    public function addBy(Request $request, EntityManagerInterface $entityManagerInterface): Response
+    public function addBy(Request $request, EntityManagerInterface $entityManagerInterface, DepartementRepository $departementRepository): Response
 
     {
 
         $upload = new Upload();
         $form = $this->createForm(UploadType::class, $upload);
-
+        $departements = $departementRepository->findAll();
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
@@ -150,6 +150,12 @@ class DepartementController extends AbstractController
                         $nom = $row['0'];
                         $NBBV  = $row['2'];
                         $NBin = $row['1'];
+                        foreach ($departements as $key => $value) {
+                            if ($value->getNom() === $nom) {
+                                $this->addFlash('error', 'certaines circonscriptions existent dèja !');
+                                return $this->redirectToRoute('app_add_csv', [], Response::HTTP_SEE_OTHER);
+                            }
+                        }
                         $departement->setNom($nom)
                             ->setNbBV($NBBV)
                             ->setNbInscrit($NBin);

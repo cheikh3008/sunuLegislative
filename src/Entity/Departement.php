@@ -10,7 +10,9 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=DepartementRepository::class)
- *  @UniqueEntity("nom")
+ * @UniqueEntity(
+ * {"nom"}, 
+ * message="Cette circonscription existe déja .")
  */
 class Departement
 {

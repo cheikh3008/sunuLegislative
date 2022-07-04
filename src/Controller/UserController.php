@@ -70,7 +70,7 @@ class UserController extends AbstractController
             foreach ($usersAll as $key => $value) {
                 if ($value->getTelephone() === (int)$username) {
                     $this->addFlash('error', 'ce numéro de téléphone existe dèja !');
-                    return $this->redirectToRoute('app_user_add', [], Response::HTTP_SEE_OTHER);
+                    return $this->redirectToRoute('app_user_new', [], Response::HTTP_SEE_OTHER);
                 }
             }
             if ($userRS) {
