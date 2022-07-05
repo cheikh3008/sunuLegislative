@@ -13,7 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 
-class UserType extends AbstractType
+class UserTypeEdit extends AbstractType
 {
 
 
@@ -33,11 +33,11 @@ class UserType extends AbstractType
                     'placeholder' => 'Entrez le prénom',
                 ]
             ])
-            ->add('code', ChoiceType::class, [
-                'label' => 'Code pays',
-                'choices'  =>  $options['codes'],
-                'placeholder' => 'Veuillez choisir un code pays',
-            ])
+            // ->add('code', ChoiceType::class, [
+            //     'label' => 'Code pays',
+            //     'choices'  =>  $options['codes'],
+            //     'placeholder' => 'Veuillez choisir un code pays',
+            // ])
             ->add('telephone', NumberType::class, [
                 'label' => 'Téléphone',
                 'attr' => [

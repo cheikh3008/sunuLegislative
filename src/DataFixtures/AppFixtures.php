@@ -33,7 +33,7 @@ class AppFixtures extends Fixture
             ->setPrenom('Cheikh')
             ->setUuid('Greush221')
             ->setRole($role_admin)
-            ->setTelephone(773043248);
+            ->setTelephone(221773043248);
         $manager->persist($user);
 
         $manager->flush();

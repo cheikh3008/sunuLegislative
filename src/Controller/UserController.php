@@ -9,17 +9,21 @@ use App\Form\UserType;
 use App\Entity\SendSMS;
 use App\Form\UploadType;
 use App\Form\SendSMSType;
+use App\Form\UserTypeEdit;
 use App\Entity\SendMessageAll;
 use App\Entity\SendMessageOne;
 use App\Entity\SendIdentifiant;
+use libphonenumber\PhoneNumber;
 use App\Form\SendMessageAllType;
 use App\Form\SendMessageOneType;
 use App\Form\SendIdentifiantType;
 use App\Repository\RoleRepository;
 use App\Repository\UserRepository;
+use libphonenumber\PhoneNumberUtil;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use App\Repository\BureauVoteRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use libphonenumber\NumberParseException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -55,20 +59,37 @@ class UserController extends AbstractController
      */
     public function new(Request $request,  UserPasswordHasherInterface $userPasswordHasher, RoleRepository $roleRepository, BureauVoteRepository $bureauVoteRepository): Response
     {
+        $phoneUtil = PhoneNumberUtil::getInstance();
+        $codes_choice = [];
+        $regions = ($phoneUtil->getSupportedRegions());
+        foreach ($regions as  $value) {
+            $codes_choice[$value . " + " . $phoneUtil->getCountryCodeForRegion($value)] = $value;
+        }
+        $formOptions = array('codes' => $codes_choice);
+        // dd($phoneUtil->getSupportedRegions());
         $user = new User();
-        $form = $this->createForm(UserType::class, $user);
+        $form = $this->createForm(UserType::class, $user, $formOptions);
         $form->handleRequest($request);
         $usersAll = $this->userRepository->findAll();
         $role = $roleRepository->findOneBy(["libelle" => "ROLE_REPRESENTANT"]);
         $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         $password = substr(str_shuffle($chars), 0, 8);
         if ($form->isSubmitted() && $form->isValid()) {
-            $username = ($form->get('telephone')->getData());
+            $telephone =  $form->get('telephone')->getData();
+            $code = $form->get('code')->getData();
+            $phone = $phoneUtil->parse($telephone, $code);
+            $number = $phone->getNationalNumber();
+            $indicatif = $phone->getCountryCode();
+            if (!$phoneUtil->isValidNumber($phone)) {
+                $this->addFlash('error', 'Le numéro de téléphone n\'est pas valide !');
+                return $this->redirectToRoute('app_user_new', [], Response::HTTP_SEE_OTHER);
+            }
             $nomBV =  ($form->get('BV')->getData());
             // $bvExi = $bureauVoteRepository->findOneBy(['nomBV' => $nomBV]);
             $userRS = $this->userRepository->findOneBy(['BV' => $nomBV]);
             foreach ($usersAll as $key => $value) {
-                if ($value->getTelephone() === (int)$username) {
+                // dd($value->getTelephone() === (int)$telephone);
+                if ($value->getTelephone() === (int)($indicatif . $telephone)) {
                     $this->addFlash('error', 'ce numéro de téléphone existe dèja !');
                     return $this->redirectToRoute('app_user_new', [], Response::HTTP_SEE_OTHER);
                 }
@@ -79,13 +100,16 @@ class UserController extends AbstractController
             }
             $user->setRole($role);
             $user->setUuid($password);
+            $user->setCode($code);
+            $user->setTelephone(trim($indicatif . $telephone));
             $user->setPassword(
                 $userPasswordHasher->hashPassword(
                     $user,
                     $password
                 )
             );
-            $user->setUsername($username);
+
+            $user->setUsername($number);
             $this->userRepository->add($user, true);
             $this->addFlash('success', 'Ce représentant a été bien ajouté');
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
@@ -103,12 +127,38 @@ class UserController extends AbstractController
      */
     public function edit(Request $request, User $user): Response
     {
-        $form = $this->createForm(UserType::class, $user);
+        $usersAll = $this->userRepository->findAll();
+        $phoneUtil = PhoneNumberUtil::getInstance();
+        $codes_choice = [];
+        $regions = ($phoneUtil->getSupportedRegions());
+        foreach ($regions as  $value) {
+            $codes_choice[$value . " + " . $phoneUtil->getCountryCodeForRegion($value)] = $value;
+        }
+        $formOptions = array('codes' => $codes_choice);
+
+        $form = $this->createForm(UserType::class, $user, $formOptions);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-            $user->setUsername($data->getTelephone());
+            $telephone =  $data->getTelephone();
+            $code = $data->getCode();
+            $phone = $phoneUtil->parse($telephone, $code);
+            $indicatif = $phone->getCountryCode();
+            $number = $phone->getNationalNumber();
+            if (!$phoneUtil->isValidNumber($phone)) {
+                $this->addFlash('error', 'Le numéro de téléphone n\'est pas valide !');
+                return $this->redirectToRoute('app_user_edit', ['id' => $user->getId()], Response::HTTP_SEE_OTHER);
+            }
+            foreach ($usersAll as $key => $value) {
+                if ($value->getTelephone() === (int)($indicatif . $telephone)) {
+                    $this->addFlash('error', 'ce numéro de téléphone existe dèja !');
+                    return $this->redirectToRoute('app_user_edit', ['id' => $user->getId()], Response::HTTP_SEE_OTHER);
+                }
+            }
+            $user->setCode($code);
+            $user->setTelephone(trim($indicatif . $number));
+            $user->setUsername($number);
             $this->userRepository->add($user, true);
             $this->addFlash('success', 'Ce représentant a été bien modifié');
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
@@ -143,6 +193,7 @@ class UserController extends AbstractController
         $form = $this->createForm(UploadType::class, $upload);
         $usersAll = $this->userRepository->findAll();
         $form->handleRequest($request);
+        $phoneUtil = PhoneNumberUtil::getInstance();
         $role = $roleRepository->findOneBy(["libelle" => "ROLE_REPRESENTANT"]);
         if ($form->isSubmitted() && $form->isValid()) {
 
@@ -180,25 +231,33 @@ class UserController extends AbstractController
                 $password = substr(str_shuffle($chars), 0, 8);
                 if ($count > 0) {
                     try {
-                        if (empty($row)) {
-                            dd($data);
-                        }
+
                         $nom = $row["0"];
                         $prenom  = $row["1"];
-                        $telephone  = $row["2"];
+                        $telephone  = (string)$row["2"];
                         $username  = $row["2"];
                         $nomBV = $row["3"];
+                        $phone = $phoneUtil->parse("+" . $telephone, null);
+                        $codePays = $phoneUtil->getRegionCodeForNumber($phone);
+                        $code = $phone->getCountryCode();
+                        $number = (int)$phone->getNationalNumber();
+                        // dd( (int) $code.$number, $phoneUtil->isValidNumber($phone));
+                        if (!$phoneUtil->isValidNumber($phone)) {
+                            $this->addFlash('error', 'Certains numéros de téléphone ne sont pas valides !');
+                            return $this->redirectToRoute('app_user_add', [], Response::HTTP_SEE_OTHER);
+                        }
                         foreach ($usersAll as $key => $value) {
-                            if ($value->getTelephone() === $telephone) {
+                            if ($value->getTelephone() === (int)($code . $number)) {
                                 $this->addFlash('error', 'Certains numéros de téléphone existent dèja !');
                                 return $this->redirectToRoute('app_user_add', [], Response::HTTP_SEE_OTHER);
                             }
                         }
                         $nomBV1 = $bureauVoteRepository->findOneBy(['nomBV' => $nomBV]);
                         $user->setNom($nom)
-                            ->setUsername($username)
+                            ->setUsername($number)
                             ->setPrenom($prenom)
-                            ->setTelephone($telephone)
+                            ->setCode($codePays)
+                            ->setTelephone($code . $number)
                             ->setUuid($password)
                             ->setBV($nomBV1)
                             ->setRole($role)
@@ -238,7 +297,7 @@ class UserController extends AbstractController
         foreach ($users as $value) {
 
             $datas[] = $value;
-            $telephone = '221' . $value->getTelephone();
+            $telephone = $value->getTelephone();
             $nom = strtoupper($value->getNom());
             $username = $value->getUsername();
             $uiid = $value->getUuid();
@@ -271,7 +330,7 @@ class UserController extends AbstractController
             $uiid = $user->getUuid();
             $prenom = strtoupper($user->getPrenom()[0]);
             $message = ("Bonjour $prenom. $nom, votre  identifiant de connexion est : $username, votre Mot de passe : $uiid \r\nLe lien de la plateforme : www.sunulegislatives2022.com");
-            $this->getSMS('221' . $user->getTelephone(), $message);
+            $this->getSMS($user->getTelephone(), $message);
             $this->addFlash('success', "Les identifiants de connexion ont été envoyé à " . $user->getFullname());
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -294,7 +353,7 @@ class UserController extends AbstractController
             $tel = $data->getTelephone();
             $user = $this->userRepository->findOneBy(["uuid" => $tel]);
             $message = $data->getMessage();
-            $this->getSMS('221' . $user->getTelephone(), $message);
+            $this->getSMS($user->getTelephone(), $message);
             $this->addFlash('success', "Votre message a été bien envoyé à " . $user->getFullname());
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -316,7 +375,7 @@ class UserController extends AbstractController
             $data = $form->getData();
             $message = $data->getMessage();
             foreach ($users as $value) {
-                $telephone = '221' . $value->getTelephone();
+                $telephone = $value->getTelephone();
 
                 $this->getSMS($telephone, $message);
             }

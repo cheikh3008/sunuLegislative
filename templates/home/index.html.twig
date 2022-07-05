@@ -201,6 +201,7 @@
                     </thead>
                     <tbody>
                         {% for row in resultDprt %}
+
                         <tr>
                             <td>{{row.nomCir}}</td>
                             <td>{{row.nbVotant}}</td>
@@ -240,18 +241,23 @@
                         <th>Bulletins nuls</th>
                         <th>Bulletins exprimés</th>
                         {% for row in coalitions %}
+                        {% if row.resultatCoalitions | length > 0 %}
                         <th>
-                            {% if row.resultatCoalitions | length > 0 %}
                             {{row.nom}}
-                            {% endif %}
                         </th>
+                        {% else %}
+                        <th style="display: none;"></th>
+                        {% endif %}
                         {% endfor %}
                         <th>Représentant</th>
+                        <style>
 
+                        </style>
                     </tr>
                 </thead>
                 <tbody>
                     {% for resultat in resultats %}
+
                     <tr>
                         <td>{{ resultat.user.BV.nomCir }}</td>
                         <td>{{ resultat.user.BV.NomBV }}</td>
@@ -277,4 +283,5 @@
     </div>
     {# Fin Nombre de résultats de Bureaux de Vote obtenus #}
 </div>
+
 {% endblock %}

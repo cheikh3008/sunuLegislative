@@ -1,4 +1,26 @@
 {{ form_start(form, {attr: {'novalidate': 'novalidate'}}) }}
-    {{ form_widget(form) }}
-    <button class="btn btn-success">{{ button_label|default('Ajouter') }}</button>
+<div class="row">
+    <div class="col-md-12">
+        {{ form_row(form.prenom) }}
+    </div>
+    <div class="col-md-12">
+        {{ form_row(form.nom) }}
+    </div>
+    <div class="col-md-3">
+        {{ form_row(form.code) }}
+    </div>
+    <div class="col-md-9">
+        {{ form_row(form.telephone) }}
+    </div>
+    <div class="col-md-12">
+        {{ form_row(form.BV) }}
+    </div>
+</div>
+<button class="btn btn-success">{{ button_label|default('Ajouter') }}</button>
 {{ form_end(form) }}
+
+<style>
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        padding: 10px !important;
+    }
+</style>

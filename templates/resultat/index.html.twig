@@ -44,7 +44,13 @@
                     <th>Bulletins nuls</th>
                     <th>Bulletins exprimés</th>
                     {% for row in coalitions %}
-                    <th> {{row.nom}} </th>
+                    {% if row.resultatCoalitions | length > 0 %}
+                    <th>
+                        {{row.nom}}
+                    </th>
+                    {% else %}
+                    <th style="display: none;"></th>
+                    {% endif %}
                     {% endfor %}
                     <th>Représentant</th>
                     {% if app.user and app.user.roles[0] == 'ROLE_REPRESENTANT' %}

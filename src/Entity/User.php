@@ -23,7 +23,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=180, unique=true)
+     * @ORM\Column(type="string", length=200, unique=true)
      */
     private $username;
 
@@ -53,12 +53,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $prenom;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="bigint")
      * @Assert\NotBlank(message="Veuillez remplir ce champ")
-     * @Assert\Regex( pattern  = "#^(77||78||76||70||75)[0-9]{9}$#",
-     *      message="Veuillez entrer un numéro de téléphone valide ."
-     * )
      */
+    // * @Assert\Regex( pattern  = "#^(77||78||76||70||75)[0-9]{9}$#",
+    // *      message="Veuillez entrer un numéro de téléphone valide."
+    // * )
     private $telephone;
 
     /**
@@ -66,21 +66,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $uuid;
 
+
+
     /**
      * @ORM\OneToOne(targetEntity=BureauVote::class, cascade={"persist", "remove"})
      * @Assert\NotBlank(message="Veuillez remplir ce champ")
      */
     private $BV;
 
-    /**
-     * @ORM\OneToOne(targetEntity=Resultat::class, mappedBy="user", cascade={"persist", "remove"})
-     */
-    private $resultat;
 
     /**
      * @ORM\OneToMany(targetEntity=Resultat::class, mappedBy="user")
      */
     private $resultats;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Veuillez choisir un code pays")
+     */
+    private $code;
 
     public function __construct()
     {
@@ -92,6 +96,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->id;
     }
+
+
 
     /**
      * @deprecated since Symfony 5.3, use getUserIdentifier instead
@@ -211,6 +217,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+
     public function getUuid(): ?string
     {
         return $this->uuid;
@@ -278,6 +285,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $resultat->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCode(): ?string
+    {
+        return $this->code;
+    }
+
+    public function setCode(?string $code): self
+    {
+        $this->code = $code;
 
         return $this;
     }
