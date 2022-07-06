@@ -95,7 +95,7 @@
                         <td> {{row.nomCir}} </td>
                         <td> {{row.nbBureauVote}} </td>
                         <td>
-                            {% if man == [] %}
+                            {% if man | length == 0 %}
                             0
                             {% else %}
                             {% for test in man %}
