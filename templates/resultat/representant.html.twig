@@ -34,8 +34,11 @@
 
     </div>
     <div class="content table-responsive">
-        {% if resultats %}
 
+
+        {# Liste resultats rep #}
+        {% if app.user and app.user.roles[0] == 'ROLE_REPRESENTANT' %}
+        {% if resultats %}
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -54,32 +57,26 @@
                     {% endif %}
                     {% endfor %}
                     <th>Représentant</th>
-                    
+
                 </tr>
             </thead>
             <tbody>
-                {% for resultat in resultats %}
+                {# {% for resultat in resultats %} #}
+                {% if app.user == resultats.user %}
                 <tr>
-                    <td>{{ resultat.user.BV.nomCir }}</td>
-                    <td>{{ resultat.user.BV.NomBV }}</td>
-                    <td>{{ resultat.nbVotant }}</td>
-                    <td>{{ resultat.bulletinNull }}</td>
-                    <td>{{ resultat.bulletinExp }}</td>
-                    {% for row in resultat.getResultatCoalitions %}
+                    <td>{{ resultats.user.BV.nomCir }}</td>
+                    <td>{{ resultats.user.BV.NomBV }}</td>
+                    <td>{{ resultats.nbVotant }}</td>
+                    <td>{{ resultats.bulletinNull }}</td>
+                    <td>{{ resultats.bulletinExp }}</td>
+                    {% for row in resultats.getResultatCoalitions %}
                     <td> {{row.nombre}} </td>
                     {% endfor %}
-                    <td>{{ resultat.user.prenom }} {{resultat.user.nom}}</td>
-                    {# {% if app.user == resultat.user %}
-                    <td>
+                    <td>{{ resultats.user.prenom }} {{resultats.user.nom}}</td>
 
-                        <a href="{{ path('app_resultat_edit', {'id': resultat.id}) }}"
-                            class="mx-1 my-2 btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></a>
-                        <a href="{{ path('app_resultat_delete', {'id': resultat.id}) }} "
-                            class="mx-1 my-2 btn btn-danger"><i class="fa-solid fa-trash-can"></i></a>
-                    </td>
-                    {% endif %} #}
                 </tr>
-                {% endfor %}
+                {% endif %}
+                {# {% endfor %} #}
             </tbody>
         </table>
 
@@ -88,6 +85,8 @@
             <span>Aucun enregistrement trouvé </span>
         </div>
         {% endif %}
+        {% endif %}
+
     </div>
 </div>
 {% endblock %}

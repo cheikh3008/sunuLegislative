@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}SunuLégislatives2022 | Résultats des bureaux de vote pour chaque coalition{% endblock %}
+
+{% block body %}
+
+
+<div class="container-fluid">
+    {% for message in app.flashes('success') %}
+    <div class="text-center alert alert-success mt-2" role="alert">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% for message in app.flashes('error') %}
+    <div class="text-center alert alert-danger mt-2" role="alert">
+        {{ message }}
+    </div>
+    {% endfor %}
+    <div class="card mt-2 mb-2" style="width: 100%;">
+        <div class="card-header" style="padding:20px;background-color:#fff !important;">
+            <div class="d-flex justify-content-between">
+                <div class="mt-2">
+                    <h4>Nombre de voix de chaque Coalition par bureau de vote</h4>
+                </div>
+                
+            </div>
+        </div>
+
+    </div>
+    <div class="content table-responsive">
+        {% if app.user and app.user.roles[0] == 'ROLE_ADMIN' %}
+
+        {% if resultats %}
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Nom de la circonscription</th>
+                    <th>Bureau de vote</th>
+                    <th>Nombre de votants</th>
+                    <th>Bulletins nuls</th>
+                    <th>Bulletins exprimés</th>
+                    {% for row in coalitions %}
+                    {% if row.resultatCoalitions | length > 0 %}
+                    <th>
+                        {{row.nom}}
+                    </th>
+                    {% else %}
+                    <th style="display: none;"></th>
+                    {% endif %}
+                    {% endfor %}
+                    <th>Représentant</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                {% for resultat in resultats %}
+                <tr>
+                    <td>{{ resultat.user.BV.nomCir }}</td>
+                    <td>{{ resultat.user.BV.NomBV }}</td>
+                    <td>{{ resultat.nbVotant }}</td>
+                    <td>{{ resultat.bulletinNull }}</td>
+                    <td>{{ resultat.bulletinExp }}</td>
+                    {% for row in resultat.getResultatCoalitions %}
+                    <td> {{row.nombre}} </td>
+                    {% endfor %}
+                    <td>{{ resultat.user.prenom }} {{resultat.user.nom}}</td>
+                   
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% else %}
+        <div class="alert alert-danger text-center" role="alert">
+            <span>Aucun enregistrement trouvé </span>
+        </div>
+        {% endif %}
+        {% endif %}
+
+       
+
+    </div>
+</div>
+{% endblock %}
