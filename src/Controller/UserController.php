@@ -302,7 +302,7 @@ class UserController extends AbstractController
             $username = $value->getUsername();
             $uiid = $value->getUuid();
             $prenom = strtoupper($value->getPrenom()[0]);
-            $message = ("Bonjour $prenom. $nom, votre  identifiant de connexion est : $username, votre Mot de passe : $uiid \r\nLe lien de la plateforme : www.sunulegislatives2022.com");
+            $message = ("Bonjour $prenom. $nom, votre  identifiant de connexion est : $username, votre Mot de passe : $uiid \r\nLe lien de la plateforme : www.sunulegislatives.com");
 
             $this->getSMS($telephone, $message);
         }
@@ -329,7 +329,7 @@ class UserController extends AbstractController
             $username = $user->getUsername();
             $uiid = $user->getUuid();
             $prenom = strtoupper($user->getPrenom()[0]);
-            $message = ("Bonjour $prenom. $nom, votre  identifiant de connexion est : $username, votre Mot de passe : $uiid \r\nLe lien de la plateforme : www.sunulegislatives2022.com");
+            $message = ("Bonjour $prenom. $nom, votre  identifiant de connexion est : $username, votre Mot de passe : $uiid \r\nLe lien de la plateforme : www.sunulegislatives.com");
             $this->getSMS($user->getTelephone(), $message);
             $this->addFlash('success', "Les identifiants de connexion ont été envoyé à " . $user->getFullname());
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
