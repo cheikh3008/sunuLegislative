@@ -170,7 +170,7 @@ class DepartementController extends AbstractController
                     $count = "1";
                 }
             }
-            $this->addFlash('success', 'Votre fichier a été importé avec succés');
+            $this->addFlash('success', 'Votre fichier a été importé avec succès');
             return $this->redirectToRoute('app_departement_index');
         }
         return $this->render('departement/add-csv.html.twig', [

@@ -86,9 +86,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $code;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isValid;
+
     public function __construct()
     {
         $this->resultats = new ArrayCollection();
+        $this->isValid = false;
     }
 
 
@@ -297,6 +303,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCode(?string $code): self
     {
         $this->code = $code;
+
+        return $this;
+    }
+
+    public function isIsValid(): ?bool
+    {
+        return $this->isValid;
+    }
+
+    public function setIsValid(?bool $isValid): self
+    {
+        $this->isValid = $isValid;
 
         return $this;
     }

@@ -162,7 +162,7 @@ class CoalitionController extends AbstractController
                     $count = "1";
                 }
             }
-            $this->addFlash('success', 'Votre fichier a été importé avec succés');
+            $this->addFlash('success', 'Votre fichier a été importé avec succès');
             return $this->redirectToRoute('app_coalition_index');
         }
         return $this->render('coalition/add-coalition.html.twig', [

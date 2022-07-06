@@ -118,7 +118,7 @@ class ResultatController extends AbstractController
      * @Route("/new-add", name="app_resultat_new_add", methods={"GET", "POST"})
      *  @IsGranted("ROLE_REPRESENTANT")
      */
-    public function new_add(Request $request,  BureauVoteRepository $bureauVoteRepository, EntityManagerInterface $manager): Response
+    public function new_add(Request $request,  BureauVoteRepository $bureauVoteRepository, EntityManagerInterface $manager, UserRepository $userRepository): Response
     {
 
         $resultat = new Resultat();
@@ -126,7 +126,8 @@ class ResultatController extends AbstractController
         $form->handleRequest($request);
         $userConnected = $this->getUser();
         $resultat_session = $this->session->get("data_session", []);
-
+        $user = $userRepository->find($this->getUser()->getId());
+        // dd($user);
         $Bv = $bureauVoteRepository->findOneBy(["nomBV" => $userConnected->getBV()->getNomBV()]);
         if ($Bv !== $userConnected->getBV()) {
             throw new AccessDeniedException("Permission non accordé !");
@@ -163,6 +164,7 @@ class ResultatController extends AbstractController
 
                     $manager->persist($res_coal);
                 }
+                $manager->persist($user->setIsValid(true));
                 $manager->flush();
                 $this->session->remove("data_session");
                 $this->addFlash('success', "Les résultats ont été ajoutés avec succés");

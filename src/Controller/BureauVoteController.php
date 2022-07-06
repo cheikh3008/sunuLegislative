@@ -147,7 +147,7 @@ class BureauVoteController extends AbstractController
                     $count = "1";
                 }
             }
-            $this->addFlash('success', 'Votre fichier a été importé avec succés');
+            $this->addFlash('success', 'Votre fichier a été importé avec succès');
             return $this->redirectToRoute('app_bureau_vote_index');
         }
         return $this->render('bureau_vote/add-bureau-vote.html.twig', [

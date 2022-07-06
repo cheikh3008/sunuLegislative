@@ -35,27 +35,27 @@ class ResultatType extends AbstractType
             //     ]),
             // ])
             ->add('nbVotant', NumberType::class, [
-                'label' => 'Nombre de votant',
+                'label' => 'Nombre de votants',
                 'attr' => [
-                    'placeholder' => 'Entrez le nombre de votant',
+                    'placeholder' => 'Entrez le nombre de votants',
                 ],
                 'constraints' => new NotBlank([
                     'message' => 'Veuillez remplir ce champ.'
                 ]),
             ])
             ->add('bulletinNull', NumberType::class, [
-                'label' => 'Bulletin null',
+                'label' => 'Bulletins nuls',
                 'attr' => [
-                    'placeholder' => 'Entrez le nombre bulletin null',
+                    'placeholder' => 'Entrez le nombre de bulletins nuls',
                 ],
                 'constraints' => new NotBlank([
                     'message' => 'Veuillez remplir ce champ.'
                 ]),
             ])
             ->add('bulletinExp', NumberType::class, [
-                'label' => 'Bulletin exprimé',
+                'label' => 'Bulletins exprimés',
                 'attr' => [
-                    'placeholder' => 'Entrez le nombre bulletin exprimé',
+                    'placeholder' => 'Entrez le nombre de bulletins exprimés',
                 ],
                 'constraints' => new NotBlank([
                     'message' => 'Veuillez remplir ce champ.'

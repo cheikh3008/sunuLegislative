@@ -278,7 +278,7 @@ class UserController extends AbstractController
                     $count = "1";
                 }
             }
-            $this->addFlash('success', 'Votre fichier a été importé avec succés');
+            $this->addFlash('success', 'Votre fichier a été importé avec succès');
             return $this->redirectToRoute('app_user_index');
         }
         return $this->render('user/add-user.html.twig', [

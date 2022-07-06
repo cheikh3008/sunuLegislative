@@ -28,8 +28,16 @@
 
                         <label class="pb-2" for="inputPassword">Mot de passe <span style="color: red;">*</span>
                         </label>
-                        <input type="password" placeholder="Entrer votre mot de passe" name="password"
-                            id="inputPassword" class="form-control" autocomplete="current-password" required>
+                        <div class="input-group">
+
+                            <input type="password" placeholder="Entrer votre mot de passe" name="password"
+                                id="inputPassword" class="form-control pwd" autocomplete="current-password" required>
+                            <div class="input-group-prepend">
+
+                                <div class="input-group-text"> <i class="fa-solid fa-eye" id="togglePassword"></i></div>
+                            </div>
+                        </div>
+
                     </div>
 
                     <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
@@ -43,4 +51,47 @@
         </div>
     </div>
 </div>
+<style>
+    form .input-group-text {
+        cursor: pointer;
+    }
+
+    .input-group-text {
+        display: block;
+        align-items: center;
+        padding: 15px;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #212529;
+        text-align: center;
+        white-space: nowrap;
+        background-color: #fff;
+        border: 1px solid #ced4da;
+        border-radius: 0 .375rem .375rem 0;
+    }
+
+    .pwd {
+        border-radius: 5px 0 0 5px !important;
+    }
+</style>
+<script>
+    const togglePassword = document.querySelector("#togglePassword");
+    const password = document.querySelector("#inputPassword");
+
+    togglePassword.addEventListener("click", function () {
+        // toggle the type attribute
+        const type = password.getAttribute("type") === "password" ? "text" : "password";
+        password.setAttribute("type", type);
+
+        // toggle the icon
+        this.classList.toggle("fa-eye-slash");
+    });
+
+    // prevent form submit
+    // const form = document.querySelector("form");
+    // form.addEventListener('submit', function (e) {
+    //     e.preventDefault();
+    // });
+</script>
 {% endblock %}
