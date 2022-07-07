@@ -50,8 +50,7 @@ class ResultatController extends AbstractController
                 'resultats' => $resultats_rep,
                 'coalitions' => $coalitions,
             ]);
-        }
-        else {
+        } else {
             $resultats = $resultatRepository->findBy([], ['user' => 'DESC']);
             $coalitions = $coalitionRepository->findBy([], []);
             return $this->render('resultat/admin.html.twig', [
@@ -59,8 +58,6 @@ class ResultatController extends AbstractController
                 'coalitions' => $coalitions,
             ]);
         }
-
-        
     }
 
     /**
@@ -180,7 +177,7 @@ class ResultatController extends AbstractController
                 $manager->persist($user->setIsValid(true));
                 $manager->flush();
                 $this->session->remove("data_session");
-                $this->addFlash('success', "Les résultats ont été ajoutés avec succés");
+                $this->addFlash('success', "Les résultats ont été ajoutés avec succès");
                 return $this->redirectToRoute('app_resultat_index', [], Response::HTTP_SEE_OTHER);
             }
         }
