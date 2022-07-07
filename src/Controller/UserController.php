@@ -331,7 +331,7 @@ class UserController extends AbstractController
             $prenom = strtoupper($user->getPrenom()[0]);
             $message = ("Bonjour $prenom. $nom, votre  identifiant de connexion est : $username, votre Mot de passe : $uiid \r\nLe lien de la plateforme : www.sunulegislatives.com");
             $this->getSMS($user->getTelephone(), $message);
-            $this->addFlash('success', "Les identifiants de connexion ont été envoyé à " . $user->getFullname());
+            $this->addFlash('success', "Les identifiants de connexion ont été envoyés à " . $user->getFullname());
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
         }
         return $this->render('user/sms-one.html.twig', [
