@@ -1,20 +1,26 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello DeleteAllResultatController!{% endblock %}
+{% block title %}SunuLégislatives2022 | supprimer tous les résultats{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+<div class="container">
+    {% for message in app.flashes('error') %}
+    <div class="text-center alert alert-danger mt-2" role="alert">
+        {{ message }}
+    </div>
+    {% endfor %}
+    <div class="content">
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+        <div class="card">
+            <div class="card-header">
+                Supprimer tous les résultats
+            </div>
+            <div class="card-body">
+                <a href="{{path('delete_all')}}" class="btn btn-danger"  rel="noopener noreferrer" onclick="return confirm('Êtes-vous sûr de bien vouloir supprimer tous les résultats?');">Supprimer</a>
+            </div>
+        </div>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ '/home/cheikhdieng/Documents/Web/Symfony/sunuLegislatives2022/src/Controller/DeleteAllResultatController.php'|file_link(0) }}">src/Controller/DeleteAllResultatController.php</a></code></li>
-        <li>Your template at <code><a href="{{ '/home/cheikhdieng/Documents/Web/Symfony/sunuLegislatives2022/templates/delete_all_resultat/index.html.twig'|file_link(0) }}">templates/delete_all_resultat/index.html.twig</a></code></li>
-    </ul>
+    </div>
+
 </div>
 {% endblock %}

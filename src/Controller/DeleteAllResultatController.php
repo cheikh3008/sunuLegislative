@@ -11,16 +11,34 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class DeleteAllResultatController extends AbstractController
 {
+    private $resultatRepository;
+    private $userRepository;
+    public function __construct(ResultatRepository $resultatRepository, UserRepository $userRepository )
+    {
+        $this->resultatRepository = $resultatRepository;
+        $this->userRepository = $userRepository;
+    }
+
     /**
      * @Route("/tout-supprimer", name="app_sup_tout")
      * @Security("is_granted('ROLE_ADMIN')")
      */
-    public function deleteAll(ResultatRepository $resultatRepository, UserRepository $userRepository  ): Response
+    public function index( ): Response
     {
-        $resultats = $resultatRepository->findAll();
+        
+        return $this->renderForm('delete_all_resultat/index.html.twig');
+    }
+
+     /**
+     * @Route("/delete-all", name="delete_all")
+     * @Security("is_granted('ROLE_ADMIN')")
+     */
+    public function deleteAll() 
+    {
+        $resultats = $this->resultatRepository->findAll();
         $entityManager = $this->getDoctrine()->getManager();
         foreach ($resultats as $key => $value) {
-            $user = $userRepository->find($value->getUser()->getid());
+            $user = $this->userRepository->find($value->getUser()->getid());
             $user->setIsValid(false);
             $entityManager->persist($user);
             $entityManager->remove($value);
