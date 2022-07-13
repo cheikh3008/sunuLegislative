@@ -16,7 +16,23 @@
                 <div class="cards">
                     <div class="alert alert-secondary">
                         <h6> Nombre total de bureaux de vote</h6>
-                        <h2> <strong> {{nombreTotalBV}} </strong> </h2>
+                        <h2> <strong> {{ nombreTotalBV.nbBV }} </strong> </h2>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-md-6 col-lg-4 my-3">
+                <div class="cards">
+                    <div class="alert alert-dark">
+                        <h6> Nombre de résulats de bureaux de vote obtenus</h6>
+                        <h2> <strong>
+                                {% if nbTotalResultatBureauObtenus %}
+                                {{nbTotalResultatBureauObtenus}}
+                                {% else %}
+                                0
+                                {% endif %}
+                            </strong> </h2>
                     </div>
 
                 </div>
@@ -25,8 +41,8 @@
             <div class="col-sm-6 col-md-6 col-lg-4 my-3">
                 <div class="cards">
                     <div class="alert alert-info">
-                        <h6> Nombre d'inscrits</h6>
-                        <h2> <strong> {{nbInscrit}} </strong> </h2>
+                        <h6> Nombre d'élécteurs</h6>
+                        <h2> <strong> {{ nombreTotalBV.nbElecteur|number_format(0, '.', ' ') }} </strong> </h2>
                     </div>
 
                 </div>
@@ -92,20 +108,13 @@
                 <tbody>
                     {% for row in nombreBVCirconscription %}
                     <tr>
-                        <td> {{row.nomCir}} </td>
-                        <td> {{row.nbBureauVote}} </td>
-                        <td>
-                            {% if man | length == 0 %}
-                            0
-                            {% else %}
-                            {% for test in man %}
-                            {% if row.nomCir == test.nomCir %}
-                            {{test.NBresultat}}
-                            {% endif %}
-                            {% endfor %}
-                            {% endif %}
-
-                        </td>
+                        <td> {{row.nom}} </td>
+                        <td> {{row.NBresultat}} </td>
+                        {% for res in nbResultatBVCir %}
+                        {% if res.nom == row.nom %}
+                        <td>{{res.NBresultat}}</td>
+                        {% endif %}
+                        {% endfor %}
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -181,13 +190,14 @@
 
     {# Fin Nombre de voix pour chaque liste #}
 
+    {# Les résultats pour chaque Coalition par Circonscription électorale #}
     <div class="card mt-3 mb-3">
         <div class="card-header pt-2">
             <h3>Nombre de voix de chaque Coalition par Circonscription électorale</h3>
         </div>
         <div class="card-body mt-3 mb-3">
             <div class="table-responsive">
-                {% if resultDprt %}
+                {% if nbVoixByCoalitionBycirconscription %}
 
                 <table class="table table-striped">
                     <thead>
@@ -196,17 +206,88 @@
                             <th scope="col">Nombre de votants</th>
                             <th scope="col">Nombre de bulletins nuls</th>
                             <th scope="col">Nombre de bulletins exprimés</th>
-
+                            {% for row in coalitions %}
+                            <th scope="col"> {{row.nom}} </th>
+                            {% endfor %}
                         </tr>
                     </thead>
                     <tbody>
-                        {% for row in resultDprt %}
-
+                        {% set comm = '' %}
+                        {% for row in nbVoixByCoalitionBycirconscription %}
+                        {% set comm = row.nom %}
                         <tr>
-                            <td>{{row.nomCir}}</td>
-                            <td>{{row.nbVotant}}</td>
-                            <td>{{row.bulletinNull}}</td>
-                            <td>{{row.bulletinExp}}</td>
+                            <td> {{row.nom}} </td>
+                            <td> {{row.nbVotant}} </td>
+                            <td> {{row.bulletinNull}} </td>
+                            <td> {{row.bulletinExp}} </td>
+                            {% for res in resultatsCoalitionParDepartement %}
+                            {% if res.d_nom == row.nom %}
+                            {# {% for row1 in res %} #}
+                            {% for coa in coalitions %}
+                                {% if coa.nom == res.nom %}
+                                    <td> {{res.nombre}} </td>
+                                {% endif %}
+                            {% endfor %}
+                            {# {% endfor %} #}
+                            {% endif %}
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="alert alert-danger text-center" role="alert">
+                    <span>Aucun enregistrement trouvé </span>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+    {# Fin Les résultats pour chaque Coalition par Circonscription électorale #}
+
+    {# Les résultats pour chaque Coalition par Circonscription électorale et par Commune #}
+    <div class="card mt-3 mb-3">
+        <div class="card-header pt-2">
+            <h3>Nombre de voix de chaque Coalition par Circonscription électorale et par Commune</h3>
+        </div>
+        <div class="card-body mt-3 mb-3">
+            <div class="table-responsive">
+                {% if nbVoixByCoalitionByCommune %}
+
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">Nom de la circonscription</th>
+                            <th scope="col">Nom de la commune</th>
+                            <th scope="col">Nombre de votants</th>
+                            <th scope="col">Nombre de bulletins nuls</th>
+                            <th scope="col">Nombre de bulletins exprimés</th>
+                            {% for row in coalitions %}
+                            <th scope="col"> {{row.nom}} </th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% set comm = '' %}
+                        {% for row in nbVoixByCoalitionByCommune %}
+                        <tr>
+                            <td> {{row.nom}} </td>
+                            <td> {{row.commune}} </td>
+                            <td> {{row.nbVotant}} </td>
+                            <td> {{row.bulletinNull}} </td>
+                            <td> {{row.bulletinExp}} </td>
+                            {% for res in resultatsCoalitionCommune %}
+                            {% if res.d_nom == row.commune %}
+                            {# {% for row1 in res %} #}
+                            {% for coa in coalitions %}
+                                {% if coa.nom == res.nom %}
+                                    <td> {{res.nombre}} </td>
+                                {% endif %}
+                            {% endfor %}
+                            {# {% endfor %} #}
+                            {% endif %}
+                            {% endfor %}
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -223,8 +304,6 @@
     {# Fin Les résultats pour chaque coalition et circonscription #}
 
 
-
-
     {# Nombre de résultats de Bureaux de Vote obtenus #}
     <div class="card mt-3 mb-3">
         <div class="card-header pt-2">
@@ -236,6 +315,7 @@
                 <thead>
                     <tr>
                         <th>Nom de la circonscription</th>
+                        <th>Nom de la commune</th>
                         <th>Bureau de vote</th>
                         <th>Nombre de votants</th>
                         <th>Bulletins nuls</th>
@@ -259,7 +339,8 @@
                     {% for resultat in resultats %}
 
                     <tr>
-                        <td>{{ resultat.user.BV.nomCir }}</td>
+                        <td> {{ resultat.user.commune.nom}} </td>
+                        <td>{{ resultat.user.BV.commune.commune }}</td>
                         <td>{{ resultat.user.BV.NomBV }}</td>
                         <td>{{ resultat.nbVotant }}</td>
                         <td>{{ resultat.bulletinNull }}</td>

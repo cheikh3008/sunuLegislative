@@ -10,9 +10,11 @@ use App\Form\BureauVoteType;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use App\Repository\BureauVoteRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\DepartementRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -22,13 +24,20 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
  */
 class BureauVoteController extends AbstractController
 {
+
+    private $slugger;
+    public function __construct(SluggerInterface $slugger)
+    {
+        $this->slugger = $slugger;
+    }
+
     /**
      * @Route("/", name="app_bureau_vote_index", methods={"GET"})
      */
     public function index(BureauVoteRepository $bureauVoteRepository): Response
     {
         return $this->render('bureau_vote/index.html.twig', [
-            'bureau_votes' => $bureauVoteRepository->findBy([], ['nomCir' => 'DESC']),
+            'bureau_votes' => $bureauVoteRepository->findBy([], ['commune' => 'DESC']),
         ]);
     }
 
@@ -42,6 +51,10 @@ class BureauVoteController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $lieu = $data->getLieu();
+            $nomBV = $data->getNomBV();
+            $bureauVote->setSlug($this->slugger->slug($lieu.''.$nomBV));
             $bureauVoteRepository->add($bureauVote, true);
             $this->addFlash('success', 'Ce bureau de vote a été bien ajouté');
             return $this->redirectToRoute('app_bureau_vote_index', [], Response::HTTP_SEE_OTHER);
@@ -63,6 +76,10 @@ class BureauVoteController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $lieu = $data->getLieu();
+            $nomBV = $data->getNomBV();
+            $bureauVote->setSlug($this->slugger->slug($lieu.''.$nomBV));
             $bureauVoteRepository->add($bureauVote, true);
             $this->addFlash('success', 'Ce bureau de vote a été bien modifié');
             return $this->redirectToRoute('app_bureau_vote_index', [], Response::HTTP_SEE_OTHER);
@@ -90,7 +107,7 @@ class BureauVoteController extends AbstractController
     /**
      * @Route("/add", name="app_bureau_vote_add")
      */
-    public function addBy(Request $request, EntityManagerInterface $entityManagerInterface): Response
+    public function addBy(Request $request, EntityManagerInterface $entityManagerInterface, DepartementRepository $departementRepository): Response
 
     {
 
@@ -132,10 +149,20 @@ class BureauVoteController extends AbstractController
                 if ($count > 0) {
                     try {
                         $bureauVote = new BureauVote();
-                        $nomCir = $row["0"];
-                        $nomBV  = $row["1"];
-                        $bureauVote->setNomBV("$nomBV")
-                            ->setNomCir($nomCir);
+                        $commune = $row["0"];
+                        $lieu = $row["1"];
+                        $nomBV  = $row["2"];
+                        $nbElecteur = $row["3"];
+                        $comm =  $departementRepository->findBy(['commune' => $commune]);
+                        foreach ($comm as $key => $value) {
+                            if($value->getCommune() === $commune) {
+                                $bureauVote->setCommune($value);
+                            }
+                        }
+                        $bureauVote->setLieu($lieu)
+                            ->setSlug($this->slugger->slug($lieu.''.$nomBV))
+                            ->setNomBV($nomBV)
+                            ->setNbElecteur($nbElecteur);
                         $entityManagerInterface->persist($bureauVote);
                         $entityManagerInterface->flush();
                     } catch (\Throwable $th) {

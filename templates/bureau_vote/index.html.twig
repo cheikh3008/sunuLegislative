@@ -32,16 +32,25 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>Nom de la circonscription</th>
+                    <th>Commune</th>
+                    <th>Lieu/Centre de vote</th>
                     <th>Nom du bureau de vote</th>
+                    <th>Nombre d'électeurs</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for bureau_vote in bureau_votes %}
                 <tr>
-                    <td>{{ bureau_vote.nomCir }}</td>
+
+                    <td>
+                        {% if bureau_vote.commune%}
+                        {{ bureau_vote.commune.commune }}
+                        {% endif %}
+                    </td>
+                    <td>{{ bureau_vote.lieu }}</td>
                     <td>{{ bureau_vote.nomBV }}</td>
+                    <td>{{ bureau_vote.nbelecteur }}</td>
                     <td>
                         <a href="{{ path('app_bureau_vote_edit', {'id': bureau_vote.id}) }}"
                             class="mx-1 my-2 btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></a>

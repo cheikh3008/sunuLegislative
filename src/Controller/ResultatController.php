@@ -62,7 +62,7 @@ class ResultatController extends AbstractController
 
     /**
      * @Route("/new", name="app_resultat_new", methods={"GET", "POST"})
-     *  @IsGranted("ROLE_REPRESENTANT")
+     * @IsGranted("ROLE_REPRESENTANT")
      */
     public function new(Request $request, ResultatRepository $resultatRepository, BureauVoteRepository $bureauVoteRepository, EntityManagerInterface $manager): Response
     {
@@ -74,7 +74,7 @@ class ResultatController extends AbstractController
         $coalitions = $this->coalitionRepository->findAll();
         // dd($resultats);
         $dataForm = $this->session->get("dataForm", []);
-        $Bv = $bureauVoteRepository->findOneBy(["nomBV" => $userConnected->getBV()->getNomBV()]);
+        $Bv = $bureauVoteRepository->findOneBy(["slug" => $userConnected->getBV()->getSlug()]);
         if ($Bv !== $userConnected->getBV()) {
             throw new AccessDeniedException("Permission non accordé !");
         }
@@ -126,7 +126,7 @@ class ResultatController extends AbstractController
 
     /**
      * @Route("/new-add", name="app_resultat_new_add", methods={"GET", "POST"})
-     *  @IsGranted("ROLE_REPRESENTANT")
+     * @IsGranted("ROLE_REPRESENTANT")
      */
     public function new_add(Request $request,  BureauVoteRepository $bureauVoteRepository, EntityManagerInterface $manager, UserRepository $userRepository): Response
     {
@@ -138,7 +138,7 @@ class ResultatController extends AbstractController
         $resultat_session = $this->session->get("data_session", []);
         $user = $userRepository->find($this->getUser()->getId());
         // dd($user);
-        $Bv = $bureauVoteRepository->findOneBy(["nomBV" => $userConnected->getBV()->getNomBV()]);
+        $Bv = $bureauVoteRepository->findOneBy(["slug" => $userConnected->getBV()->getSlug()]);
         if ($Bv !== $userConnected->getBV()) {
             throw new AccessDeniedException("Permission non accordé !");
         }

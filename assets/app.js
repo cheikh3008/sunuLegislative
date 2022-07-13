@@ -14,7 +14,13 @@ import 'select2';
 
 $(document).ready(function () {
     $('.form-select').select2();
-    console.log('ok cool');
+    $('#export').on('click', function(e){
+        $("#tableexport").table2excel({
+            exclude: ".noExport",
+            name: "Data",
+            filename: "resultatElection",
+        });
+    });
 });
 
 const dash_link_href = location.href;

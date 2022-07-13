@@ -51,6 +51,10 @@ class DepartementController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $nom = $data->getNom();
+            $commune = $data->getCommune();
+            $departement->setSlug($this->slugger->slug($nom . '' . $commune));
             $departementRepository->add($departement, true);
             $this->addFlash('success', 'Cette circonscription a été bien ajoutée');
             return $this->redirectToRoute('app_departement_index', [], Response::HTTP_SEE_OTHER);
@@ -81,6 +85,10 @@ class DepartementController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $nom = $data->getNom();
+            $commune = $data->getCommune();
+            $departement->setSlug($this->slugger->slug($nom . '' . $commune));
             $departementRepository->add($departement, true);
             $this->addFlash('success', 'Cette circonscription a été bien modifiée');
             return $this->redirectToRoute('app_departement_index', [], Response::HTTP_SEE_OTHER);
@@ -144,28 +152,30 @@ class DepartementController extends AbstractController
             });
             $count = "0";
             foreach ($data as  $row) {
+                // dd($data);
                 if ($count > 0) {
-                    try {
-                        $departement = new Departement();
-                        $nom = $row['0'];
-                        $NBBV  = $row['2'];
-                        $NBin = $row['1'];
-                        foreach ($departements as $key => $value) {
-                            if ($value->getNom() === $nom) {
-                                $this->addFlash('error', 'certaines circonscriptions existent dèja !');
-                                return $this->redirectToRoute('app_add_csv', [], Response::HTTP_SEE_OTHER);
-                            }
+                    // try {
+                    $departement = new Departement();
+                    $nom = $row['0'];
+                    $commune  = $row['1'];
+                    $slug = $this->slugger->slug($nom . '' . $commune);
+
+                    foreach ($departements as $key => $value) {
+                        if ($value->getNom() === $nom) {
+                            $this->addFlash('error', 'certaines circonscriptions existent dèja !');
+                            return $this->redirectToRoute('app_add_csv', [], Response::HTTP_SEE_OTHER);
                         }
-                        $departement->setNom($nom)
-                            ->setNbBV($NBBV)
-                            ->setNbInscrit($NBin);
-                        $entityManagerInterface->persist($departement);
-                        $entityManagerInterface->flush();
-                    } catch (\Throwable $th) {
-                        // throw new Exception("Impossible d'importer ce fichier.");
-                        $this->addFlash('error', "Impossible d'importer ce fichier.");
-                        return $this->redirectToRoute('app_add_csv', [], Response::HTTP_SEE_OTHER);
                     }
+                    $departement->setNom($nom)
+                        ->setCommune($commune)
+                        ->setSlug($slug);
+                    $entityManagerInterface->persist($departement);
+                    $entityManagerInterface->flush();
+                    // } catch (\Throwable $th) {
+                    //     // throw new Exception("Impossible d'importer ce fichier.");
+                    //     $this->addFlash('error', "Impossible d'importer ce fichier.");
+                    //     return $this->redirectToRoute('app_add_csv', [], Response::HTTP_SEE_OTHER);
+                    // }
                 } else {
                     $count = "1";
                 }

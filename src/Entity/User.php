@@ -66,15 +66,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $uuid;
 
-
-
-    /**
-     * @ORM\OneToOne(targetEntity=BureauVote::class, cascade={"persist", "remove"})
-     * @Assert\NotBlank(message="Veuillez remplir ce champ")
-     */
-    private $BV;
-
-
     /**
      * @ORM\OneToMany(targetEntity=Resultat::class, mappedBy="user")
      */
@@ -90,6 +81,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="boolean")
      */
     private $isValid;
+
+
+
+    /**
+     * @ORM\Column(type="string", length=180)
+     * @Assert\NotBlank(message="Veuillez remplir ce champ")
+     */
+    private $lieu;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=BureauVote::class, inversedBy="user")
+     */
+    private $BV;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Departement::class, inversedBy="user")
+     */
+    private $commune;
 
     public function __construct()
     {
@@ -236,18 +245,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getBV(): ?BureauVote
-    {
-        return $this->BV;
-    }
-
-    public function setBV(?BureauVote $BV): self
-    {
-        $this->BV = $BV;
-
-        return $this;
-    }
-
+    
 
 
     public function __toString()
@@ -315,6 +313,46 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsValid(?bool $isValid): self
     {
         $this->isValid = $isValid;
+
+        return $this;
+    }
+
+
+
+    public function getLieu(): ?string
+    {
+        return $this->lieu;
+    }
+
+    public function setLieu(string $lieu): self
+    {
+        $this->lieu = $lieu;
+
+        return $this;
+    }
+
+   
+
+    public function getBV(): ?BureauVote
+    {
+        return $this->BV;
+    }
+
+    public function setBV(?BureauVote $BV): self
+    {
+        $this->BV = $BV;
+
+        return $this;
+    }
+
+    public function getCommune(): ?Departement
+    {
+        return $this->commune;
+    }
+
+    public function setCommune(?Departement $commune): self
+    {
+        $this->commune = $commune;
 
         return $this;
     }

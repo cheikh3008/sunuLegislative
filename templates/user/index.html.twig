@@ -67,7 +67,8 @@
                     <th>Nom</th>
                     <th>Prenom</th>
                     <th>Téléphone</th>
-                    <th>Identifiant</th>
+                    <th>Commune</th>
+                    <th>Lieu/Centre de vote</th>
                     <th>Nom du bureau de vote</th>
                     <th>Actions</th>
                 </tr>
@@ -78,7 +79,12 @@
                     <td>{{ users.nom }}</td>
                     <td>{{ users.prenom }}</td>
                     <td>{{ users.telephone }}</td>
-                    <td>{{ users.username }}</td>
+                    <td>
+                        {% if users.commune %}
+                        {{ users.commune.commune }}
+                        {% endif %}
+                    </td>
+                    <td>{{ users.lieu }}</td>
                     <td>
                         {% if users.BV %}
                         {{ users.BV.nomBV }}

@@ -43,6 +43,8 @@
             <thead>
                 <tr>
                     <th>Nom de la circonscription</th>
+                    <th>Nom de la commune</th>
+                    <th>Lieu/Centre de vote</th>
                     <th>Bureau de vote</th>
                     <th>Nombre de votants</th>
                     <th>Bulletins nuls</th>
@@ -64,7 +66,9 @@
                 {# {% for resultat in resultats %} #}
                 {% if app.user == resultats.user %}
                 <tr>
-                    <td>{{ resultats.user.BV.nomCir }}</td>
+                    <td> {{ resultats.user.commune.nom}} </td>
+                    <td>{{ resultats.user.BV.commune.commune }}</td>
+                    <td>{{ resultats.user.BV.lieu }}</td>
                     <td>{{ resultats.user.BV.NomBV }}</td>
                     <td>{{ resultats.nbVotant }}</td>
                     <td>{{ resultats.bulletinNull }}</td>

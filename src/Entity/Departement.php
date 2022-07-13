@@ -3,16 +3,14 @@
 namespace App\Entity;
 
 use App\Repository\DepartementRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 
 /**
  * @ORM\Entity(repositoryClass=DepartementRepository::class)
- * @UniqueEntity(
- * {"nom"}, 
- * message="Cette circonscription existe déja .")
  */
 class Departement
 {
@@ -30,18 +28,34 @@ class Departement
     private $nom;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="Veuillez remplir ce champ")
-     * @Assert\PositiveOrZero(message="Veuillez entrez un nombre positive")
      */
-    private $nbInscrit;
+    private $commune;
+
+    
 
     /**
-     * @ORM\Column(type="integer")
-     * @Assert\NotBlank(message="Veuillez remplir ce champ")
-     * @Assert\PositiveOrZero(message="Veuillez entrez un nombre positive")
+     * @ORM\OneToMany(targetEntity=BureauVote::class, mappedBy="commune", cascade={"persist", "remove"})
      */
-    private $nbBV;
+    private $bureauVotes;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $slug;
+
+    /**
+     * @ORM\OneToMany(targetEntity=User::class, mappedBy="commune")
+     */
+    private $user;
+
+    public function __construct()
+    {
+        $this->bureauVotes = new ArrayCollection();
+        $this->user = new ArrayCollection();
+    }
+
 
     public function getId(): ?int
     {
@@ -60,26 +74,93 @@ class Departement
         return $this;
     }
 
-    public function getNbInscrit(): ?int
+    public function getCommune(): ?string
     {
-        return $this->nbInscrit;
+        return $this->commune;
     }
 
-    public function setNbInscrit(?int $nbInscrit): self
+    public function setCommune(?string $commune): self
     {
-        $this->nbInscrit = $nbInscrit;
+        $this->commune = $commune;
 
         return $this;
     }
 
-    public function getNbBV(): ?int
+   
+
+    /**
+     * @return Collection<int, BureauVote>
+     */
+    public function getBureauVotes(): Collection
     {
-        return $this->nbBV;
+        return $this->bureauVotes;
     }
 
-    public function setNbBV(?int $nbBV): self
+    public function addBureauVote(BureauVote $bureauVote): self
     {
-        $this->nbBV = $nbBV;
+        if (!$this->bureauVotes->contains($bureauVote)) {
+            $this->bureauVotes[] = $bureauVote;
+            $bureauVote->setCommune($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBureauVote(BureauVote $bureauVote): self
+    {
+        if ($this->bureauVotes->removeElement($bureauVote)) {
+            // set the owning side to null (unless already changed)
+            if ($bureauVote->getCommune() === $this) {
+                $bureauVote->setCommune(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->commune;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): self
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUser(): Collection
+    {
+        return $this->user;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->user->contains($user)) {
+            $this->user[] = $user;
+            $user->setCommune($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->user->removeElement($user)) {
+            // set the owning side to null (unless already changed)
+            if ($user->getCommune() === $this) {
+                $user->setCommune(null);
+            }
+        }
 
         return $this;
     }

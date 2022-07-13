@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\BureauVoteRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -20,15 +22,48 @@ class BureauVote
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="Veuillez remplir ce champ")
+     * @Assert\NotBlank(message="Veuillez choisir un bureau de vote")
      */
     private $nomBV;
+
+
+    // /**
+    //  * @ORM\Column(type="string", length=255)
+    //  * @Assert\NotBlank(message="Veuillez choisir une commune")
+    //  */
+    // private $commune;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="Veuillez remplir ce champ")
      */
-    private $nomCir;
+    private $lieu;
+
+    /**
+     * @ORM\Column(type="integer")
+     * @Assert\NotBlank(message="Veuillez remplir ce champ")
+     * @Assert\PositiveOrZero(message="Veuillez entrez un nombre positive")
+     */
+    private $nbElecteur;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Departement::class, inversedBy="bureauVotes")
+     */
+    private $commune;
+
+    
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $slug;
+
+    public function __construct()
+    {
+        $this->user = new ArrayCollection();
+    }
+
+    
 
 
     public function getId(): ?int
@@ -48,14 +83,72 @@ class BureauVote
         return $this;
     }
 
-    public function getNomCir(): ?string
+
+    // public function getCommune(): ?string
+    // {
+    //     return $this->commune;
+    // }
+
+    // public function setCommune(string $commune): self
+    // {
+    //     $this->commune = $commune;
+
+    //     return $this;
+    // }
+
+    public function getLieu(): ?string
     {
-        return $this->nomCir;
+        return $this->lieu;
     }
 
-    public function setNomCir(?string $nomCir): self
+    public function setLieu(string $lieu): self
     {
-        $this->nomCir = $nomCir;
+        $this->lieu = $lieu;
+
+        return $this;
+    }
+
+    public function getNbElecteur(): ?int
+    {
+        return $this->nbElecteur;
+    }
+
+    public function setNbElecteur(int $nbElecteur): self
+    {
+        $this->nbElecteur = $nbElecteur;
+
+        return $this;
+    }
+
+   
+
+    public function __toString()
+    {
+        return $this->nomBV;
+    }
+
+    public function getCommune(): ?Departement
+    {
+        return $this->commune;
+    }
+
+    public function setCommune(?Departement $commune): self
+    {
+        $this->commune = $commune;
+
+        return $this;
+    }
+
+    
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): self
+    {
+        $this->slug = $slug;
 
         return $this;
     }

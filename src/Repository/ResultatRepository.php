@@ -62,20 +62,27 @@ class ResultatRepository extends ServiceEntityRepository
     //         ->getResult();
     // }
 
-    public function findByDepartement()
+    public function findByCirconscription()
     {
         return $this->getEntityManager()
             ->createQuery(
-                ' SELECT B.nomCir,  
-                SUM(R.nbVotant) as nbVotant,
-                SUM(R.bulletinNull) as bulletinNull,
-                SUM(R.bulletinExp) as bulletinExp
-                    FROM App\Entity\User U,
-                    App\Entity\Resultat R,
-                    App\Entity\BureauVote B
-                    WHERE  B.id = U.BV
-                    AND R.user = U.id  
-                    GROUP BY B.nomCir  '
+                "SELECT  D.nom , SUM(R.nbVotant) as nbVotant , SUM(R.bulletinNull) as bulletinNull, SUM(R.bulletinExp)  as bulletinExp
+                FROM App\Entity\Resultat R, App\Entity\BureauVote B, App\Entity\User U, App\Entity\Departement D
+                WHERE D.id = B.commune AND U.BV = B.id AND R.user = U.id  
+                GROUP BY D.nom
+             "
+            )->getResult();
+    }
+
+    public function findByCommune()
+    {
+        return $this->getEntityManager()
+            ->createQuery(
+                "SELECT  D.nom, D.commune , SUM(R.nbVotant) as nbVotant , SUM(R.bulletinNull) as bulletinNull, SUM(R.bulletinExp)  as bulletinExp
+                FROM App\Entity\Resultat R, App\Entity\BureauVote B, App\Entity\User U, App\Entity\Departement D
+                WHERE D.id = B.commune AND U.BV = B.id AND R.user = U.id  
+                GROUP BY D.nom, D.commune
+             "
             )->getResult();
     }
 
@@ -91,13 +98,15 @@ class ResultatRepository extends ServiceEntityRepository
             )->getResult();
     }
 
-    public function findNombreTotalVoixCoalition()
+    public function findNombreResultBureauVoteParDepartement()
     {
         return $this->getEntityManager()
             ->createQuery(
-                " SELECT 
-                R
-                FROM  App\Entity\Resultat R "
+                "SELECT D.nom,  COUNT(R.bulletinExp) as NBresultat
+                FROM  App\Entity\BureauVote B,  App\Entity\Resultat R,  App\Entity\User U, App\Entity\Departement  D
+                WHERE R.user = U.id AND B.id = U.BV AND D.id = B.commune
+                GROUP BY D.nom
+                "
             )->getResult();
     }
 
@@ -105,9 +114,10 @@ class ResultatRepository extends ServiceEntityRepository
     {
         return $this->getEntityManager()
             ->createQuery(
-                " SELECT 
-                    B.nomCir , COUNT (B.nomBV) as nbBureauVote
-                    FROM  App\Entity\BureauVote B  GROUP BY B.nomCir
+                " SELECT D.nom, COUNT(B.nomBV) as NBresultat
+                FROM  App\Entity\BureauVote B, App\Entity\Departement D
+                WHERE  D.id = B.commune
+                GROUP BY D.nom
                  "
             )->getResult();
     }
@@ -117,14 +127,49 @@ class ResultatRepository extends ServiceEntityRepository
         return $this->getEntityManager()
             ->createQuery(
                 " SELECT 
-                    B.nomCir , COUNT (R.bulletinExp) as NBresultat
+                    B.nomBV , COUNT (R.bulletinExp) as NBresultat
                     FROM  App\Entity\BureauVote B,  App\Entity\Resultat R,  App\Entity\User U
                     WHERE R.user = U.id AND B.id = U.BV
-                    GROUP BY B.nomCir
+                    GROUP BY B.nomBV
                  "
             )->getResult();
     }
 
+    public function findNombreBureauVoteTotal()
+    {
+        return $this->getEntityManager()
+            ->createQuery(
+                "SELECT COUNT(B.nomBV) as nbBV, SUM(B.nbElecteur) as nbElecteur 
+                FROM  App\Entity\BureauVote B 
+                "
+            )->getResult();
+    }
+
+    public function findTotalNbresultatParDepartement()
+    {
+        return $this->getEntityManager()
+            ->createQuery(
+                "SELECT D.nom as d_nom, C.nom, SUM(RC.nombre) as nombre
+                FROM App\Entity\ResultatCoalition RC, App\Entity\Coalition C, App\Entity\User U,  App\Entity\Resultat R, App\Entity\Departement D 
+                WHERE RC.resulat= R.id AND RC.coaltion= C.id AND R.user= U.id AND D.id = U.commune  
+                GROUP BY D.nom, C.nom  
+                "
+            )->getResult();
+    }
+
+    public function findTotalNbresultatParCommune()
+    {
+        return $this->getEntityManager()
+            ->createQuery(
+                "SELECT D.commune as d_nom, C.nom, SUM(RC.nombre) as nombre
+                FROM App\Entity\ResultatCoalition RC, App\Entity\Coalition C, App\Entity\User U,  App\Entity\Resultat R, App\Entity\Departement D 
+                WHERE RC.resulat= R.id AND RC.coaltion= C.id AND R.user= U.id AND D.id = U.commune  
+                GROUP BY D.commune, C.nom  
+                "
+            )->getResult();
+    }
+
+    // SELECT departement.nom ,coalition.nom, SUM(resultat_coalition.nombre) FROM resultat, resultat_coalition, coalition, user, departement WHERE resultat_coalition.resulat_id = resultat.id AND resultat_coalition.coaltion_id = coalition.id AND resultat.user_id = user.id AND departement.id = user.commune_id  GROUP BY departement.nom, coalition.nom
     // SELECT BV.nom_cir, COUNT(BV.nom_bv), COUNT(R.bulletin_exp) FROM resultat R, bureau_vote BV, user U WHERE R.user_id = U.id AND BV.id = U.bv_id GROUP BY BV.nom_cir
 
     // SELECT  r.user_id , bureau_vote.nom_cir , retenus.nom , SUM(r.nb_inscrit), SUM(r.nb_votant), SUM(r.bulletin_null), SUM(r.bulletin_exp)  FROM resultat as r, bureau_vote, user, retenus WHERE r.retenus_id = retenus.id AND bureau_vote.id = user.bv_id and r.user_id = user.id   GROUP BY r.user_id, bureau_vote.nom_cir, retenus.nom

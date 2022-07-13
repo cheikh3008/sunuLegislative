@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\User;
 use App\Entity\BureauVote;
+use App\Entity\Departement;
 use libphonenumber\PhoneNumberUtil;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -43,6 +44,18 @@ class UserType extends AbstractType
                 'attr' => [
                     'placeholder' => 'Entrez le numéro de téléphone',
                     'id' => 'phone'
+                ]
+            ])
+            ->add('commune', EntityType::class, [
+                'label' => 'Nom de la commune',
+                'class' => Departement::class,
+                'choice_label' => 'commune',
+                'placeholder' => 'Choisir le nom de la commune'
+            ])
+            ->add('lieu', TextType::class, [
+                'label' => 'Lieu/Centre de vote',
+                'attr' => [
+                    'placeholder' => 'Entrez le lieu/centre de vote',
                 ]
             ])
             ->add('BV', EntityType::class, [

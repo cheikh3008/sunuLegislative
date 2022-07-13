@@ -8,6 +8,7 @@ use App\Repository\ResultatRepository;
 use App\Repository\CoalitionRepository;
 use App\Repository\BureauVoteRepository;
 use App\Repository\DepartementRepository;
+use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\UX\Chartjs\Builder\ChartBuilderInterface;
@@ -21,19 +22,21 @@ class HomeController extends AbstractController
     private $bureauVoteRepository;
     private $chartBuilder;
     private $coalitionRepository;
+    private $userRepository;
     public function __construct(
         DepartementRepository $departementRepository,
         ResultatRepository $resultatRepository,
         ChartBuilderInterface $chartBuilder,
         BureauVoteRepository $bureauVoteRepository,
-        CoalitionRepository $coalitionRepository
+        CoalitionRepository $coalitionRepository,
+        UserRepository $userRepository
     ) {
         $this->departementRepository = $departementRepository;
         $this->resultatRepository = $resultatRepository;
         $this->chartBuilder = $chartBuilder;
         $this->bureauVoteRepository = $bureauVoteRepository;
         $this->coalitionRepository = $coalitionRepository;
-
+        $this->userRepository = $userRepository;
     }
     /**
      * @Route("/", name="app_home")
@@ -44,62 +47,85 @@ class HomeController extends AbstractController
 
     {
         $departements = $this->departementRepository->findAll();
-        $resultats =  $this->resultatRepository->findAll();
+        $resultats =  $this->resultatRepository->findBy([], ['user' => 'DESC']);
+        $users = $this->userRepository->findBy([], []);
+        // foreach ($users as $key => $value) {
+        //     if ($value->getCommune() != null) {
+        //         $commune_ids[] = $value->getCommune()->getId();
+        //     }
+        // }
+        // foreach (array_unique($commune_ids) as $key => $value) {
+        //     $nomD = $this->departementRepository->find($value);
+        //     $resultatsCoalitionParDepartement[] = [
+        //         $nomD->getNom() => $this->resultatRepository->findTotalNbresultatParDepartement($value)
+        //     ];
+        // }
+        $resultatsCoalitionParDepartement = $this->resultatRepository->findTotalNbresultatParDepartement();
+        $resultatsCoalitionCommune = $this->resultatRepository->findTotalNbresultatParCommune();
         $coalitions = $this->coalitionRepository->findBy([], []);
+        foreach ($coalitions as $key => $value) {
+
+            $tt[] = $value->getResultatCoalitions()->toArray();
+        }
+        // dd($tt);
         $nbInscrit = 0;
         $nbVotant = 0;
         $bulletinNull = 0;
         $bulletinExp = 0;
-        $nombreTotalBV = 0;
+        $nombreTotalBV = $this->resultatRepository->findNombreBureauVoteTotal()[0];
+        // dd($nombreTotalBV);
         $nombreResultatBV = $this->resultatRepository->findBy([], ['id' => 'DESC']);
         $nombreBVCirconscription = $this->resultatRepository->findNombreBureauVoteCoalition();
         $man = $this->resultatRepository->findNombreResultBureauVoteCoalition();
-        $findNombreTotalVoix =  $this->resultatRepository->findNombreTotalVoix() ;       
+        $findNombreTotalVoix =  $this->resultatRepository->findNombreTotalVoix();
+        $nbResultatBVCir = $this->resultatRepository->findNombreResultBureauVoteParDepartement();
         $nb = [];
         $nbVoix = [];
         $nom_de_la_coaltion = [];
         $taux = 0;
-        $resultDprt = [];
-
-        foreach ($this->resultatRepository->findByDepartement() as $key => $ddd) {
-            $resultDprt[] = $ddd;
+        $nbVoixByCoalitionBycirconscription = [];
+        $nbVoixByCoalitionByCommune = $this->resultatRepository->findByCommune();
+        foreach ($this->resultatRepository->findByCirconscription() as $key => $value) {
+            $nbVoixByCoalitionBycirconscription[] = $value;
         }
         // dd($this->resultatRepository->findNombreTotalVoix());
         foreach ($findNombreTotalVoix as $key => $value) {
-            $nbVoix [$key] = $value['nbVoix'];
-            $nom_de_la_coaltion [$key] = $value['nom'];
+            $nbVoix[$key] = $value['nbVoix'];
+            $nom_de_la_coaltion[$key] = $value['nom'];
         }
         foreach ($departements as  $value) {
-            $nbInscrit += $value->getNbInscrit();
-            $nombreTotalBV += $value->getNbBV();
+            $nbInscrit += 0;
         }
         foreach ($resultats as  $res) {
             $nbVotant += $res->getNbVotant();
             $bulletinNull += $res->getBulletinNull();
             $bulletinExp += $res->getBulletinExp();
         }
-        if ($nbVotant && $nbInscrit) {
-            $taux = $nbVotant / $nbInscrit * 100;
+        if (!empty((int)$nombreTotalBV['nbElecteur'])) {
+            $taux = $nbVotant / (int)$nombreTotalBV['nbElecteur'] * 100;
         }
-        // foreach ($coalitions as $key => $value) {
-        //     $nom_de_la_coaltion [] = $value->getNom();
-        // }
+
         return $this->render('home/index.html.twig', [
-            'nbInscrit' => number_format($nbInscrit, 0, '.', ' '),
+            'nbInscrit' => number_format($nbInscrit, 0, ' ', ' '),
             'nbVotant' => number_format($nbVotant, 0, '.', ' '),
             'bulletinExp' => number_format($bulletinExp, 0, '.', ' '),
-            'nombreTotalBV' => number_format($nombreTotalBV, 0, '.', ' '),
+            'nombreTotalBV' => $nombreTotalBV,
             'bulletinNull' => number_format($bulletinNull, 0, '.', ' '),
             'taux' => number_format($taux, 2),
             'nb' => $nb,
-            'resultDprt' => $resultDprt,
             'chartBar' => $this->getChartBar($nom_de_la_coaltion, $nbVoix),
             'nombreBVCirconscription' => $nombreBVCirconscription,
             'nombreResultatBV' => $nombreResultatBV,
             'man' => $man,
             'coalitions' => $coalitions,
             'findNombreTotalVoix' => $findNombreTotalVoix,
-            'resultats' => $resultats
+            'resultats' => $resultats,
+            'nbTotalResultatBureauObtenus' => count($resultats),
+            'nbVoixByCoalitionBycirconscription' => $nbVoixByCoalitionBycirconscription,
+            'nbVoixByCoalitionByCommune' => $nbVoixByCoalitionByCommune,
+            'nbResultatBVCir' => $nbResultatBVCir,
+            'resultatsCoalitionParDepartement' => $resultatsCoalitionParDepartement,
+            'resultatsCoalitionCommune' => $resultatsCoalitionCommune,
         ]);
     }
 

@@ -20,16 +20,10 @@ class DepartementType extends AbstractType
                     'placeholder' => 'Entrez le nom de la circonscription',
                 ]
             ])
-            ->add('nbInscrit', NumberType::class, [
-                'label' => 'Nombre d\'inscrits',
+            ->add('commune', TextType::class, [
+                'label' => 'Nombre de la commune',
                 'attr' => [
-                    'placeholder' => 'Entrez le nombre d\'inscrits',
-                ]
-            ])
-            ->add('nbBV', NumberType::class, [
-                'label' => 'Nombre de bureaux de vote',
-                'attr' => [
-                    'placeholder' => 'Entrez le nombre de bureaux de vote',
+                    'placeholder' => 'Entrez le nombre de la commune',
                 ]
             ]);
     }

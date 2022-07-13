@@ -24,9 +24,11 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use App\Repository\BureauVoteRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use libphonenumber\NumberParseException;
+use App\Repository\DepartementRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -37,10 +39,13 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
  */
 class UserController extends AbstractController
 {
+
     private $userRepository;
-    public function __construct(UserRepository $userRepository)
+    private $slugger;
+    public function __construct(UserRepository $userRepository, SluggerInterface $slugger)
     {
         $this->userRepository = $userRepository;
+        $this->slugger = $slugger;
     }
 
     /**
@@ -185,7 +190,7 @@ class UserController extends AbstractController
     /**
      * @Route("/add", name="app_user_add")
      */
-    public function addBy(Request $request, EntityManagerInterface $entityManagerInterface, UserPasswordHasherInterface $userPasswordHasher, BureauVoteRepository $bureauVoteRepository, RoleRepository $roleRepository): Response
+    public function addBy(Request $request, EntityManagerInterface $entityManagerInterface, UserPasswordHasherInterface $userPasswordHasher, BureauVoteRepository $bureauVoteRepository, RoleRepository $roleRepository, DepartementRepository $departementRepository): Response
 
     {
 
@@ -230,50 +235,61 @@ class UserController extends AbstractController
                 $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
                 $password = substr(str_shuffle($chars), 0, 8);
                 if ($count > 0) {
-                    try {
+                    // try {
+                    $nom = $row["0"];
+                    $prenom  = $row["1"];
+                    $telephone  = (string)$row["2"];
+                    $commune = $row["3"];
+                    $lieu = $row["4"];
+                    $nomBV = $row["5"];
+                    $phone = $phoneUtil->parse("+" . $telephone, null);
+                    $codePays = $phoneUtil->getRegionCodeForNumber($phone);
+                    $code = $phone->getCountryCode();
+                    $number = (int)$phone->getNationalNumber();
+                    $slug = $this->slugger->slug($lieu . '' . $nomBV);
 
-                        $nom = $row["0"];
-                        $prenom  = $row["1"];
-                        $telephone  = (string)$row["2"];
-                        $username  = $row["2"];
-                        $nomBV = $row["3"];
-                        $phone = $phoneUtil->parse("+" . $telephone, null);
-                        $codePays = $phoneUtil->getRegionCodeForNumber($phone);
-                        $code = $phone->getCountryCode();
-                        $number = (int)$phone->getNationalNumber();
-                        // dd( (int) $code.$number, $phoneUtil->isValidNumber($phone));
-                        if (!$phoneUtil->isValidNumber($phone)) {
-                            $this->addFlash('error', 'Certains numéros de téléphone ne sont pas valides !');
+                    // dd( (int) $code.$number, $phoneUtil->isValidNumber($phone));
+                    if (!$phoneUtil->isValidNumber($phone)) {
+                        $this->addFlash('error', 'Certains numéros de téléphone ne sont pas valides !');
+                        return $this->redirectToRoute('app_user_add', [], Response::HTTP_SEE_OTHER);
+                    }
+                    foreach ($usersAll as $key => $value) {
+                        if ($value->getTelephone() === (int)($code . $number)) {
+                            $this->addFlash('error', 'Certains numéros de téléphone existent dèja !');
                             return $this->redirectToRoute('app_user_add', [], Response::HTTP_SEE_OTHER);
                         }
-                        foreach ($usersAll as $key => $value) {
-                            if ($value->getTelephone() === (int)($code . $number)) {
-                                $this->addFlash('error', 'Certains numéros de téléphone existent dèja !');
-                                return $this->redirectToRoute('app_user_add', [], Response::HTTP_SEE_OTHER);
-                            }
-                        }
-                        $nomBV1 = $bureauVoteRepository->findOneBy(['nomBV' => $nomBV]);
-                        $user->setNom($nom)
-                            ->setUsername($number)
-                            ->setPrenom($prenom)
-                            ->setCode($codePays)
-                            ->setTelephone($code . $number)
-                            ->setUuid($password)
-                            ->setBV($nomBV1)
-                            ->setRole($role)
-                            ->setPassword(
-                                $userPasswordHasher->hashPassword(
-                                    $user,
-                                    $password
-                                )
-                            );
-                        $entityManagerInterface->persist($user);
-                        $entityManagerInterface->flush();
-                    } catch (\Throwable $th) {
-                        throw new Exception("Impossible d'importer ce fichier.");
-                        return $this->redirectToRoute('app_user_add', [], Response::HTTP_SEE_OTHER);
-                        $this->addFlash('error', "Impossible d'importer ce fichier.");
                     }
+                    $nomBV1 = $bureauVoteRepository->findOneBy(['slug' => $slug]);
+                    $cir = $departementRepository->findOneBy(['commune' => $commune]);
+                    // $comm = $bureauVoteRepository->findOneBy(['commune' => $cir]);
+                    // $slugCommune = $this->slugger->slug($nom.''.$commune);
+                    // if (!$nomBV1->getCommune()->getCommune() == $commune) {
+                    //     dd('error');
+                    // }
+                    $user->setNom($nom)
+                        ->setUsername($number)
+                        ->setPrenom($prenom)
+                        ->setCommune($cir)
+                        ->setLieu($lieu)
+                        ->setCode($codePays)
+                        ->setTelephone($code . $number)
+                        ->setUuid($password)
+                        ->setBV($nomBV1)
+                        ->setRole($role)
+                        ->setPassword(
+                            $userPasswordHasher->hashPassword(
+                                $user,
+                                $password
+                            )
+                        );
+                    $entityManagerInterface->persist($user);
+                    // dd($user);
+                    $entityManagerInterface->flush();
+                    // } catch (\Throwable $th) {
+                    //     throw new Exception("Impossible d'importer ce fichier.");
+                    //     return $this->redirectToRoute('app_user_add', [], Response::HTTP_SEE_OTHER);
+                    //     $this->addFlash('error', "Impossible d'importer ce fichier.");
+                    // }
                 } else {
                     $count = "1";
                 }
