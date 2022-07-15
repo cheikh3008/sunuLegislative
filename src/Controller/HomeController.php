@@ -48,18 +48,7 @@ class HomeController extends AbstractController
     {
         $departements = $this->departementRepository->findAll();
         $resultats =  $this->resultatRepository->findBy([], ['user' => 'DESC']);
-        $users = $this->userRepository->findBy([], []);
-        // foreach ($users as $key => $value) {
-        //     if ($value->getCommune() != null) {
-        //         $commune_ids[] = $value->getCommune()->getId();
-        //     }
-        // }
-        // foreach (array_unique($commune_ids) as $key => $value) {
-        //     $nomD = $this->departementRepository->find($value);
-        //     $resultatsCoalitionParDepartement[] = [
-        //         $nomD->getNom() => $this->resultatRepository->findTotalNbresultatParDepartement($value)
-        //     ];
-        // }
+        $nbTotalElecteurDepartement = $this->resultatRepository->findNombreTotalElecteursDepartement();
         $resultatsCoalitionParDepartement = $this->resultatRepository->findTotalNbresultatParDepartement();
         $resultatsCoalitionCommune = $this->resultatRepository->findTotalNbresultatParCommune();
         $coalitions = $this->coalitionRepository->findBy([], []);
@@ -126,6 +115,7 @@ class HomeController extends AbstractController
             'nbResultatBVCir' => $nbResultatBVCir,
             'resultatsCoalitionParDepartement' => $resultatsCoalitionParDepartement,
             'resultatsCoalitionCommune' => $resultatsCoalitionCommune,
+            'nbTotalElecteurDepartement' => $nbTotalElecteurDepartement
         ]);
     }
 
@@ -178,5 +168,39 @@ class HomeController extends AbstractController
         ]);
 
         return $chart;
+    }
+
+    /**
+     * @Route("/resultats-bureau-de-vote", name="app_resultats_bureau_de_vote")
+     * @IsGranted("ROLE_ADMIN")
+     */
+
+    public function getResultatParBureauVote()
+    {
+        $resultats = $this->resultatRepository->findBy([], ['user' => 'DESC']);
+        $coalitions = $this->coalitionRepository->findBy([], []);        
+        return $this->render('home/resultats-bv.html.twig', [
+            'resultats' => $resultats,
+            'coalitions' => $coalitions,
+        ]);
+    }
+
+    /**
+     * @Route("/resultats-communes", name="app_resultats_communes")
+     * @IsGranted("ROLE_ADMIN")
+     */
+
+    public function getResultatParCommune()
+    {
+        $resultatsCoalitionCommune = $this->resultatRepository->findTotalNbresultatParCommune();
+        $coalitions = $this->coalitionRepository->findBy([], []);
+        $nbVoixByCoalitionByCommune = $this->resultatRepository->findByCommune();
+        $nbTotalElecteurCommune = $this->resultatRepository->findNombreTotalElecteursCommune();
+        return $this->render('home/resultats-communes.html.twig', [
+            'coalitions' => $coalitions,
+            'resultatsCoalitionCommune' => $resultatsCoalitionCommune,
+            'nbVoixByCoalitionByCommune' => $nbVoixByCoalitionByCommune,
+            'nbTotalElecteurCommune' => $nbTotalElecteurCommune
+        ]);
     }
 }

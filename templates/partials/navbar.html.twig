@@ -1,89 +1,83 @@
+{% if app.user and app.user.roles[0] == 'ROLE_ADMIN' %}
 <nav class="navbar navbar-expand-md sticky-top">
-    {% if app.user and app.user.roles[0] == 'ROLE_ADMIN' %}
     <div class="container-fluid">
         <a class="navbar-brand" href="/">
-            {# <img src="/img/logo-trans.png" width="50" alt="Auto Ecole Miftahou Chahada"> #}
             <strong class="pt-4">SunuLégislatives2022</strong>
         </a>
-        <a class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
-            aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
-        </a>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="/">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_coalition_index') }}">Liste des coalitions</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_departement_index') }}">Liste des circonscriptions</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_bureau_vote_index') }}">Liste des bureaux de vote</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_user_index') }}">Liste des représentants</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Résultats
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
 
-        <div class="container">
-            {# {% if app.user %} #}
-            <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/">Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ path('app_coalition_index') }}">Liste des coalitions</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ path('app_departement_index') }}">Liste des circonscriptions</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ path('app_bureau_vote_index') }}">Liste des bureaux de vote</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ path('app_user_index') }}">Liste des représentants</a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ path('app_resultat_index') }}">Resultats</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ path('app_logout') }}">
-                            Deconnexion
-                        </a>
-                    </li>
-
-                </ul>
-            </div>
-            {# {% endif %} #}
+                        <li>
+                            <a class="dropdown-item" href="{{ path('app_resultats_communes') }}">
+                                Nombre de voix de chaque Coalition par Circonscription électorale et par Commune
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{{ path('app_resultats_bureau_de_vote') }}">Nombre de voix de
+                                chaque Coalition par bureau de vote</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_logout') }}">
+                        Deconnexion
+                    </a>
+                </li>
+            </ul>
         </div>
     </div>
-    {% endif %}
-    {% if app.user and app.user.roles[0] == 'ROLE_REPRESENTANT' %}
-    <div class="container">
-        <a class="navbar-brand" href="/">
-            {# <img src="/img/logo-trans.png" width="50" alt="Auto Ecole Miftahou Chahada"> #}
-            <strong class="pt-4">SunuLégislatives2022</strong>
-        </a>
-        <a class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
-            aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </a>
-
-        <div class="container">
-            {# {% if app.user %} #}
-            <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ path('app_resultat_index') }}">Resultats</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ path('app_logout') }}">
-                            Deconnexion
-                        </a>
-                    </li>
-                </ul>
-            </div>
-            {# {% endif %} #}
-        </div>
-    </div>
-    {% endif %}
-    {% if not app.user %}
-    <div class="container-fluid">
-        <a class="navbar-brand" href="/">
-            {# <img src="/img/logo-trans.png" width="50" alt="Auto Ecole Miftahou Chahada"> #}
-            <strong class="pt-4">SunuLégislatives2022</strong>
-        </a>
-        <a class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
-            aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </a>
-    </div>
-    {% endif %}
 </nav>
+{% endif %}
+{% if app.user and app.user.roles[0] == 'ROLE_REPRESENTANT' %}
+<nav class="navbar navbar-expand-md sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="#">
+            <strong class="pt-4">SunuLégislatives2022</strong>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_resultat_index') }}">Resultats</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_logout') }}">
+                        Deconnexion
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+{% endif %}

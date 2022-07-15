@@ -2,8 +2,8 @@
     width: 100%;
     background-color: #0253a5 !important;
     // padding-bottom: 20px !important;
-    height: 100%;
-    overflow: hidden;
+    height: auto !important;
+    // overflow: hidden;
   }
   // .navbar-collapse ul {
   //   overflow: hidden;
@@ -16,6 +16,12 @@
   .navbar-brand strong{
     color: #fff !important;
     font-size: 1.2em;
+  }
+  .dropdown-menu {
+    background-color: #0253a5 !important;
+  }
+  .dropdown-item:focus, .dropdown-item:hover {
+    background-color: #fff !important;
   }
   .navbar-collapse li a {
     position: relative;

@@ -153,5 +153,10 @@ class BureauVote
         return $this;
     }
 
+    public function getLieuAndNomBV()
+    {
+        return $this->lieu . ' - ' . $this->nomBV;
+    }
+
     
 }

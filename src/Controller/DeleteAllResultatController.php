@@ -45,7 +45,7 @@ class DeleteAllResultatController extends AbstractController
             // dd($user, $value);
         }
         $entityManager->flush();
-        $this->addFlash('success', 'tous les resultats ont été  supprimés');
-        return $this->redirectToRoute('app_resultat_index', [], Response::HTTP_SEE_OTHER);
+        $this->addFlash('success', 'Tous les resultats ont été  supprimés');
+        return $this->redirectToRoute('app_resultats_bureau_de_vote', [], Response::HTTP_SEE_OTHER);
     }
 }

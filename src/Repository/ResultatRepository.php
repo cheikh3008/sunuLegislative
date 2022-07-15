@@ -169,6 +169,30 @@ class ResultatRepository extends ServiceEntityRepository
             )->getResult();
     }
 
+    public function findNombreTotalElecteursDepartement()
+    {
+        return $this->getEntityManager()
+            ->createQuery(
+                "SELECT D.nom , SUM(B.nbElecteur) as nbElecteur 
+                FROM  App\Entity\Departement D ,  App\Entity\BureauVote B  
+                WHERE D.id = B.commune
+                GROUP BY D.nom
+                "
+            )->getResult();
+    }
+
+    public function findNombreTotalElecteursCommune()
+    {
+        return $this->getEntityManager()
+            ->createQuery(
+                "SELECT D.commune , SUM(B.nbElecteur) as nbElecteur 
+                FROM  App\Entity\Departement D ,  App\Entity\BureauVote B  
+                WHERE D.id = B.commune
+                GROUP BY D.commune
+                "
+            )->getResult();
+    }
+
     // SELECT departement.nom ,coalition.nom, SUM(resultat_coalition.nombre) FROM resultat, resultat_coalition, coalition, user, departement WHERE resultat_coalition.resulat_id = resultat.id AND resultat_coalition.coaltion_id = coalition.id AND resultat.user_id = user.id AND departement.id = user.commune_id  GROUP BY departement.nom, coalition.nom
     // SELECT BV.nom_cir, COUNT(BV.nom_bv), COUNT(R.bulletin_exp) FROM resultat R, bureau_vote BV, user U WHERE R.user_id = U.id AND BV.id = U.bv_id GROUP BY BV.nom_cir
 
@@ -179,4 +203,6 @@ class ResultatRepository extends ServiceEntityRepository
     // SELECT retenus.nom, SUM(resultat.bulletin_exp) as nbVoix FROM resultat, retenus WHERE retenus.id = resultat.retenus_id GROUP BY retenus.nom
 
     // SELECT b.nom_cir , COUNT(b.nom_bv) FROM  bureau_vote as b GROUP BY b.nom_cir
+
+    // SELECT departement.nom , SUM(bureau_vote.nb_electeur) FROM departement, bureau_vote WHERE departement.id = bureau_vote.commune_id GROUP BY departement.nom
 }

@@ -41,7 +41,7 @@
             <div class="col-sm-6 col-md-6 col-lg-4 my-3">
                 <div class="cards">
                     <div class="alert alert-info">
-                        <h6> Nombre d'élécteurs</h6>
+                        <h6> Nombre d'électeurs</h6>
                         <h2> <strong> {{ nombreTotalBV.nbElecteur|number_format(0, '.', ' ') }} </strong> </h2>
                     </div>
 
@@ -156,7 +156,7 @@
 
     <div class="card mt-3 mb-3">
         <div class="card-header pt-2">
-            <h3>Tableau du nombre de voix total de chaque Coalition</h3>
+            <h3>Tableau du nombre total de voix de chaque Coalition</h3>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -203,6 +203,7 @@
                     <thead>
                         <tr>
                             <th scope="col">Nom de la circonscription</th>
+                            <th scope="col">Nombre d'électeurs</th>
                             <th scope="col">Nombre de votants</th>
                             <th scope="col">Nombre de bulletins nuls</th>
                             <th scope="col">Nombre de bulletins exprimés</th>
@@ -217,6 +218,11 @@
                         {% set comm = row.nom %}
                         <tr>
                             <td> {{row.nom}} </td>
+                            {% for nb in nbTotalElecteurDepartement %}
+                                {% if nb.nom == row.nom %}
+                                    <td> {{nb.nbElecteur |number_format(0, '.', ' ') }} </td>
+                                {% endif %}
+                            {% endfor %}
                             <td> {{row.nbVotant}} </td>
                             <td> {{row.bulletinNull}} </td>
                             <td> {{row.bulletinExp}} </td>
@@ -224,9 +230,9 @@
                             {% if res.d_nom == row.nom %}
                             {# {% for row1 in res %} #}
                             {% for coa in coalitions %}
-                                {% if coa.nom == res.nom %}
-                                    <td> {{res.nombre}} </td>
-                                {% endif %}
+                            {% if coa.nom == res.nom %}
+                            <td> {{res.nombre}} </td>
+                            {% endif %}
                             {% endfor %}
                             {# {% endfor %} #}
                             {% endif %}
@@ -247,7 +253,7 @@
     {# Fin Les résultats pour chaque Coalition par Circonscription électorale #}
 
     {# Les résultats pour chaque Coalition par Circonscription électorale et par Commune #}
-    <div class="card mt-3 mb-3">
+    {# <div class="card mt-3 mb-3">
         <div class="card-header pt-2">
             <h3>Nombre de voix de chaque Coalition par Circonscription électorale et par Commune</h3>
         </div>
@@ -279,13 +285,11 @@
                             <td> {{row.bulletinExp}} </td>
                             {% for res in resultatsCoalitionCommune %}
                             {% if res.d_nom == row.commune %}
-                            {# {% for row1 in res %} #}
                             {% for coa in coalitions %}
-                                {% if coa.nom == res.nom %}
-                                    <td> {{res.nombre}} </td>
-                                {% endif %}
+                            {% if coa.nom == res.nom %}
+                            <td> {{res.nombre}} </td>
+                            {% endif %}
                             {% endfor %}
-                            {# {% endfor %} #}
                             {% endif %}
                             {% endfor %}
                         </tr>
@@ -300,12 +304,12 @@
 
             </div>
         </div>
-    </div>
+    </div> #}
     {# Fin Les résultats pour chaque coalition et circonscription #}
 
 
     {# Nombre de résultats de Bureaux de Vote obtenus #}
-    <div class="card mt-3 mb-3">
+    {# <div class="card mt-3 mb-3">
         <div class="card-header pt-2">
             <h3>Nombre de voix de chaque Coalition par bureau de vote</h3>
         </div>
@@ -361,7 +365,7 @@
             </div>
             {% endif %}
         </div>
-    </div>
+    </div> #}
     {# Fin Nombre de résultats de Bureaux de Vote obtenus #}
 </div>
 

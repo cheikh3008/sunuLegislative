@@ -52,16 +52,18 @@ class UserType extends AbstractType
                 'choice_label' => 'commune',
                 'placeholder' => 'Choisir le nom de la commune'
             ])
-            ->add('lieu', TextType::class, [
-                'label' => 'Lieu/Centre de vote',
-                'attr' => [
-                    'placeholder' => 'Entrez le lieu/centre de vote',
-                ]
-            ])
+            // ->add('lieu', EntityType::class, [
+            //     'label' => 'Nom du bureau de vote',
+            //     'class' => BureauVote::class,
+            //     'choice_label' => 'lieu',
+            //     'placeholder' => 'Choisir le nom du bureau de vote'
+            // ])
             ->add('BV', EntityType::class, [
                 'label' => 'Nom du bureau de vote',
                 'class' => BureauVote::class,
-                'choice_label' => 'nomBV',
+                'choice_label' => function ($bv) {
+                    return $bv->getLieuAndNomBV();
+                },
                 'placeholder' => 'Choisir le nom du bureau de vote'
             ]);
     }

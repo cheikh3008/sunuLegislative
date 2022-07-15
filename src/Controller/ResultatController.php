@@ -37,7 +37,7 @@ class ResultatController extends AbstractController
 
     /**
      * @Route("/", name="app_resultat_index", methods={"GET"})
-     * @Security("is_granted('ROLE_ADMIN') or is_granted('ROLE_REPRESENTANT')")
+     * @Security("is_granted('ROLE_REPRESENTANT')")
      */
     public function index(ResultatRepository $resultatRepository, CoalitionRepository $coalitionRepository): Response
     {
@@ -48,13 +48,6 @@ class ResultatController extends AbstractController
             $resultats_rep = $resultatRepository->findOneBy(["user" => $user], []);
             return $this->render('resultat/representant.html.twig', [
                 'resultats' => $resultats_rep,
-                'coalitions' => $coalitions,
-            ]);
-        } else {
-            $resultats = $resultatRepository->findBy([], ['user' => 'DESC']);
-            $coalitions = $coalitionRepository->findBy([], []);
-            return $this->render('resultat/admin.html.twig', [
-                'resultats' => $resultats,
                 'coalitions' => $coalitions,
             ]);
         }

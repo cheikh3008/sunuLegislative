@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}SunuLégislatives2022 | Résultats par Commune{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    {# Les résultats pour chaque Coalition par Circonscription électorale et par Commune #}
+    <div class="card mt-3 mb-3">
+        <div class="card-header pt-2">
+            <div class="d-flex justify-content-between">
+                <div class="mt-2">
+                    <h3>Nombre de voix de chaque Coalition par Circonscription électorale et par Commune</h3>
+
+                </div>
+                <div class="mt-2">
+                    <button id="exportCommune" class="btn btn-success">Export to Excel</button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body mt-3 mb-3">
+            <div class="table-responsive">
+                {% if nbVoixByCoalitionByCommune %}
+
+                <table id="tablecommuneexport" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">Nom de la circonscription</th>
+                            <th scope="col">Nom de la commune</th>
+                            <th scope="col">Nombre d'électeurs</th>
+                            <th scope="col">Nombre de votants</th>
+                            <th scope="col">Nombre de bulletins nuls</th>
+                            <th scope="col">Nombre de bulletins exprimés</th>
+                            {% for row in coalitions %}
+                            <th scope="col"> {{row.nom}} </th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% set comm = '' %}
+                        {% for row in nbVoixByCoalitionByCommune %}
+                        <tr>
+                            <td> {{row.nom}} </td>
+                            <td> {{row.commune}} </td>
+                            {% for nb in nbTotalElecteurCommune %}
+                            {% if nb.commune == row.commune %}
+                            <td> {{nb.nbElecteur}} </td>
+                            {% endif %}
+                            {% endfor %}
+                            <td> {{row.nbVotant}} </td>
+                            <td> {{row.bulletinNull}} </td>
+                            <td> {{row.bulletinExp}} </td>
+                            {% for res in resultatsCoalitionCommune %}
+                            {% if res.d_nom == row.commune %}
+                            {# {% for row1 in res %} #}
+                            {% for coa in coalitions %}
+                            {% if coa.nom == res.nom %}
+                            <td> {{res.nombre}} </td>
+                            {% endif %}
+                            {% endfor %}
+                            {# {% endfor %} #}
+                            {% endif %}
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="alert alert-danger text-center" role="alert">
+                    <span>Aucun enregistrement trouvé </span>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+    {# Fin Les résultats pour chaque coalition et circonscription #}
+
+</div>
+{% endblock %}

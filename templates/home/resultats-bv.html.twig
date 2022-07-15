@@ -1,18 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}SunuLégislatives2022 | Résultats des bureaux de vote pour chaque coalition{% endblock %}
+{% block title %}SunuLégislatives2022 | Résultats par Circonscription{% endblock %}
 
 {% block body %}
-
-
 <div class="container-fluid">
     {% for message in app.flashes('success') %}
     <div class="text-center alert alert-success mt-2" role="alert">
-        {{ message }}
-    </div>
-    {% endfor %}
-    {% for message in app.flashes('error') %}
-    <div class="text-center alert alert-danger mt-2" role="alert">
         {{ message }}
     </div>
     {% endfor %}
@@ -23,7 +16,7 @@
                     <h4>Nombre de voix de chaque Coalition par bureau de vote</h4>
                 </div>
                 <div>
-                    <button id="export" class="btn btn-success">Export to excel</button>
+                    <button id="export" class="btn btn-success">Export to Excel</button>
                 </div>
             </div>
         </div>
@@ -38,6 +31,7 @@
                 <tr>
                     <th>Nom de la circonscription</th>
                     <th>Nom de la commune</th>
+                    <th>Nombre d'électeurs</th>
                     <th>Lieu/Centre de vote</th>
                     <th>Bureau de vote</th>
                     <th>Nombre de votants</th>
@@ -59,8 +53,9 @@
             <tbody>
                 {% for resultat in resultats %}
                 <tr>
-                    <td> {{ resultats.user.commune.nom}} </td>
+                    <td> {{ resultat.user.commune.nom}} </td>
                     <td>{{ resultat.user.BV.commune.commune }}</td>
+                    <td> {{ resultat.user.BV.nbElecteur }} </td>
                     <td>{{ resultat.user.BV.lieu }}</td>
                     <td>{{ resultat.user.BV.NomBV }}</td>
                     <td>{{ resultat.nbVotant }}</td>

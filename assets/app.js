@@ -18,7 +18,15 @@ $(document).ready(function () {
         $("#tableexport").table2excel({
             exclude: ".noExport",
             name: "Data",
-            filename: "resultatElection",
+            filename: "resultatElectionParBureauVote",
+        });
+    });
+
+    $('#exportCommune').on('click', function(e){
+        $("#tablecommuneexport").table2excel({
+            exclude: ".noExport",
+            name: "Data",
+            filename: "resultatElectionParCommune",
         });
     });
 });

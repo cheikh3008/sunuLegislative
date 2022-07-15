@@ -113,7 +113,7 @@ class UserController extends AbstractController
                     $password
                 )
             );
-
+            $user->setLieu($nomBV->getLieu());
             $user->setUsername($number);
             $this->userRepository->add($user, true);
             $this->addFlash('success', 'Ce représentant a été bien ajouté');
@@ -147,6 +147,8 @@ class UserController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $telephone =  $data->getTelephone();
+            $nombv = $data->getBV();
+            $userRS = $this->userRepository->findOneBy(['BV' => $nombv]);
             $code = $data->getCode();
             $phone = $phoneUtil->parse($telephone, $code);
             $indicatif = $phone->getCountryCode();
@@ -155,11 +157,16 @@ class UserController extends AbstractController
                 $this->addFlash('error', 'Le numéro de téléphone n\'est pas valide !');
                 return $this->redirectToRoute('app_user_edit', ['id' => $user->getId()], Response::HTTP_SEE_OTHER);
             }
+
             foreach ($usersAll as $key => $value) {
                 if ($value->getTelephone() === (int)($indicatif . $telephone)) {
                     $this->addFlash('error', 'ce numéro de téléphone existe dèja !');
                     return $this->redirectToRoute('app_user_edit', ['id' => $user->getId()], Response::HTTP_SEE_OTHER);
                 }
+            }
+            if ($userRS) {
+                $this->addFlash('error', "Ce bureau a été dèja affecté par un représentant");
+                return $this->redirectToRoute('app_user_edit', ['id' => $user->getId()], Response::HTTP_SEE_OTHER);
             }
             $user->setCode($code);
             $user->setTelephone(trim($indicatif . $number));

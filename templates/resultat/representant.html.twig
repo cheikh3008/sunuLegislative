@@ -44,6 +44,7 @@
                 <tr>
                     <th>Nom de la circonscription</th>
                     <th>Nom de la commune</th>
+                    <th>Nombre d'électeurs</th>
                     <th>Lieu/Centre de vote</th>
                     <th>Bureau de vote</th>
                     <th>Nombre de votants</th>
@@ -68,6 +69,7 @@
                 <tr>
                     <td> {{ resultats.user.commune.nom}} </td>
                     <td>{{ resultats.user.BV.commune.commune }}</td>
+                    <td> {{ resultats.user.BV.nbElecteur }} </td>
                     <td>{{ resultats.user.BV.lieu }}</td>
                     <td>{{ resultats.user.BV.NomBV }}</td>
                     <td>{{ resultats.nbVotant }}</td>

@@ -86,7 +86,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=180)
-     * @Assert\NotBlank(message="Veuillez remplir ce champ")
      */
     private $lieu;
 
@@ -262,6 +261,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->telephone . ' - ' . $this->prenom . ' ' . $this->nom;
     }
+
 
     /**
      * @return Collection<int, Resultat>
