@@ -51,7 +51,7 @@ class HomeController extends AbstractController
         $nbTotalElecteurDepartement = $this->resultatRepository->findNombreTotalElecteursDepartement();
         $resultatsCoalitionParDepartement = $this->resultatRepository->findTotalNbresultatParDepartement();
         $resultatsCoalitionCommune = $this->resultatRepository->findTotalNbresultatParCommune();
-        $coalitions = $this->coalitionRepository->findBy([], []);
+        $coalitions = $this->coalitionRepository->findBy([], ['nom' => 'ASC']);
         foreach ($coalitions as $key => $value) {
 
             $tt[] = $value->getResultatCoalitions()->toArray();
@@ -178,7 +178,7 @@ class HomeController extends AbstractController
     public function getResultatParBureauVote()
     {
         $resultats = $this->resultatRepository->findBy([], ['user' => 'DESC']);
-        $coalitions = $this->coalitionRepository->findBy([], []);        
+        $coalitions = $this->coalitionRepository->findAll();
         return $this->render('home/resultats-bv.html.twig', [
             'resultats' => $resultats,
             'coalitions' => $coalitions,
@@ -193,7 +193,7 @@ class HomeController extends AbstractController
     public function getResultatParCommune()
     {
         $resultatsCoalitionCommune = $this->resultatRepository->findTotalNbresultatParCommune();
-        $coalitions = $this->coalitionRepository->findBy([], []);
+        $coalitions = $this->coalitionRepository->findBy([], ['nom' => 'ASC']);
         $nbVoixByCoalitionByCommune = $this->resultatRepository->findByCommune();
         $nbTotalElecteurCommune = $this->resultatRepository->findNombreTotalElecteursCommune();
         return $this->render('home/resultats-communes.html.twig', [

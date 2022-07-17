@@ -219,9 +219,9 @@
                         <tr>
                             <td> {{row.nom}} </td>
                             {% for nb in nbTotalElecteurDepartement %}
-                                {% if nb.nom == row.nom %}
-                                    <td> {{nb.nbElecteur |number_format(0, '.', ' ') }} </td>
-                                {% endif %}
+                            {% if nb.nom == row.nom %}
+                            <td> {{nb.nbElecteur |number_format(0, '.', ' ') }} </td>
+                            {% endif %}
                             {% endfor %}
                             <td> {{row.nbVotant}} </td>
                             <td> {{row.bulletinNull}} </td>

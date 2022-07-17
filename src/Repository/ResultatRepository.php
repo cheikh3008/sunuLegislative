@@ -152,7 +152,7 @@ class ResultatRepository extends ServiceEntityRepository
                 "SELECT D.nom as d_nom, C.nom, SUM(RC.nombre) as nombre
                 FROM App\Entity\ResultatCoalition RC, App\Entity\Coalition C, App\Entity\User U,  App\Entity\Resultat R, App\Entity\Departement D 
                 WHERE RC.resulat= R.id AND RC.coaltion= C.id AND R.user= U.id AND D.id = U.commune  
-                GROUP BY D.nom, C.nom  
+                GROUP BY D.nom, C.nom   ORDER BY C.nom
                 "
             )->getResult();
     }
@@ -164,7 +164,7 @@ class ResultatRepository extends ServiceEntityRepository
                 "SELECT D.commune as d_nom, C.nom, SUM(RC.nombre) as nombre
                 FROM App\Entity\ResultatCoalition RC, App\Entity\Coalition C, App\Entity\User U,  App\Entity\Resultat R, App\Entity\Departement D 
                 WHERE RC.resulat= R.id AND RC.coaltion= C.id AND R.user= U.id AND D.id = U.commune  
-                GROUP BY D.commune, C.nom  
+                GROUP BY D.commune, C.nom   ORDER BY C.nom
                 "
             )->getResult();
     }
@@ -176,7 +176,7 @@ class ResultatRepository extends ServiceEntityRepository
                 "SELECT D.nom , SUM(B.nbElecteur) as nbElecteur 
                 FROM  App\Entity\Departement D ,  App\Entity\BureauVote B  
                 WHERE D.id = B.commune
-                GROUP BY D.nom
+                GROUP BY D.nom 
                 "
             )->getResult();
     }
