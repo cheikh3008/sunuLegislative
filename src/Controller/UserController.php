@@ -140,12 +140,12 @@ class UserController extends AbstractController
             $codes_choice[$value . " + " . $phoneUtil->getCountryCodeForRegion($value)] = $value;
         }
         $formOptions = array('codes' => $codes_choice);
-
         $form = $this->createForm(UserType::class, $user, $formOptions);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
+            // dd($data);
             $telephone =  $data->getTelephone();
             $nombv = $data->getBV();
             $userRS = $this->userRepository->findOneBy(['BV' => $nombv]);
@@ -157,17 +157,16 @@ class UserController extends AbstractController
                 $this->addFlash('error', 'Le numéro de téléphone n\'est pas valide !');
                 return $this->redirectToRoute('app_user_edit', ['id' => $user->getId()], Response::HTTP_SEE_OTHER);
             }
-
             foreach ($usersAll as $key => $value) {
                 if ($value->getTelephone() === (int)($indicatif . $telephone)) {
                     $this->addFlash('error', 'ce numéro de téléphone existe dèja !');
                     return $this->redirectToRoute('app_user_edit', ['id' => $user->getId()], Response::HTTP_SEE_OTHER);
                 }
             }
-            if ($userRS) {
-                $this->addFlash('error', "Ce bureau a été dèja affecté par un représentant");
-                return $this->redirectToRoute('app_user_edit', ['id' => $user->getId()], Response::HTTP_SEE_OTHER);
-            }
+            // if ($userRS->getBV() == $user->getBV() ) {
+            //     $this->addFlash('error', "Ce bureau a été dèja affecté par un représentant");
+            //     return $this->redirectToRoute('app_user_edit', ['id' => $user->getId()], Response::HTTP_SEE_OTHER);
+            // }
             $user->setCode($code);
             $user->setTelephone(trim($indicatif . $number));
             $user->setUsername($number);
