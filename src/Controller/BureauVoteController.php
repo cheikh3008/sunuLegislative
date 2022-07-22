@@ -17,6 +17,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 /**
  * @Route("/bureau/vote")
@@ -54,7 +55,7 @@ class BureauVoteController extends AbstractController
             $data = $form->getData();
             $lieu = $data->getLieu();
             $nomBV = $data->getNomBV();
-            $bureauVote->setSlug($this->slugger->slug($lieu.''.$nomBV));
+            $bureauVote->setSlug($this->slugger->slug($lieu . '' . $nomBV));
             $bureauVoteRepository->add($bureauVote, true);
             $this->addFlash('success', 'Ce bureau de vote a été bien ajouté');
             return $this->redirectToRoute('app_bureau_vote_index', [], Response::HTTP_SEE_OTHER);
@@ -79,7 +80,7 @@ class BureauVoteController extends AbstractController
             $data = $form->getData();
             $lieu = $data->getLieu();
             $nomBV = $data->getNomBV();
-            $bureauVote->setSlug($this->slugger->slug($lieu.''.$nomBV));
+            $bureauVote->setSlug($this->slugger->slug($lieu . '' . $nomBV));
             $bureauVoteRepository->add($bureauVote, true);
             $this->addFlash('success', 'Ce bureau de vote a été bien modifié');
             return $this->redirectToRoute('app_bureau_vote_index', [], Response::HTTP_SEE_OTHER);
@@ -155,12 +156,12 @@ class BureauVoteController extends AbstractController
                         $nbElecteur = $row["3"];
                         $comm =  $departementRepository->findBy(['commune' => $commune]);
                         foreach ($comm as $key => $value) {
-                            if($value->getCommune() === $commune) {
+                            if ($value->getCommune() === $commune) {
                                 $bureauVote->setCommune($value);
                             }
                         }
                         $bureauVote->setLieu($lieu)
-                            ->setSlug($this->slugger->slug($lieu.''.$nomBV))
+                            ->setSlug($this->slugger->slug($lieu . '' . $nomBV))
                             ->setNomBV($nomBV)
                             ->setNbElecteur($nbElecteur);
                         $entityManagerInterface->persist($bureauVote);
@@ -182,4 +183,6 @@ class BureauVoteController extends AbstractController
             // 'erreur' => $erreur,
         ]);
     }
+
+    
 }

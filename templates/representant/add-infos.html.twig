@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}SunuLégislatives2022 | ajputer un représentant{% endblock %}
+
+{% block body %}
+<div class="container">
+    {% for message in app.flashes('success') %}
+    <div class="text-center alert alert-success mt-2" role="alert">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% for message in app.flashes('error') %}
+    <div class="text-center alert alert-danger mt-2" role="alert">
+        {{ message }}
+    </div>
+    {% endfor %}
+    <div class="content">
+        <div class="card">
+            <div class="card-header">
+                <h4> Veuillez ajouter les information complémentaires</h4>
+            </div>
+            <div class="card-body">
+                {{ form_start(form, {attr: {'novalidate': 'novalidate'}}) }}
+                <div class="row">
+                    <div class="col-md-12">
+                        {{ form_row(form.prenom) }}
+                    </div>
+                    <div class="col-md-12">
+                        {{ form_row(form.nom) }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form_row(form.code) }}
+                    </div>
+                    <div class="col-md-9">
+                        {{ form_row(form.telephone) }}
+                    </div>
+                </div>
+                <button class="btn btn-success">{{ button_label|default('Enrégistrer') }}</button>
+                {{ form_end(form) }}
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+{% endblock %}
