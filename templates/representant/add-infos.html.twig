@@ -28,14 +28,27 @@
                     <div class="col-md-12">
                         {{ form_row(form.nom) }}
                     </div>
-                    <div class="col-md-3">
-                        {{ form_row(form.code) }}
-                    </div>
-                    <div class="col-md-9">
+                    <div class="col-md-12">
                         {{ form_row(form.telephone) }}
                     </div>
+                    <div class="col-md-12">
+                        <div class="d-flex justify-content-start">
+                            <div>
+                                {{ form_row(form.check) }}
+
+                            </div>
+                            <div>&nbsp;&nbsp; | </div>
+                            <div>
+                                 <a href="{{path('app_termes_conditions')}}" class="btn btn-link" style="margin-top: -7px">Cliquer ici pour lire les
+                                    termes et
+                                    conditions d'utilisation</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <button class="btn btn-success">{{ button_label|default('Enrégistrer') }}</button>
+                <a href="{{path('app_bv_add')}}" class="btn btn-warning mt-2" >Précendent</a>
+
+                <button class="btn btn-success mt-2">{{ button_label|default('Enrégistrer') }}</button>
                 {{ form_end(form) }}
             </div>
         </div>

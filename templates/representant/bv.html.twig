@@ -17,13 +17,13 @@
     <div class="content">
         <div class="card">
             <div class="card-header">
-                <h4> Veuillez choisir un département</h4>
+                <h4> Veuillez choisir un bureau de vote </h4>
             </div>
             <div class="card-body">
                 {{ form_start(form, {attr: {'novalidate': 'novalidate'}}) }}
                 {{ form_widget(form) }}
-                <a href="{{path('app_representant')}}" class="btn btn-warning" >Précendent</a>
-                <button class="btn btn-success">{{ button_label|default('suivant') }}</button>
+                <a href="{{path('app_lieu_add')}}" class="btn btn-warning" >Précendent</a>
+                <button class="btn btn-success">{{ button_label|default('Suivant') }}</button>
                 {{ form_end(form) }}
             </div>
         </div>
