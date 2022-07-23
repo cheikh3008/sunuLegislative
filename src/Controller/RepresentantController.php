@@ -304,7 +304,7 @@ class RepresentantController extends AbstractController
             $this->session->remove("commune");
             $this->session->remove("lieu");
             $this->session->remove("nom_bv");
-            return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_representant', [], Response::HTTP_SEE_OTHER);
         }
         return $this->render('representant/add-infos.html.twig', [
             'form' => $form->createView()
