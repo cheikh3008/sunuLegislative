@@ -92,6 +92,9 @@ class RepresentantController extends AbstractController
     public function addcommune(Request $request): Response
     {
         $departement = $this->session->get("circonscription", []);
+        if( $departement == []){
+            return $this->redirectToRoute('app_circonscription_add', [], Response::HTTP_SEE_OTHER);
+        }
         $communes  = $this->departementRepository->findBy(["nom" => $departement['circonscription']]);
         foreach ($communes as $key => $value) {
             $com[$value->getCommune()] = $value->getCommune();
@@ -129,9 +132,11 @@ class RepresentantController extends AbstractController
     public function addlieu(Request $request): Response
     {
         $commune = $this->session->get("commune", []);
+        if( $commune == []){
+            return $this->redirectToRoute('app_commune_add', [], Response::HTTP_SEE_OTHER);
+        }
         $communes  = $this->departementRepository->findBy(["commune" => $commune['commune']]);
         $bureauVote = $this->bureauVoteRepository->findBy(['commune' => $communes[0]]);
-        // dd($bureauVote);
         foreach ($bureauVote as $key => $value) {
             $bv[$value->getLieu()] = $value->getLieu();
         }
@@ -172,7 +177,11 @@ class RepresentantController extends AbstractController
      */
     public function addbv(Request $request): Response
     {
+
         $lieu = $this->session->get("lieu", []);
+        if( $lieu == []){
+            return $this->redirectToRoute('app_lieu_add', [], Response::HTTP_SEE_OTHER);
+        }
         $bureauVote = $this->bureauVoteRepository->findBy(['lieu' => $lieu['lieu']]);
         foreach ($bureauVote as $key => $value) {
             $bv_nom[$value->getNomBV()] = $value->getSlug();
@@ -215,16 +224,14 @@ class RepresentantController extends AbstractController
         $user = new User();
         $role = $roleRepository->findOneBy(["libelle" => "ROLE_REPRESENTANT"]);
         $slugBV = $this->session->get("nom_bv", []);
+        if( $slugBV == []){
+            return $this->redirectToRoute('app_bv_add', [], Response::HTTP_SEE_OTHER);
+        }
         $bureauVote = $this->bureauVoteRepository->findOneBy(['slug' => $slugBV]);
         // dd($bureauVote);
         $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         $password = substr(str_shuffle($chars), 0, 8);
-        // $phoneUtil = PhoneNumberUtil::getInstance();
-        // $codes_choice = [];
-        // $regions = ($phoneUtil->getSupportedRegions());
-        // foreach ($regions as  $value) {
-        //     $codes_choice[$value . " + " . $phoneUtil->getCountryCodeForRegion($value)] = $value;
-        // }
+       
         $form = $this->createFormBuilder()
             ->add('nom', TextType::class, [
                 'label' => 'Nom',
