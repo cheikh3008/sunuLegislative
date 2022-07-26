@@ -90,7 +90,7 @@ class UserController extends AbstractController
                 return $this->redirectToRoute('app_user_new', [], Response::HTTP_SEE_OTHER);
             }
             $nomBV =  ($form->get('BV')->getData());
-            // $bvExi = $bureauVoteRepository->findOneBy(['nomBV' => $nomBV]);
+            $newbv = $bureauVoteRepository->find($nomBV->getId());
             $userRS = $this->userRepository->findOneBy(['BV' => $nomBV]);
             foreach ($usersAll as $key => $value) {
                 // dd($value->getTelephone() === (int)$telephone);
@@ -115,6 +115,7 @@ class UserController extends AbstractController
             );
             $user->setLieu($nomBV->getLieu());
             $user->setUsername($number);
+            $newbv->setIsValid(true);
             $this->userRepository->add($user, true);
             $this->addFlash('success', 'Ce représentant a été bien ajouté');
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
