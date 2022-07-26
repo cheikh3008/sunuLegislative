@@ -342,13 +342,13 @@ class RepresentantController extends AbstractController
             $bvv = $user->getBV()->getNombv();
             $ll = $user->getLieu();
             $this->addFlash('success', "
-            Félicitations, vous êtes bien enregistré comme Représentant du centre/ lieu de vote  $ll / $bvv. Vos identifiants de connexion pour saisir les résultats du Bureau de Vote pour lequel vous êtes Représentant vous seront ultérieurement envoyés par SMS.\r\nMerci de bien noter votre numéro de Bureau de Vote d'affectation(pour lequel vous êtes représentant).
+            Félicitations, vous êtes bien enregistré comme Représentant du centre/ lieu de vote  $ll / $bvv. Vos identifiants de connexion pour saisir les résultats du Bureau de Vote pour lequel vous êtes Représentant vous seront ultérieurement envoyés par SMS.\r\nMerci de bien noter votre numéro de Bureau de Vote d'affectation (pour lequel vous êtes représentant).
             ");
             $this->session->remove("circonscription");
             $this->session->remove("commune");
             $this->session->remove("lieu");
             $this->session->remove("nom_bv");
-            return $this->redirectToRoute('app_representant', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_success', [], Response::HTTP_SEE_OTHER);
         }
         return $this->render('representant/add-infos.html.twig', [
             'form' => $form->createView()
@@ -361,5 +361,13 @@ class RepresentantController extends AbstractController
     public function app_termes_conditions(): Response
     {
         return $this->render('representant/termes-conditions.html.twig');
+    }
+
+    /**
+     * @Route("/representant/success", name="app_success")
+     */
+    public function success(): Response
+    {
+        return $this->render('representant/success.html.twig');
     }
 }
