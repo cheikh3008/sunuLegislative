@@ -30,7 +30,7 @@
                     <tr>
                         <th scope="col">Nom de la circonscription</th>
                         <th scope="col">Nom de la commune</th>
-                        <th scope="col">Nombre de lieu</th>
+                        <th scope="col">Centre /Lieu de vote</th>
                         <th scope="col">Nombre d'électeurs</th>
                         <th scope="col">Nombre de votants</th>
                         <th scope="col">Nombre de bulletins nuls</th>
@@ -46,7 +46,11 @@
                         <td> {{row.nom}} </td>
                         <td> {{row.commune}} </td>
                         <td> {{row.lieu}} </td>
-                        <td> {{row.nbElecteur}} </td>
+                        {% for nb in nbElecteurParLieuVote %}
+                            {% if nb.lieu == row.lieu %}
+                                <td> {{nb.nbElecteur}} </td>
+                            {% endif %}
+                        {% endfor %}
                         <td> {{row.nbVotant}} </td>
                         <td> {{row.bulletinNull}} </td>
                         <td> {{row.bulletinExp}} </td>

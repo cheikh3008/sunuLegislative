@@ -199,11 +199,11 @@ class RepresentantController extends AbstractController
         $form = $this->createFormBuilder()
             ->add('nom_bv', ChoiceType::class, [
                 'label' => false,
-                'placeholder' => 'Choisir le Bureau de vote de vote pour lequel, vous désirez être Représentant',
+                'placeholder' => 'Choisir le Bureau de vote  pour lequel, vous désirez être Représentant',
                 'choices' => $bv_nom,
                 'data' => $dt ? $dt['nom_bv'] : '',
                 'constraints' => new NotBlank([
-                    'message' => 'Veuillez choisir le Bureau de vote de vote pour lequel, vous désirez être Représentant.'
+                    'message' => 'Veuillez choisir le Bureau  de vote pour lequel, vous désirez être Représentant.'
                 ]),
             ])
             ->getForm();
@@ -342,7 +342,7 @@ class RepresentantController extends AbstractController
             $bvv = $user->getBV()->getNombv();
             $ll = $user->getLieu();
             $this->addFlash('success', "
-            Félicitations, vous êtes bien enregistré comme Représentant du centre/ lieu de vote  $ll / $bvv. Vos identifiants de connexion pour saisir les résultats du Bureau de Vote pour lequel vous êtes Représentant vous seront ultérieurement envoyés par SMS.
+            Félicitations, vous êtes bien enregistré comme Représentant du centre/ lieu de vote  $ll / $bvv. Vos identifiants de connexion pour saisir les résultats du Bureau de Vote pour lequel vous êtes Représentant vous seront ultérieurement envoyés par SMS.\r\nMerci de bien noter votre numéro de Bureau de Vote d'affectation(pour lequel vous êtes représentant).
             ");
             $this->session->remove("circonscription");
             $this->session->remove("commune");

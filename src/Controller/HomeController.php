@@ -214,11 +214,13 @@ class HomeController extends AbstractController
     {
         $coalitions = $this->coalitionRepository->findBy([], ['nom' => 'ASC']);
         $resultatsParLieuVote  = $this->resultatRepository->findTotalNbresultatParLieuVote();
-        $nbVoixByCoalitionByLieuVote = $this->resultatRepository->findNombreTotalElecteursLieuVote();
+        $nbVoixByCoalitionByLieuVote = $this->resultatRepository->findNombreTotalResultatsLieuVoteByCoalition();
+        $nbElecteurParLieuVote = $this->resultatRepository->findNombreTotalElecteursLieuVote();
         return $this->render('home/resultats-lv.html.twig', [
             'resultatsParLieuVote' => $resultatsParLieuVote,
             'coalitions' => $coalitions,
-            'nbVoixByCoalitionByLieuVote' => $nbVoixByCoalitionByLieuVote
+            'nbVoixByCoalitionByLieuVote' => $nbVoixByCoalitionByLieuVote,
+            'nbElecteurParLieuVote' => $nbElecteurParLieuVote
         ]);
     }
 }

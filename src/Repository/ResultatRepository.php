@@ -209,6 +209,17 @@ class ResultatRepository extends ServiceEntityRepository
     {
         return $this->getEntityManager()
             ->createQuery(
+                "SELECT B.lieu , SUM(B.nbElecteur) as nbElecteur 
+                FROM App\Entity\BureauVote B  
+                GROUP BY B.lieu
+                "
+            )->getResult();
+    }
+
+    public function findNombreTotalResultatsLieuVoteByCoalition()
+    {
+        return $this->getEntityManager()
+            ->createQuery(
                 "SELECT B.lieu as lieu, C.nom, SUM(RC.nombre) as nombre 
                 FROM App\Entity\ResultatCoalition RC, App\Entity\Coalition C, App\Entity\User U, App\Entity\Resultat R, App\Entity\BureauVote as B 
                 WHERE RC.resulat = R.id AND RC.coaltion = C.id AND R.user = U.id AND B.id = U.BV GROUP BY B.lieu, C.nom ORDER BY C.nom
