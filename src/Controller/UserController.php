@@ -322,7 +322,7 @@ class UserController extends AbstractController
         $users = $this->userRepository->findAll();
         $datas = [];
         foreach ($users as $value) {
-            if($value->getBV() != null) {
+            if ($value->getBV() != null) {
 
                 $datas[] = $value;
                 $telephone = $value->getTelephone();
@@ -335,7 +335,7 @@ class UserController extends AbstractController
                 $int = (int) filter_var($value->getBV()->getNomBV(), FILTER_SANITIZE_NUMBER_INT);
                 $message = ("Bjr $prenom.$nom, Représentant $lv / BV N°$int, votre  identifiant de connexion est : $username, votre Mot de passe : $uiid \r\nLe lien de la plateforme : www.sunulegislatives.com");
                 // $message = ("Bonjour $prenom. $nom, votre  identifiant de connexion est : $username, votre Mot de passe : $uiid \r\nLe lien de la plateforme : www.sunulegislatives.com");
-    
+
                 $this->getSMS($telephone, $message);
             }
         }
@@ -354,6 +354,7 @@ class UserController extends AbstractController
         $sms = new SendIdentifiant();
         $form = $this->createForm(SendIdentifiantType::class, $sms);
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $tel = $data->getTelephone();
@@ -364,8 +365,12 @@ class UserController extends AbstractController
             $prenom = strtoupper($user->getPrenom()[0]);
             $lv = $user->getLieu();
             $bvv =  substr($user->getLieu(), -4);
-            $int = (int) filter_var($user->getBV()->getNomBV(), FILTER_SANITIZE_NUMBER_INT);
-            $message = ("Bjr $prenom.$nom, Représentant $lv / BV N°$int, votre  identifiant de connexion est : $username, votre Mot de passe : $uiid \r\nLe lien de la plateforme : www.sunulegislatives.com");
+            if ($user->getBV() == null) {
+                $message = ("Bjr $prenom.$nom, votre  identifiant de connexion est : $username, votre Mot de passe : $uiid \r\nLe lien de la plateforme : www.sunulegislatives.com");
+            } else {
+                $int = (int) filter_var($user->getBV()->getNomBV(), FILTER_SANITIZE_NUMBER_INT);
+                $message = ("Bjr $prenom.$nom, Représentant $lv / BV N°$int, votre  identifiant de connexion est : $username, votre Mot de passe : $uiid \r\nLe lien de la plateforme : www.sunulegislatives.com");
+            }
             // $tt = ("
             // Bjr $prenom.$nom, Représentant $lv...$bvv / BV N°$int, votre identifiant : $username, votre mot de passe : $uiid ; Le lien de connexion : www.sunulegislatives.com
             // ");
