@@ -16,7 +16,7 @@
                 <div class="cards">
                     <div class="alert alert-secondary">
                         <h6> Nombre total de bureaux de vote</h6>
-                        <h2> <strong> {{ nombreTotalBV.nbBV }} </strong> </h2>
+                        <h2> <strong> {{ nombreTotalBV.nbBV|number_format(0, '.', ' ')}} </strong> </h2>
                     </div>
 
                 </div>
@@ -51,7 +51,7 @@
                 <div class="cards">
                     <div class="alert alert-warning">
                         <h6>Nombre total de votants</h6>
-                        <h2> <strong> {{nbVotant}} </strong> </h2>
+                        <h2> <strong> {{nbVotant|number_format(0, '.', ' ')}} </strong> </h2>
                     </div>
 
                 </div>
@@ -60,7 +60,7 @@
                 <div class="cards">
                     <div class="alert alert-danger">
                         <h6>Nombre total de bulletins nuls</h6>
-                        <h2> <strong> {{bulletinNull}} </strong> </h2>
+                        <h2> <strong> {{bulletinNull|number_format(0, '.', ' ')}} </strong> </h2>
                     </div>
 
                 </div>
@@ -69,7 +69,7 @@
                 <div class="cards">
                     <div class="alert alert-primary">
                         <h6> Nombre total de bulletins exprimés</h6>
-                        <h2> <strong> {{bulletinExp}} </strong> </h2>
+                        <h2> <strong> {{bulletinExp|number_format(0, '.', ' ')}} </strong> </h2>
                     </div>
 
                 </div>
@@ -109,10 +109,10 @@
                     {% for row in nombreBVCirconscription %}
                     <tr>
                         <td> {{row.nom}} </td>
-                        <td> {{row.NBresultat}} </td>
+                        <td> <strong>{{row.NBresultat |number_format(0, '.', ' ')}}</strong> </td>
                         {% for res in nbResultatBVCir %}
                         {% if res.nom == row.nom %}
-                        <td>{{res.NBresultat}}</td>
+                        <td><strong>{{res.NBresultat |number_format(0, '.', ' ')}}</strong></td>
                         {% endif %}
                         {% endfor %}
                     </tr>
@@ -173,7 +173,7 @@
                         {% for row in findNombreTotalVoix %}
                         <tr>
                             <td> {{row.nom}} </td>
-                            <td> {{row.nbVoix}} </td>
+                            <td> {{row.nbVoix|number_format(0, '.', ' ')}} </td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -223,15 +223,15 @@
                             <td> {{nb.nbElecteur |number_format(0, '.', ' ') }} </td>
                             {% endif %}
                             {% endfor %}
-                            <td> {{row.nbVotant}} </td>
-                            <td> {{row.bulletinNull}} </td>
-                            <td> {{row.bulletinExp}} </td>
+                            <td> {{row.nbVotant|number_format(0, '.', ' ')}} </td>
+                            <td> {{row.bulletinNull|number_format(0, '.', ' ')}} </td>
+                            <td> {{row.bulletinExp|number_format(0, '.', ' ')}} </td>
                             {% for res in resultatsCoalitionParDepartement %}
                             {% if res.d_nom == row.nom %}
                             {# {% for row1 in res %} #}
                             {% for coa in coalitions %}
                             {% if coa.nom == res.nom %}
-                            <td> {{res.nombre}} </td>
+                            <td> {{res.nombre|number_format(0, '.', ' ')}} </td>
                             {% endif %}
                             {% endfor %}
                             {# {% endfor %} #}

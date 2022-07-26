@@ -184,10 +184,12 @@ class UserController extends AbstractController
     /**
      * @Route("/{id}/delete", name="app_user_delete")
      */
-    public function delete(User $user): Response
+    public function delete(User $user, BureauVoteRepository $bureauVoteRepository): Response
     {
         $entityManager = $this->getDoctrine()->getManager();
+        $bv = $bureauVoteRepository->find($user->getBV()->getId());
         $entityManager->remove($user);
+        $bv->setIsValid(false);
         $entityManager->flush();
         $this->addFlash('success', 'Ce représentant a été bien supprimé');
         return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
@@ -267,11 +269,13 @@ class UserController extends AbstractController
                     }
                     $nomBV1 = $bureauVoteRepository->findOneBy(['slug' => $slug]);
                     $cir = $departementRepository->findOneBy(['commune' => $commune]);
+                    $bvv = $bureauVoteRepository->find($nomBV1->getId());
                     // $comm = $bureauVoteRepository->findOneBy(['commune' => $cir]);
                     // $slugCommune = $this->slugger->slug($nom.''.$commune);
                     // if (!$nomBV1->getCommune()->getCommune() == $commune) {
                     //     dd('error');
                     // }
+
                     $user->setNom($nom)
                         ->setUsername($number)
                         ->setPrenom($prenom)
@@ -288,6 +292,7 @@ class UserController extends AbstractController
                                 $password
                             )
                         );
+                    $bvv->setIsValid(true);
                     $entityManagerInterface->persist($user);
                     // dd($user);
                     $entityManagerInterface->flush();
@@ -317,16 +322,22 @@ class UserController extends AbstractController
         $users = $this->userRepository->findAll();
         $datas = [];
         foreach ($users as $value) {
+            if($value->getBV() != null) {
 
-            $datas[] = $value;
-            $telephone = $value->getTelephone();
-            $nom = strtoupper($value->getNom());
-            $username = $value->getUsername();
-            $uiid = $value->getUuid();
-            $prenom = strtoupper($value->getPrenom()[0]);
-            $message = ("Bonjour $prenom. $nom, votre  identifiant de connexion est : $username, votre Mot de passe : $uiid \r\nLe lien de la plateforme : www.sunulegislatives.com");
-
-            $this->getSMS($telephone, $message);
+                $datas[] = $value;
+                $telephone = $value->getTelephone();
+                $nom = strtoupper($value->getNom());
+                $username = $value->getUsername();
+                $uiid = $value->getUuid();
+                $prenom = strtoupper($value->getPrenom()[0]);
+                $nom = strtoupper($value->getNom()[0]);
+                $lv = $value->getLieu();
+                $int = (int) filter_var($value->getBV()->getNomBV(), FILTER_SANITIZE_NUMBER_INT);
+                $message = ("Bjr $prenom.$nom, Représentant $lv / BV N°$int, votre  identifiant de connexion est : $username, votre Mot de passe : $uiid \r\nLe lien de la plateforme : www.sunulegislatives.com");
+                // $message = ("Bonjour $prenom. $nom, votre  identifiant de connexion est : $username, votre Mot de passe : $uiid \r\nLe lien de la plateforme : www.sunulegislatives.com");
+    
+                $this->getSMS($telephone, $message);
+            }
         }
         $this->addFlash('success', "Les identifiants de connexion ont été envoyés  à tous les représentants .");
         return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
@@ -347,11 +358,17 @@ class UserController extends AbstractController
             $data = $form->getData();
             $tel = $data->getTelephone();
             $user = $this->userRepository->findOneBy(["uuid" => $tel]);
-            $nom = strtoupper($user->getNom());
+            $nom = strtoupper($user->getNom()[0]);
             $username = $user->getUsername();
             $uiid = $user->getUuid();
             $prenom = strtoupper($user->getPrenom()[0]);
-            $message = ("Bonjour $prenom. $nom, votre  identifiant de connexion est : $username, votre Mot de passe : $uiid \r\nLe lien de la plateforme : www.sunulegislatives.com");
+            $lv = $user->getLieu();
+            $bvv =  substr($user->getLieu(), -4);
+            $int = (int) filter_var($user->getBV()->getNomBV(), FILTER_SANITIZE_NUMBER_INT);
+            $message = ("Bjr $prenom.$nom, Représentant $lv / BV N°$int, votre  identifiant de connexion est : $username, votre Mot de passe : $uiid \r\nLe lien de la plateforme : www.sunulegislatives.com");
+            // $tt = ("
+            // Bjr $prenom.$nom, Représentant $lv...$bvv / BV N°$int, votre identifiant : $username, votre mot de passe : $uiid ; Le lien de connexion : www.sunulegislatives.com
+            // ");
             $this->getSMS($user->getTelephone(), $message);
             $this->addFlash('success', "Les identifiants de connexion ont été envoyés à " . $user->getFullname());
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);

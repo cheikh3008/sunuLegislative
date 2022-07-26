@@ -58,9 +58,15 @@ class BureauVote
      */
     private $slug;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $isValid;
+
     public function __construct()
     {
         $this->user = new ArrayCollection();
+        $this->isValid = false;
     }
 
     
@@ -156,6 +162,18 @@ class BureauVote
     public function getLieuAndNomBV()
     {
         return $this->lieu . ' - ' . $this->nomBV;
+    }
+
+    public function isIsValid(): ?bool
+    {
+        return $this->isValid;
+    }
+
+    public function setIsValid(?bool $isValid): self
+    {
+        $this->isValid = $isValid;
+
+        return $this;
     }
 
     

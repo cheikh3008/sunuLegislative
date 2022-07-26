@@ -157,6 +157,18 @@ class ResultatRepository extends ServiceEntityRepository
             )->getResult();
     }
 
+    public function findTotalNbresultatParLieuVote()
+    {
+        return $this->getEntityManager()
+            ->createQuery(
+                "SELECT D.nom, D.commune , B.lieu ,SUM(B.nbElecteur) as nbElecteur ,SUM(R.nbVotant) as nbVotant , SUM(R.bulletinNull) as bulletinNull, SUM(R.bulletinExp) as bulletinExp
+                FROM App\Entity\Departement D, App\Entity\User U,  App\Entity\Resultat R, App\Entity\BureauVote B 
+                WHERE D.id = B.commune AND U.BV = B.id AND R.user = U.id  
+                GROUP BY D.nom, D.commune, B.lieu
+                "
+            )->getResult();
+    }
+
     public function findTotalNbresultatParCommune()
     {
         return $this->getEntityManager()
@@ -193,6 +205,17 @@ class ResultatRepository extends ServiceEntityRepository
             )->getResult();
     }
 
+    public function findNombreTotalElecteursLieuVote()
+    {
+        return $this->getEntityManager()
+            ->createQuery(
+                "SELECT B.lieu as lieu, C.nom, SUM(RC.nombre) as nombre 
+                FROM App\Entity\ResultatCoalition RC, App\Entity\Coalition C, App\Entity\User U, App\Entity\Resultat R, App\Entity\BureauVote as B 
+                WHERE RC.resulat = R.id AND RC.coaltion = C.id AND R.user = U.id AND B.id = U.BV GROUP BY B.lieu, C.nom ORDER BY C.nom
+                "
+            )->getResult();
+    }
+
     // SELECT departement.nom ,coalition.nom, SUM(resultat_coalition.nombre) FROM resultat, resultat_coalition, coalition, user, departement WHERE resultat_coalition.resulat_id = resultat.id AND resultat_coalition.coaltion_id = coalition.id AND resultat.user_id = user.id AND departement.id = user.commune_id  GROUP BY departement.nom, coalition.nom
     // SELECT BV.nom_cir, COUNT(BV.nom_bv), COUNT(R.bulletin_exp) FROM resultat R, bureau_vote BV, user U WHERE R.user_id = U.id AND BV.id = U.bv_id GROUP BY BV.nom_cir
 
@@ -205,4 +228,6 @@ class ResultatRepository extends ServiceEntityRepository
     // SELECT b.nom_cir , COUNT(b.nom_bv) FROM  bureau_vote as b GROUP BY b.nom_cir
 
     // SELECT departement.nom , SUM(bureau_vote.nb_electeur) FROM departement, bureau_vote WHERE departement.id = bureau_vote.commune_id GROUP BY departement.nom
+
+    // SELECT D.nom, D.commune , B.lieu ,SUM(B.nb_electeur) ,SUM(R.nb_votant) as nbVotant , SUM(R.bulletin_null) as bulletinNull, SUM(R.bulletin_exp) as bulletinExp FROM resultat R, bureau_vote B, user U, departement D WHERE D.id = B.commune_id AND U.bv_id = B.id AND R.user_id = U.id GROUP BY D.nom, D.commune, B.lieu 
 }

@@ -15,15 +15,19 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Validator\Constraints\Type;
+use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Validator\Constraints\Regex;
 
 class RepresentantController extends AbstractController
 {
@@ -63,18 +67,18 @@ class RepresentantController extends AbstractController
         $form = $this->createFormBuilder()
             ->add('circonscription', ChoiceType::class, [
                 'label' => false,
-                'placeholder' => 'Choisir la circonscription',
+                'placeholder' => 'Choisir le département',
                 'choices' => $ressultDepartements,
                 'data' => $dt ? $dt['circonscription'] : '',
                 // 'class' => Departement::class,
                 'constraints' => new NotBlank([
-                    'message' => 'Veuillez choisir la circonscription .'
+                    'message' => 'Veuillez choisir le département.'
                 ]),
             ])
             ->getForm();
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-           
+
             $data = $form->getData();
             $this->session->set("circonscription", $data);
             // $this->addFlash('success', 'Le partenaire a été bien ajouté');
@@ -92,7 +96,7 @@ class RepresentantController extends AbstractController
     public function addcommune(Request $request): Response
     {
         $departement = $this->session->get("circonscription", []);
-        if( $departement == []){
+        if ($departement == []) {
             return $this->redirectToRoute('app_circonscription_add', [], Response::HTTP_SEE_OTHER);
         }
         $communes  = $this->departementRepository->findBy(["nom" => $departement['circonscription']]);
@@ -107,7 +111,7 @@ class RepresentantController extends AbstractController
                 'choices' => $com,
                 'data' => $dt ? $dt['commune'] : '',
                 'constraints' => new NotBlank([
-                    'message' => 'Veuillez choisir la commune .'
+                    'message' => 'Veuillez choisir la commune.'
                 ]),
             ])
             ->getForm();
@@ -132,7 +136,7 @@ class RepresentantController extends AbstractController
     public function addlieu(Request $request): Response
     {
         $commune = $this->session->get("commune", []);
-        if( $commune == []){
+        if ($commune == []) {
             return $this->redirectToRoute('app_commune_add', [], Response::HTTP_SEE_OTHER);
         }
         $communes  = $this->departementRepository->findBy(["commune" => $commune['commune']]);
@@ -179,22 +183,27 @@ class RepresentantController extends AbstractController
     {
 
         $lieu = $this->session->get("lieu", []);
-        if( $lieu == []){
+        if ($lieu == []) {
             return $this->redirectToRoute('app_lieu_add', [], Response::HTTP_SEE_OTHER);
         }
         $bureauVote = $this->bureauVoteRepository->findBy(['lieu' => $lieu['lieu']]);
+
         foreach ($bureauVote as $key => $value) {
-            $bv_nom[$value->getNomBV()] = $value->getSlug();
+            if ($value->isIsValid() == false) {
+                $bv_nom[$value->getNomBV()] = $value->getSlug();
+            } else {
+                $bv_nom[] = [];
+            }
         }
         $dt = $this->session->get("nom_bv", []);
         $form = $this->createFormBuilder()
             ->add('nom_bv', ChoiceType::class, [
                 'label' => false,
-                'placeholder' => 'Choisir le numéro du bureau de vote',
+                'placeholder' => 'Choisir le Bureau de vote de vote pour lequel, vous désirez être Représentant',
                 'choices' => $bv_nom,
                 'data' => $dt ? $dt['nom_bv'] : '',
                 'constraints' => new NotBlank([
-                    'message' => 'Veuillez choisir le numéro du bureau de vote .'
+                    'message' => 'Veuillez choisir le Bureau de vote de vote pour lequel, vous désirez être Représentant.'
                 ]),
             ])
             ->getForm();
@@ -207,7 +216,7 @@ class RepresentantController extends AbstractController
                 $this->addFlash('error', "Ce bureau a été dèja affecté par un représentant");
                 return $this->redirectToRoute('app_bv_add', [], Response::HTTP_SEE_OTHER);
             }
-            
+
             $this->session->set("nom_bv", $data);
             return $this->redirectToRoute('app_infos_add', [], Response::HTTP_SEE_OTHER);
         }
@@ -224,14 +233,14 @@ class RepresentantController extends AbstractController
         $user = new User();
         $role = $roleRepository->findOneBy(["libelle" => "ROLE_REPRESENTANT"]);
         $slugBV = $this->session->get("nom_bv", []);
-        if( $slugBV == []){
+        if ($slugBV == []) {
             return $this->redirectToRoute('app_bv_add', [], Response::HTTP_SEE_OTHER);
         }
         $bureauVote = $this->bureauVoteRepository->findOneBy(['slug' => $slugBV]);
         // dd($bureauVote);
         $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         $password = substr(str_shuffle($chars), 0, 8);
-       
+
         $form = $this->createFormBuilder()
             ->add('nom', TextType::class, [
                 'label' => 'Nom',
@@ -239,7 +248,7 @@ class RepresentantController extends AbstractController
                     'placeholder' => 'Entrez le nom',
                 ],
                 'constraints' => new NotBlank([
-                    'message' => 'Veuillez remplir ce champs.'
+                    'message' => 'Veuillez entrer le nom.'
                 ]),
             ])
             ->add('prenom', TextType::class, [
@@ -248,7 +257,7 @@ class RepresentantController extends AbstractController
                     'placeholder' => 'Entrez le prénom',
                 ],
                 'constraints' => new NotBlank([
-                    'message' => 'Veuillez remplir ce champs.'
+                    'message' => 'Veuillez entrer le prénom.'
                 ]),
             ])
             ->add('check', CheckboxType::class, [
@@ -257,23 +266,45 @@ class RepresentantController extends AbstractController
                     'message' => 'Veuillez accepter les termes et conditions.'
                 ]),
             ])
-            ->add('telephone', NumberType::class, [
-                'label' => 'Téléphone',
-                'attr' => [
-                    'placeholder' => 'Entrez le numéro de téléphone',
-                    'id' => 'phone'
-                ],
+            ->add('telephone', RepeatedType::class, [
+                'type' => IntegerType::class,
+                'invalid_message' => 'Les deux numéros de téléphone ne sont pas identiques.',
+                'options' => ['attr' => ['class' => 'password-field']],
+                'required' => true,
+                'trim' => true,
+                'first_options'  => ['label' => 'Numéro de téléphone', 'attr' => [
+                    'placeholder' => "Veuillez entrer votre numéro de téléphone sans espace"
+                ]],
+                'second_options' => ['label' => 'Confirmez votre numéro de téléphone', 'attr' => [
+                    'placeholder' => "Veuillez confirmer votre numéro de téléphone sans espace"
+                ]],
                 'constraints' => [
                     new NotBlank([
-                        'message' => 'Veuillez remplir ce champs.'
+                        'message' => 'Merci de saisir votre numéro de téléphone sans espace.'
                     ]),
                     new Regex([
                         'pattern'  => '#^(77||78||76||70||75)[0-9]{9}$#',
                         'message' => 'Veuillez entrer un numéro de téléphone valide.',
-                    ])
+                    ]),
                 ],
-
             ])
+            // ->add('telephone', NumberType::class, [
+            //     'label' => 'Téléphone',
+            //     'attr' => [
+            //         'placeholder' => 'Entrez le numéro de téléphone',
+            //         'id' => 'phone'
+            //     ],
+            //     'constraints' => [
+            //         new NotBlank([
+            //             'message' => 'Veuillez entrer le numéro du téléphone.'
+            //         ]),
+            //         new Regex([
+            //             'pattern'  => '#^(77||78||76||70||75)[0-9]{9}$#',
+            //             'message' => 'Veuillez entrer un numéro de téléphone valide.',
+            //         ])
+            //     ],
+
+            // ])
             ->getForm();
         $form->handleRequest($request);
         $usersAll = $this->userRepository->findAll();
@@ -281,13 +312,15 @@ class RepresentantController extends AbstractController
             $telephone =  $form->get('telephone')->getData();
             $nom = $form->get('nom')->getData();
             $prenom = $form->get('prenom')->getData();
-    
+
             foreach ($usersAll as $key => $value) {
                 if ($value->getTelephone() === (int)(221 . $telephone)) {
-                    $this->addFlash('error', 'ce numéro de téléphone existe dèja !');
+                    $this->addFlash('error', 'Ce numéro de téléphone existe dèja !');
                     return $this->redirectToRoute('app_infos_add', [], Response::HTTP_SEE_OTHER);
                 }
             }
+            $new_bv = $this->bureauVoteRepository->find($bureauVote->getId());
+            $new_bv->setIsValid(true);
             $user->setRole($role);
             $user->setUuid($password);
             $user->setCode("SN");
@@ -306,7 +339,11 @@ class RepresentantController extends AbstractController
             $user->setUsername($telephone);
             $em->persist($user);
             $em->flush();
-            $this->addFlash('success', 'Ce représentant a été bien ajouté');
+            $bvv = $user->getBV()->getNombv();
+            $ll = $user->getLieu();
+            $this->addFlash('success', "
+            Félicitations, vous êtes bien enregistré comme Représentant du centre/ lieu de vote  $ll / $bvv. Vos identifiants de connexion pour saisir les résultats du Bureau de Vote pour lequel vous êtes Représentant vous seront ultérieurement envoyés par SMS.
+            ");
             $this->session->remove("circonscription");
             $this->session->remove("commune");
             $this->session->remove("lieu");

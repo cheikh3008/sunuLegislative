@@ -71,12 +71,12 @@
                     <td>{{ resultats.user.BV.commune.commune }}</td>
                     <td>{{ resultats.user.BV.lieu }}</td>
                     <td>{{ resultats.user.BV.NomBV }}</td>
-                    <td> {{ resultats.user.BV.nbElecteur }} </td>
-                    <td>{{ resultats.nbVotant }}</td>
-                    <td>{{ resultats.bulletinNull }}</td>
-                    <td>{{ resultats.bulletinExp }}</td>
+                    <td> {{ resultats.user.BV.nbElecteur |number_format(0, '.', ' ')}} </td>
+                    <td>{{ resultats.nbVotant |number_format(0, '.', ' ')}}</td>
+                    <td>{{ resultats.bulletinNull |number_format(0, '.', ' ')}}</td>
+                    <td>{{ resultats.bulletinExp |number_format(0, '.', ' ')}}</td>
                     {% for row in resultats.getResultatCoalitions %}
-                    <td> {{row.nombre}} </td>
+                    <td> {{row.nombre |number_format(0, '.', ' ')}} </td>
                     {% endfor %}
                     <td>{{ resultats.user.prenom }} {{resultats.user.nom}}</td>
 

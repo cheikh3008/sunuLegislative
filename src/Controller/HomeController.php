@@ -203,4 +203,22 @@ class HomeController extends AbstractController
             'nbTotalElecteurCommune' => $nbTotalElecteurCommune
         ]);
     }
+
+    /**
+     * @Route("/resultats-lieu-de-vote", name="app_resultats_lieu_vote")
+     * @IsGranted("ROLE_ADMIN")
+     */
+
+    public function getResultatLieuVote()
+
+    {
+        $coalitions = $this->coalitionRepository->findBy([], ['nom' => 'ASC']);
+        $resultatsParLieuVote  = $this->resultatRepository->findTotalNbresultatParLieuVote();
+        $nbVoixByCoalitionByLieuVote = $this->resultatRepository->findNombreTotalElecteursLieuVote();
+        return $this->render('home/resultats-lv.html.twig', [
+            'resultatsParLieuVote' => $resultatsParLieuVote,
+            'coalitions' => $coalitions,
+            'nbVoixByCoalitionByLieuVote' => $nbVoixByCoalitionByLieuVote
+        ]);
+    }
 }

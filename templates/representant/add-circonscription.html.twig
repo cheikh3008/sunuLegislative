@@ -17,12 +17,12 @@
     <div class="content">
         <div class="card">
             <div class="card-header">
-                <h4> Veuillez choisir un département</h4>
+                <h4>Pour quel département, souhaitez-vous être Représentant ?</h4>
             </div>
             <div class="card-body">
                 {{ form_start(form, {attr: {'novalidate': 'novalidate'}}) }}
                 {{ form_widget(form) }}
-                <a href="{{path('app_representant')}}" class="btn btn-warning" >Précendent</a>
+                <a href="{{path('app_representant')}}" class="btn btn-warning" >Précédent</a>
                 <button class="btn btn-success">{{ button_label|default('suivant') }}</button>
                 {{ form_end(form) }}
             </div>

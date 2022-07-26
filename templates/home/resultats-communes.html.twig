@@ -43,18 +43,18 @@
                             <td> {{row.commune}} </td>
                             {% for nb in nbTotalElecteurCommune %}
                             {% if nb.commune == row.commune %}
-                            <td> {{nb.nbElecteur}} </td>
+                            <td> {{nb.nbElecteur|number_format(0, '.', ' ')}} </td>
                             {% endif %}
                             {% endfor %}
-                            <td> {{row.nbVotant}} </td>
-                            <td> {{row.bulletinNull}} </td>
-                            <td> {{row.bulletinExp}} </td>
+                            <td> {{row.nbVotant|number_format(0, '.', ' ')}} </td>
+                            <td> {{row.bulletinNull|number_format(0, '.', ' ')}} </td>
+                            <td> {{row.bulletinExp|number_format(0, '.', ' ')}} </td>
                             {% for res in resultatsCoalitionCommune %}
                             {% if res.d_nom == row.commune %}
                             {# {% for row1 in res %} #}
                             {% for coa in coalitions %}
                             {% if coa.nom == res.nom %}
-                            <td> {{res.nombre}} </td>
+                            <td> {{res.nombre|number_format(0, '.', ' ')}} </td>
                             {% endif %}
                             {% endfor %}
                             {# {% endfor %} #}

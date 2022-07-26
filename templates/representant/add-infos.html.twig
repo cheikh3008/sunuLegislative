@@ -17,7 +17,7 @@
     <div class="content">
         <div class="card">
             <div class="card-header">
-                <h4> Veuillez ajouter les information complémentaires</h4>
+                <h4>Veuillez fournir quelques informations complémentaires</h4>
             </div>
             <div class="card-body">
                 {{ form_start(form, {attr: {'novalidate': 'novalidate'}}) }}
@@ -39,16 +39,17 @@
                             </div>
                             <div>&nbsp;&nbsp; | </div>
                             <div>
-                                 <a href="{{path('app_termes_conditions')}}" class="btn btn-link" style="margin-top: -7px">Cliquer ici pour lire les
+                                <a href="{{path('app_termes_conditions')}}" class="btn btn-link"
+                                    style="margin-top: -7px">Cliquer ici pour lire les
                                     termes et
                                     conditions d'utilisation</a>
                             </div>
                         </div>
                     </div>
                 </div>
-                <a href="{{path('app_bv_add')}}" class="btn btn-warning mt-2" >Précendent</a>
+                <a href="{{path('app_bv_add')}}" class="btn btn-warning mt-2">Précédent</a>
 
-                <button class="btn btn-success mt-2">{{ button_label|default('Enrégistrer') }}</button>
+                <button class="btn btn-success mt-2">{{ button_label|default('Enregistrer') }}</button>
                 {{ form_end(form) }}
             </div>
         </div>

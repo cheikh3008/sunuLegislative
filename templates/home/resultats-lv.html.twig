@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}SunuLégislatives2022 | Résultats par Circonscription{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    {% for message in app.flashes('success') %}
+    <div class="text-center alert alert-success mt-2" role="alert">
+        {{ message }}
+    </div>
+    {% endfor %}
+    <div class="card mt-2 mb-2" style="width: 100%;">
+        <div class="card-header" style="padding:20px;background-color:#fff !important;">
+            <div class="d-flex justify-content-between">
+                <div class="mt-2">
+                    <h4>Nombre de voix de chaque Coalition par Centre / Lieu de Vote</h4>
+                </div>
+                <div>
+                    <button id="exportlieu" class="btn btn-success">Export to Excel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-body mt-3 mb-3">
+        <div class="table-responsive">
+            {% if resultatsParLieuVote %}
+
+            <table id="tableclieuexport" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Nom de la circonscription</th>
+                        <th scope="col">Nom de la commune</th>
+                        <th scope="col">Nombre de lieu</th>
+                        <th scope="col">Nombre d'électeurs</th>
+                        <th scope="col">Nombre de votants</th>
+                        <th scope="col">Nombre de bulletins nuls</th>
+                        <th scope="col">Nombre de bulletins exprimés</th>
+                        {% for row in coalitions %}
+                        <th scope="col"> {{row.nom}} </th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in resultatsParLieuVote %}
+                    <tr>
+                        <td> {{row.nom}} </td>
+                        <td> {{row.commune}} </td>
+                        <td> {{row.lieu}} </td>
+                        <td> {{row.nbElecteur}} </td>
+                        <td> {{row.nbVotant}} </td>
+                        <td> {{row.bulletinNull}} </td>
+                        <td> {{row.bulletinExp}} </td>
+                        {% for row1 in nbVoixByCoalitionByLieuVote %}
+                        {% if row1.lieu == row.lieu %}
+                        {# {% for row1 in res %} #}
+                        {% for coa in coalitions %}
+                        {% if coa.nom == row1.nom %}
+                        <td> {{row1.nombre|number_format(0, '.', ' ')}} </td>
+                        {% endif %}
+                        {% endfor %}
+                        {% endif %}
+                         {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="alert alert-danger text-center" role="alert">
+                <span>Aucun enregistrement trouvé </span>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+{% endblock %}

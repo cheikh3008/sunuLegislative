@@ -29,6 +29,14 @@ $(document).ready(function () {
             filename: "resultatElectionParCommune",
         });
     });
+
+    $('#exportlieu').on('click', function(e){
+        $("#tableclieuexport").table2excel({
+            exclude: ".noExport",
+            name: "Data",
+            filename: "resultatElectionParLieuDeVote",
+        });
+    });
 });
 
 const dash_link_href = location.href;
