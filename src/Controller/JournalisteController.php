@@ -167,7 +167,7 @@ class JournalisteController extends AbstractController
             $em->persist($user);
             $em->flush();
             $this->addFlash('success', 'Votre inscription a réussi avec succès. Vous allez utiliser votre numéro de téléphone et votre mot de passe pour vous connecter.');
-            return $this->redirectToRoute('app_success', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_success_journaliste', [], Response::HTTP_SEE_OTHER);
         }
         return $this->render('journaliste/index.html.twig', [
             'form' => $form->createView()
@@ -543,6 +543,7 @@ class JournalisteController extends AbstractController
 
     /**
      * @Route("/termes-conditions", name="app_termes_conditions_journaliste")
+     * @IsGranted("ROLE_JOURNALISTE")
      */
     public function app_termes_conditions(): Response
     {
@@ -551,6 +552,7 @@ class JournalisteController extends AbstractController
 
     /**
      * @Route("/success", name="app_success_journaliste")
+     * @IsGranted("ROLE_JOURNALISTE")
      */
     public function success(): Response
     {
