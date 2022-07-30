@@ -3,15 +3,16 @@
 namespace App\Controller;
 
 
+use App\Repository\UserRepository;
 use Symfony\UX\Chartjs\Model\Chart;
 use App\Repository\ResultatRepository;
 use App\Repository\CoalitionRepository;
 use App\Repository\BureauVoteRepository;
 use App\Repository\DepartementRepository;
-use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\UX\Chartjs\Builder\ChartBuilderInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -40,7 +41,7 @@ class HomeController extends AbstractController
     }
     /**
      * @Route("/", name="app_home")
-     * @IsGranted("ROLE_ADMIN")
+     *  @Security("is_granted('ROLE_ADMIN') or is_granted('ROLE_READER')")
      */
 
     public function index(): Response
@@ -172,7 +173,7 @@ class HomeController extends AbstractController
 
     /**
      * @Route("/resultats-bureau-de-vote", name="app_resultats_bureau_de_vote")
-     * @IsGranted("ROLE_ADMIN")
+     * @Security("is_granted('ROLE_ADMIN') or is_granted('ROLE_READER')")
      */
 
     public function getResultatParBureauVote()
@@ -187,7 +188,7 @@ class HomeController extends AbstractController
 
     /**
      * @Route("/resultats-communes", name="app_resultats_communes")
-     * @IsGranted("ROLE_ADMIN")
+     * @Security("is_granted('ROLE_ADMIN') or is_granted('ROLE_READER')")
      */
 
     public function getResultatParCommune()
@@ -206,7 +207,7 @@ class HomeController extends AbstractController
 
     /**
      * @Route("/resultats-lieu-de-vote", name="app_resultats_lieu_vote")
-     * @IsGranted("ROLE_ADMIN")
+     * @Security("is_granted('ROLE_ADMIN') or is_granted('ROLE_READER')")
      */
 
     public function getResultatLieuVote()

@@ -1,11 +1,18 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}SunuLégislatives2022 | Résultats par Circonscription{% endblock %}
+{% block title %}SunuLégislatives2022 | Résultats des bureaux de vote pour chaque coalition{% endblock %}
 
 {% block body %}
+
+
 <div class="container-fluid">
     {% for message in app.flashes('success') %}
     <div class="text-center alert alert-success mt-2" role="alert">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% for message in app.flashes('error') %}
+    <div class="text-center alert alert-danger mt-2" role="alert">
         {{ message }}
     </div>
     {% endfor %}
@@ -16,17 +23,22 @@
                     <h4>Nombre de voix de chaque Coalition par bureau de vote</h4>
                 </div>
                 <div>
-                    <button id="export" class="btn btn-success">Export to Excel</button>
+
+                    <a href="{{path('app_journaliste_circonscription_add')}}" class="btn btn-success">Ajouter</a>
+
+                    {# <a href="" class="btn btn-success">Importer le fichier</a> #}
                 </div>
             </div>
         </div>
+
     </div>
     <div class="content table-responsive">
-        {% if app.user and app.user.roles[0] == 'ROLE_ADMIN' %}
-        
-        {% if resultats %}
 
-        <table id="tableexport" class="table table-striped">
+
+        {# Liste resultats rep #}
+        {% if app.user and app.user.roles[0] == 'ROLE_JOURNALISTE' %}
+        {% if resultats %}
+        <table class="table table-striped">
             <thead>
                 <tr>
                     <th>Nom de la circonscription</th>
@@ -51,23 +63,27 @@
                 </tr>
             </thead>
             <tbody>
-                {% for resultat in resultats %}
+                {# {% for resultat in resultats %} #}
+                {% if app.user %}
+                {% for resultats in resultats %}
                 <tr>
-                    <td> {{ resultat.user.commune.nom}} </td>
-                    <td>{{ resultat.user.BV.commune.commune }}</td>
-                    <td>{{ resultat.user.BV.lieu }}</td>
-                    <td>{{ resultat.user.BV.NomBV }}</td>
-                    <td> {{ resultat.user.BV.nbElecteur |number_format(0, '.', ' ')}} </td>
-                    <td>{{ resultat.nbVotant |number_format(0, '.', ' ')}}</td>
-                    <td>{{ resultat.bulletinNull |number_format(0, '.', ' ')}}</td>
-                    <td>{{ resultat.bulletinExp |number_format(0, '.', ' ')}}</td>
-                    {% for row in resultat.getResultatCoalitions %}
-                    <td> {{row.nombre|number_format(0, '.', ' ')}} </td>
+                    <td> {{ resultats.user.commune.nom}} </td>
+                    <td>{{ resultats.user.BV.commune.commune }}</td>
+                    <td>{{ resultats.user.BV.lieu }}</td>
+                    <td>{{ resultats.user.BV.NomBV }}</td>
+                    <td> {{ resultats.user.BV.nbElecteur |number_format(0, '.', ' ')}} </td>
+                    <td>{{ resultats.nbVotant |number_format(0, '.', ' ')}}</td>
+                    <td>{{ resultats.bulletinNull |number_format(0, '.', ' ')}}</td>
+                    <td>{{ resultats.bulletinExp |number_format(0, '.', ' ')}}</td>
+                    {% for row in resultats.getResultatCoalitions %}
+                    <td> {{row.nombre |number_format(0, '.', ' ')}} </td>
                     {% endfor %}
-                    <td>{{ resultat.user.prenom }} {{resultat.user.nom}}</td>
+                    <td>{{ resultats.user.prenom }} {{resultats.user.nom}}</td>
 
                 </tr>
                 {% endfor %}
+                {% endif %}
+                {# {% endfor %} #}
             </tbody>
         </table>
 
@@ -77,8 +93,6 @@
         </div>
         {% endif %}
         {% endif %}
-
-
 
     </div>
 </div>

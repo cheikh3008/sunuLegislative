@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}SunuLégislatives2022 | ajouter un journaliste{% endblock %}
+
+{% block body %}
+<div class="container">
+    {% for message in app.flashes('success') %}
+    <div class="text-center alert alert-success mt-2" role="alert">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% for message in app.flashes('error') %}
+    <div class="text-center alert alert-danger mt-2" role="alert">
+        {{ message }}
+    </div>
+    {% endfor %}
+    <div class="content">
+        <div class="card">
+            <div class="card-header">
+                <h4>Pour quel bureau de vote, souhaitez-vous être Représentant ?</h4>
+            </div>
+            <div class="card-body">
+                {{ form_start(form, {attr: {'novalidate': 'novalidate'}}) }}
+                <div class="row">
+                    <div class="col-md-6">
+                        {{ form_row(form.prenom) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form_row(form.nom) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form_row(form.telephone) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form_row(form.presse) }}
+                    </div>
+                    <div class="col-md-12">
+                        {{ form_row(form.password) }}
+                    </div>
+                    <div class="col-md-12">
+                        <div class="d-flex justify-content-start">
+                            <div>
+                                {{ form_row(form.check) }}
+
+                            </div>
+                            <div>&nbsp;&nbsp; | </div>
+                            <div>
+                                <a href="{{path('app_termes_conditions_journaliste')}}" class="btn btn-link"
+                                    style="margin-top: -7px">Cliquer ici pour lire les
+                                    termes et
+                                    conditions d'utilisation</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-success">{{ button_label|default('Ajouter') }}</button>
+                {{ form_end(form) }}
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+{% endblock %}

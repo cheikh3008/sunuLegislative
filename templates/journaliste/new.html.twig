@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}SunuLégislatives2022 | Importer les résultats{% endblock %}
+{% block title %}SunuLégislatives2022 | Ajouter les résultats{% endblock %}
 
 {% block body %}
 
@@ -18,8 +18,7 @@
     <div class="content">
         <div class="card">
             <div class="card-header">
-                <h4>Confirmer les résultats du bureau de vote {{app.user.BV.nomBV}} {{app.user.BV.lieu}} de
-                    {{app.user.commune.nom}}</h4>
+                <h4>Ajouter les résultats du bureau de vote   </h4>
             </div>
             <div class="card-body">
                 {{ include('resultat/_form.html.twig') }}

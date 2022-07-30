@@ -23,7 +23,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=200, unique=true)
+     * @ORM\Column(type="string", length=200)
      */
     private $username;
 
@@ -85,7 +85,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
     /**
-     * @ORM\Column(type="string", length=180)
+     * @ORM\Column(type="string", length=255, nullable=true )
      */
     private $lieu;
 
@@ -98,6 +98,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\ManyToOne(targetEntity=Departement::class, inversedBy="user")
      */
     private $commune;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $presse;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $slug;
 
     public function __construct()
     {
@@ -353,6 +363,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCommune(?Departement $commune): self
     {
         $this->commune = $commune;
+
+        return $this;
+    }
+
+    public function getPresse(): ?string
+    {
+        return $this->presse;
+    }
+
+    public function setPresse(?string $presse): self
+    {
+        $this->presse = $presse;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(?string $slug): self
+    {
+        $this->slug = $slug;
 
         return $this;
     }

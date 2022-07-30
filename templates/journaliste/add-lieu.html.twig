@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}SunuLégislatives2022 | ajputer un représentant{% endblock %}
+
+{% block body %}
+<div class="container">
+    {% for message in app.flashes('success') %}
+    <div class="text-center alert alert-success mt-2" role="alert">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% for message in app.flashes('error') %}
+    <div class="text-center alert alert-danger mt-2" role="alert">
+        {{ message }}
+    </div>
+    {% endfor %}
+    <div class="content">
+        <div class="card">
+            <div class="card-header">
+                <h4>Pour quel centre / lieu de vote, souhaitez-vous donner les résultats ?</h4>
+            </div>
+            <div class="card-body">
+                {{ form_start(form, {attr: {'novalidate': 'novalidate'}}) }}
+                {{ form_widget(form) }}
+                <a href="{{path('app_commune_add')}}" class="btn btn-warning" >Précédent</a>
+                <button class="btn btn-success">{{ button_label|default('Suivant') }}</button>
+                {{ form_end(form) }}
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+{% endblock %}

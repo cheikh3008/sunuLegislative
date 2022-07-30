@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\BureauVoteRepository;
 use App\Repository\ResultatRepository;
 use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,36 +14,46 @@ class DeleteAllResultatController extends AbstractController
 {
     private $resultatRepository;
     private $userRepository;
-    public function __construct(ResultatRepository $resultatRepository, UserRepository $userRepository )
+    private $bureauVoteRepository;
+    public function __construct(ResultatRepository $resultatRepository, UserRepository $userRepository, BureauVoteRepository $bureauVoteRepository)
     {
         $this->resultatRepository = $resultatRepository;
         $this->userRepository = $userRepository;
+        $this->bureauVoteRepository = $bureauVoteRepository;
     }
 
     /**
      * @Route("/tout-supprimer", name="app_sup_tout")
      * @Security("is_granted('ROLE_ADMIN')")
      */
-    public function index( ): Response
+    public function index(): Response
     {
-        
+
         return $this->renderForm('delete_all_resultat/index.html.twig');
     }
 
-     /**
+    /**
      * @Route("/delete-all", name="delete_all")
      * @Security("is_granted('ROLE_ADMIN')")
      */
-    public function deleteAll() 
+    public function deleteAll()
     {
         $resultats = $this->resultatRepository->findAll();
         $entityManager = $this->getDoctrine()->getManager();
         foreach ($resultats as $key => $value) {
+            $bv = $this->bureauVoteRepository->find($value->getUser()->getBV()->getId());
+            $bv->setIsValid(false);
             $user = $this->userRepository->find($value->getUser()->getid());
-            $user->setIsValid(false);
+
+            if ($value->getUser()->getRole()->getLibelle() == 'ROLE_JOURNALISTE') {
+                $user->setBV(null);
+                $user->setCommune(null);
+            }
             $entityManager->persist($user);
             $entityManager->remove($value);
-            // dd($user, $value);
+            $bv->setIsValid(false);
+            $entityManager->persist($bv);
+            $entityManager->flush();
         }
         $entityManager->flush();
         $this->addFlash('success', 'Tous les resultats ont été  supprimés');

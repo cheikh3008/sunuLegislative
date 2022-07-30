@@ -26,12 +26,21 @@ class AppFixtures extends Fixture
         $role_admin->setLibelle("ROLE_ADMIN");
         $manager->persist($role_admin);
 
+        $role_journaliste = new Role();
+        $role_journaliste->setLibelle("ROLE_JOURNALISTE");
+        $manager->persist($role_journaliste);
+
+        $role_READER = new Role();
+        $role_READER->setLibelle("ROLE_READER");
+        $manager->persist($role_READER);
+
+        // Super Admin
         $user = new User();
         $user->setUsername('cheikh3008')
             ->setPassword($this->encoder->hashPassword($user, "admin123"))
             ->setNom('Dieng')
             ->setPrenom('Cheikh')
-            ->setUuid('Greush221')
+            ->setUuid('admin123')
             ->setRole($role_admin)
             ->setCode('SN')
             ->setCommune(null)
@@ -39,6 +48,36 @@ class AppFixtures extends Fixture
             ->SetIsValid(false)
             ->setTelephone(221773043248);
         $manager->persist($user);
+
+        // Admin
+        $user1 = new User();
+        $user1->setUsername('administrateur')
+            ->setPassword($this->encoder->hashPassword($user1, "election@2022"))
+            ->setNom('Thiam')
+            ->setPrenom('Ousseynou')
+            ->setUuid('election@2022')
+            ->setRole($role_admin)
+            ->setCode('SN')
+            ->setCommune(null)
+            ->setLieu('Senegal')
+            ->SetIsValid(false)
+            ->setTelephone(221784387796);
+        $manager->persist($user1);
+
+        // Reader
+        $user2 = new User();
+        $user2->setUsername('user')
+            ->setPassword($this->encoder->hashPassword($user2, "user@2022"))
+            ->setNom('Thiam')
+            ->setPrenom('Ousseynou')
+            ->setUuid('user@2022')
+            ->setRole($role_READER)
+            ->setCode('SN')
+            ->setCommune(null)
+            ->setLieu('Senegal')
+            ->SetIsValid(false)
+            ->setTelephone(221784387796);
+        $manager->persist($user2);
 
         $manager->flush();
     }

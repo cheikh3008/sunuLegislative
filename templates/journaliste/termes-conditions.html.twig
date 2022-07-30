@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}SunuLégislatives2022 | Termes et Conditions{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="card mt-5">
+        <div class="card-header">
+            <h1 class="h3 pt-2 font-weight-normal">J'accepte les termes et conditions
+            </h1>
+        </div>
+        <div class="card-body">
+            <p>
+                Vous êtes sur le site mis en place pour notre Organisation pour collecter les résultats des 15 196
+                Bureaux de vote de notre Pays.
+            </p>
+            <p>
+                Ces quelques règles devront être respectées par les personnes ayant décidé de s’inscrire comme
+                rapporteurs des résultats d’un bureau de vote donné afin de garantir la fiabilité des résultats
+                obtenus :
+            </p>
+            <ul>
+                <style>
+                    li {
+                        padding: 10px;
+                        font-size: 15px;
+                    }
+                </style>
+                <li>
+                    <strong>
+                        Vous avez la possibilité d’être le rapporteur des résultats du bureau de vote de votre
+                        choix ;
+                    </strong>
+                </li>
+                <li>
+                    <strong>
+                        Avant de renseigner les résultats de bureau de vote que vous avez choisi, il faut attendre
+                        les résultats du dépouillement ; Ne pas communiquer de résultats si les résultats du bureau
+                        de vote que vous avez choisi ne sont pas sortis ;
+                    </strong>
+                </li>
+                <li>
+                    <strong>
+                        Il faut s’assurer que vous donnez bien les résultats du bureau de vote pour lequel vous
+                        avez choisi d’être le Rapporteur. Donc, attention à ne pas vous tromper de résultats de
+                        bureau de vote ;
+                    </strong>
+                </li>
+                <li>
+                    <strong>
+                        Assurez-vous de bien donner les bons résultats ;
+                    </strong>
+                </li>
+                <li>
+                    <strong>
+                        Vous ne pouvez être rapporteur de résultats que d’un seul et unique bureau de vote ;
+                    </strong>
+                </li>
+                <li>
+                    <strong>
+                        Vous vous engagez que les résultats que vous mettrez sur la plateforme sont bien les
+                        résultats après dépouillement du bureau de vote.
+                    </strong>
+                </li>
+            </ul>
+            <p>
+                En validant ces conditions et règles d’utilisation de la plateforme, vous confirmez que vous acceptez
+                de vous confirmer aux règles indiquées ci-dessus.
+            </p>
+
+            <p>
+                Traitement des données à caractère personnel : <br>
+                Tout utilisateur du site, en remplissant les formulaires mis en ligne, consent et accepte que cette
+                dernière traite les informations personnelles qui le concerne, conformément à la législation et à la
+                réglementation en vigueur. Aucune information personnelle n’est collectée à votre insu ou cédée à
+                des tiers.
+            </p>
+            <p>
+                Confidentialité : <br>
+                Vos données personnelles sont confidentielles et ne seront en aucun cas communiquées à des tiers.
+            </p>
+        </div>
+    </div>
+    <div class="mt-3 ">
+        <a href="{{path('app_journaliste')}}" class="btn btn-success float-end mb-3">Continuer</a>
+    </div>
+
+</div>
+<style>
+    p {
+        padding: 5px;
+    }
+</style>
+{% endblock %}
