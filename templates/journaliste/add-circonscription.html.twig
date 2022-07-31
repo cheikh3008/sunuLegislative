@@ -22,7 +22,7 @@
             <div class="card-body">
                 {{ form_start(form, {attr: {'novalidate': 'novalidate'}}) }}
                 {{ form_widget(form) }}
-                <a href="{{path('app_representant')}}" class="btn btn-warning" >Précédent</a>
+                {# <a href="{{path('app_journaliste')}}" class="btn btn-warning" >Précédent</a> #}
                 <button class="btn btn-success">{{ button_label|default('suivant') }}</button>
                 {{ form_end(form) }}
             </div>

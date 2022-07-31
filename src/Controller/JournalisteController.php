@@ -543,7 +543,6 @@ class JournalisteController extends AbstractController
 
     /**
      * @Route("/termes-conditions", name="app_termes_conditions_journaliste")
-     * @IsGranted("ROLE_JOURNALISTE")
      */
     public function app_termes_conditions(): Response
     {
@@ -552,7 +551,6 @@ class JournalisteController extends AbstractController
 
     /**
      * @Route("/success", name="app_success_journaliste")
-     * @IsGranted("ROLE_JOURNALISTE")
      */
     public function success(): Response
     {

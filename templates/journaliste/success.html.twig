@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}SunuLégislatives2022 | Inscription réussi{% endblock %}
+
+{% block body %}
+<div class="container">
+
+    <div class="mt-5">
+        {% for message in app.flashes('success') %}
+        <div class="text-center alert alert-success mt-2" role="alert">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% for message in app.flashes('error') %}
+        <div class="text-center alert alert-danger mt-2" role="alert">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}
