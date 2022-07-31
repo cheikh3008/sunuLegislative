@@ -57,13 +57,12 @@ class HomeController extends AbstractController
 
             $tt[] = $value->getResultatCoalitions()->toArray();
         }
-        // dd($tt);
         $nbInscrit = 0;
         $nbVotant = 0;
         $bulletinNull = 0;
         $bulletinExp = 0;
         $nombreTotalBV = $this->resultatRepository->findNombreBureauVoteTotal()[0];
-        // dd($nombreTotalBV);
+        
         $nombreResultatBV = $this->resultatRepository->findBy([], ['id' => 'DESC']);
         $nombreBVCirconscription = $this->resultatRepository->findNombreBureauVoteCoalition();
         $man = $this->resultatRepository->findNombreResultBureauVoteCoalition();
@@ -102,6 +101,8 @@ class HomeController extends AbstractController
             'nombreTotalBV' => $nombreTotalBV,
             'bulletinNull' => number_format($bulletinNull, 0, '.', ' '),
             'taux' => number_format($taux, 2),
+            'nbTotalEclecteur' => number_format($nombreTotalBV['nbElecteur'], 0, '.', ' '),
+            'nbTotalBV' => number_format($nombreTotalBV['nbBV'], 0, '.', ' '),
             'nb' => $nb,
             'chartBar' => $this->getChartBar($nom_de_la_coaltion, $nbVoix),
             'nombreBVCirconscription' => $nombreBVCirconscription,

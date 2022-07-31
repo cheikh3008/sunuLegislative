@@ -1,6 +1,7 @@
 {{ form_start(form, {attr: {'novalidate': 'novalidate'}}) }}
 <div class="row">
     {{ form_widget(form) }}
+    {# {{ form_widget(form.bulletinExp, {'value' : 'Default title'}) }} #}
 </div>
 <button class="btn btn-success">{{ button_label|default('Ajouter') }}</button>
 {{ form_end(form) }}

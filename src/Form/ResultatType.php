@@ -65,6 +65,7 @@ class ResultatType extends AbstractType
             # code...
             $builder->add($value->getSlug(), TextType::class, [
                 'label' => $value->getNom(),
+                'data' => 0,
                 'attr' => [
                     'placeholder' => 'Entrez le nombre de voix',
                 ],

@@ -47,9 +47,9 @@
                         <td> {{row.commune}} </td>
                         <td> {{row.lieu}} </td>
                         {% for nb in nbElecteurParLieuVote %}
-                            {% if nb.lieu == row.lieu %}
-                                <td> {{nb.nbElecteur}} </td>
-                            {% endif %}
+                        {% if nb.lieu == row.lieu %}
+                        <td> {{nb.nbElecteur}} </td>
+                        {% endif %}
                         {% endfor %}
                         <td> {{row.nbVotant}} </td>
                         <td> {{row.bulletinNull}} </td>
@@ -59,11 +59,11 @@
                         {# {% for row1 in res %} #}
                         {% for coa in coalitions %}
                         {% if coa.nom == row1.nom %}
-                        <td> {{row1.nombre|number_format(0, '.', ' ')}} </td>
+                        <td> {{row1.nombre}} </td>
                         {% endif %}
                         {% endfor %}
                         {% endif %}
-                         {% endfor %}
+                        {% endfor %}
                     </tr>
                     {% endfor %}
                 </tbody>
